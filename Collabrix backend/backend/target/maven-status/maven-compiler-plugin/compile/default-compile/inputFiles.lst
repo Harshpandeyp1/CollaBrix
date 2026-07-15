@@ -1,0 +1,10 @@
+C:\Users\HARSH PANDEY\Desktop\codes\Springboot\Collabrix backend\backend\src\main\java\com\example\collabrix\backend\BackendApplication.java
+C:\Users\HARSH PANDEY\Desktop\codes\Springboot\Collabrix backend\backend\src\main\java\com\example\collabrix\backend\Dto\AuthResponse.java
+C:\Users\HARSH PANDEY\Desktop\codes\Springboot\Collabrix backend\backend\src\main\java\com\example\collabrix\backend\Dto\LoginRequest.java
+C:\Users\HARSH PANDEY\Desktop\codes\Springboot\Collabrix backend\backend\src\main\java\com\example\collabrix\backend\Dto\RegisterRequest.java
+C:\Users\HARSH PANDEY\Desktop\codes\Springboot\Collabrix backend\backend\src\main\java\com\example\collabrix\backend\Entity\UserEntity.java
+C:\Users\HARSH PANDEY\Desktop\codes\Springboot\Collabrix backend\backend\src\main\java\com\example\collabrix\backend\Repository\UserRepo.java
+C:\Users\HARSH PANDEY\Desktop\codes\Springboot\Collabrix backend\backend\src\main\java\com\example\collabrix\backend\Security\CustomUserDetailService.java
+C:\Users\HARSH PANDEY\Desktop\codes\Springboot\Collabrix backend\backend\src\main\java\com\example\collabrix\backend\Security\JwtAuthenticationFilter.java
+C:\Users\HARSH PANDEY\Desktop\codes\Springboot\Collabrix backend\backend\src\main\java\com\example\collabrix\backend\Security\JwtService.java
+C:\Users\HARSH PANDEY\Desktop\codes\Springboot\Collabrix backend\backend\src\main\java\com\example\collabrix\backend\Security\SecurityConfig.java

@@ -1,0 +1,11 @@
+com\example\collabrix\backend\Dto\RegisterRequest.class
+com\example\collabrix\backend\Security\CustomUserDetailService.class
+com\example\collabrix\backend\Dto\AuthResponse.class
+com\example\collabrix\backend\Dto\LoginRequest.class
+com\example\collabrix\backend\Security\JwtAuthenticationFilter.class
+com\example\collabrix\backend\BackendApplication.class
+com\example\collabrix\backend\Entity\UserEntity.class
+com\example\collabrix\backend\Security\SecurityConfig.class
+com\example\collabrix\backend\Security\JwtService.class
+com\example\collabrix\backend\Repository\UserRepo.class
+com\example\collabrix\backend\Entity\UserEntity$UserEntityBuilder.class

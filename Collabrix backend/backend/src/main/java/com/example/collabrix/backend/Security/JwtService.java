@@ -20,7 +20,7 @@ public class JwtService {
     @Value("${jwt.expiration}")
     private long jwtExpiration;
 
-    public static String generateToken(String email){
+    public String generateToken(String email){
         return Jwts.builder()
                 .subject(email)
                 .issuedAt(new Date())

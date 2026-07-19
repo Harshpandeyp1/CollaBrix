@@ -7,14 +7,6 @@ import java.util.Optional;
 
 public interface UserRepo extends JpaRepository<UserEntity,Long> {
     Optional<UserEntity> findByEmail(String email);
-
-    static boolean existsByEmail(String email)//chck username already register
-    {
-        return false;
-    }
-
-    static boolean existsByUsername(String username)//username alreadyy taken
-    {
-        return false;
-    }
+    boolean existsByEmail(String email);
+    boolean existsByUsername(String username);
 }

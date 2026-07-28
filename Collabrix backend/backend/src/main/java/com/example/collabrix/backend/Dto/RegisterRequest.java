@@ -13,7 +13,7 @@ public class RegisterRequest {
 
     @Email(message="Enter is a valid email")
     @NotBlank(message = "Email is required")
-    private String Email;
+    private String email;
 
     @NotBlank(message = "Password is Required")
     private String password;

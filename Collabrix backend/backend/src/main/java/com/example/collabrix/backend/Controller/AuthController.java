@@ -1,8 +1,8 @@
 package com.example.collabrix.backend.Controller;
 
-import com.example.collabrix.backend.Dto.AuthResponse;
-import com.example.collabrix.backend.Dto.LoginRequest;
-import com.example.collabrix.backend.Dto.RegisterRequest;
+import com.example.collabrix.backend.Dto.auth.AuthResponse;
+import com.example.collabrix.backend.Dto.auth.LoginRequest;
+import com.example.collabrix.backend.Dto.auth.RegisterRequest;
 import com.example.collabrix.backend.Service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

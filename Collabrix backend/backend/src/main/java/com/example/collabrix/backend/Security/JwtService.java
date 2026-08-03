@@ -33,7 +33,7 @@ public class JwtService {
         return extractAllClaims(token).getSubject();
     }
     //chek if token is valid
-    private boolean isTokenValid(String token,String email){
+    public boolean isTokenValid(String token,String email){
         return extractEmail(token).equals(email)&&!isTokenExpired(token);
     }
     // Check if Token Expired

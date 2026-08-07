@@ -1,219 +1,246 @@
-import React, { useState } from 'react'
 
-const DiscoveryFeed = () => {
+import React, { useState } from "react";
 
-  // Stores the currently selected filter
-  const [activeFilter, setActiveFilter] = useState('all')
+const DiscoveryFeed = ({ posts = [], loading = false }) => {
 
-  // Tracks which items the user has liked
-  const [likedItems, setLikedItems] = useState({})
+  // Currently selected filter
+  const [activeFilter, setActiveFilter] = useState("all");
 
-  // Tracks which items the user marked "Interested" in
-  const [interestedItems, setInterestedItems] = useState({})
+  // Local like state for now
+  const [likedItems, setLikedItems] = useState({});
 
-  // Tracks which post's comment section is currently expanded (stores the item id, or null if none open)
-  const [openCommentsFor, setOpenCommentsFor] = useState(null)
+  // Local interested state for projects
+  const [interestedItems, setInterestedItems] = useState({});
 
-  // Stores the text currently typed in each post's comment input, keyed by item id
-  // e.g. { 1: "nice idea!", 2: "" }
-  const [commentDrafts, setCommentDrafts] = useState({})
+  // Currently opened comments
+  const [openCommentsFor, setOpenCommentsFor] = useState(null);
 
-  // Stores the actual submitted comments for each post, keyed by item id
-  // e.g. { 1: [{ id: 1, author: 'You', text: 'nice idea!' }] }
-  const [comments, setComments] = useState({})
+  // Comment drafts
+  const [commentDrafts, setCommentDrafts] = useState({});
 
-  // Filter buttons
+  // Local comments for now
+  const [comments, setComments] = useState({});
+
   const filters = [
-    { key: 'all', label: 'All Feed' },
-    { key: 'idea', label: 'Ideas' },
-    { key: 'project', label: 'Projects' },
-  ]
+    { key: "all", label: "All Feed" },
+    { key: "idea", label: "Ideas" },
+    { key: "project", label: "Projects" },
+  ];
 
-  // Temporary feed data
-  const feedItems = [
-    {
-      id: 1,
-      type: 'project',
-      title: 'Collabrix',
-      description:
-        'A collaboration platform where developers can discover people, ideas, and projects.',
-      author: 'Harsh Kumar',
-      time: '2 hours ago',
-      likes: 24,
-      comments: 12
-    },
-    {
-      id: 2,
-      type: 'idea',
-      title: 'AI-powered college assistant',
-      description:
-        'What if students could use AI to get help with their studies, projects, and career planning?',
-      author: 'Rahul Sharma',
-      time: '4 hours ago',
-      likes: 18,
-      comments: 6
-    },
-    {
-      id: 2,
-      type: 'idea',
-      title: 'AI-powered college assistant',
-      description:
-        'What if students could use AI to get help with their studies, projects, and career planning?',
-      author: 'Rahul Sharma',
-      time: '4 hours ago',
-      likes: 18,
-      comments: 6
-    },
-    {
-      id: 2,
-      type: 'idea',
-      title: 'AI-powered college assistant',
-      description:
-        'What if students could use AI to get help with their studies, projects, and career planning?',
-      author: 'Rahul Sharma',
-      time: '4 hours ago',
-      likes: 18,
-      comments: 6
-    },
-    {
-      id: 2,
-      type: 'idea',
-      title: 'AI-powered college assistant',
-      description:
-        'What if students could use AI to get help with their studies, projects, and career planning?',
-      author: 'Rahul Sharma',
-      time: '4 hours ago',
-      likes: 18,
-      comments: 6
-    },
-    {
-      id: 2,
-      type: 'idea',
-      title: 'AI-powered college assistant',
-      description:
-        'What if students could use AI to get help with their studies, projects, and career planning?',
-      author: 'Rahul Sharma',
-      time: '4 hours ago',
-      likes: 18,
-      comments: 6
-    },
-    {
-      id: 2,
-      type: 'idea',
-      title: 'AI-powered college assistant',
-      description:
-        'What if students could use AI to get help with their studies, projects, and career planning?',
-      author: 'Rahul Sharma',
-      time: '4 hours ago',
-      likes: 18,
-      comments: 6
-    },
-    {
-      id: 2,
-      type: 'idea',
-      title: 'AI-powered college assistant',
-      description:
-        'What if students could use AI to get help with their studies, projects, and career planning?',
-      author: 'Rahul Sharma',
-      time: '4 hours ago',
-      likes: 18,
-      comments: 6
-    },
-    {
-      id: 2,
-      type: 'idea',
-      title: 'AI-powered college assistant',
-      description:
-        'What if students could use AI to get help with their studies, projects, and career planning?',
-      author: 'Rahul Sharma',
-      time: '4 hours ago',
-      likes: 18,
-      comments: 6
-    },
-    {
-      id: 3,
-      type: 'project',
-      title: 'Campus Connect',
-      description:
-        'A platform that helps students discover events and connect with other students.',
-      author: 'Priya Singh',
-      time: '1 day ago',
-      likes: 31,
-      comments: 14
+  // --------------------------------
+  // FILTER POSTS
+  // --------------------------------
+
+  const filteredPosts = posts.filter((post) => {
+
+    if (activeFilter === "all") {
+      return true;
     }
-  ]
 
-  // Filter the feed items based on the active filter tab
-  const filteredItems = feedItems.filter((item) => {
-    if (activeFilter === 'all') return true
-    return item.type === activeFilter
-  })
+    /*
+      Your backend Post entity has PostStatus.
+      We currently treat posts as "idea".
 
-  // Toggle like state for a specific post
+      Later, when Project posts are integrated,
+      we can use a proper post type/category.
+    */
+
+    if (activeFilter === "idea") {
+      return true;
+    }
+
+    if (activeFilter === "project") {
+      return false;
+    }
+
+    return true;
+  });
+
+  // --------------------------------
+  // LIKE
+  // --------------------------------
+
   const toggleLike = (id) => {
-    setLikedItems((prev) => ({ ...prev, [id]: !prev[id] }))
-  }
+    setLikedItems((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
-  // Toggle "Interested" state for a specific post
+  // --------------------------------
+  // INTERESTED
+  // --------------------------------
+
   const toggleInterested = (id) => {
-    setInterestedItems((prev) => ({ ...prev, [id]: !prev[id] }))
-  }
+    setInterestedItems((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
 
-  // Opens the comment section for a post, or closes it if it's already open (accordion-style, one at a time)
+  // --------------------------------
+  // COMMENTS
+  // --------------------------------
+
   const toggleComments = (id) => {
-    setOpenCommentsFor((prev) => (prev === id ? null : id))
-  }
+    setOpenCommentsFor((prev) =>
+      prev === id ? null : id
+    );
+  };
 
-  // Updates the draft text as the user types in a specific post's comment box
   const handleCommentChange = (id, text) => {
-    setCommentDrafts((prev) => ({ ...prev, [id]: text }))
-  }
+    setCommentDrafts((prev) => ({
+      ...prev,
+      [id]: text,
+    }));
+  };
 
-  // Submits a new comment for a given post
   const handleCommentSubmit = (id, e) => {
-    e.preventDefault() // stop the form from refreshing the page
+    e.preventDefault();
 
-    const text = (commentDrafts[id] || '').trim()
-    if (!text) return // don't add empty comments
+    const text = (commentDrafts[id] || "").trim();
 
-    // Build a new comment object — using Date.now() as a quick unique id for now
-    const newComment = { id: Date.now(), author: 'You', text }
+    if (!text) {
+      return;
+    }
 
-    // Append the new comment to this post's existing comment list (or start a new array if none yet)
+    const newComment = {
+      id: Date.now(),
+      author: "You",
+      text,
+    };
+
     setComments((prev) => ({
       ...prev,
-      [id]: [...(prev[id] || []), newComment]
-    }))
+      [id]: [
+        ...(prev[id] || []),
+        newComment,
+      ],
+    }));
 
-    // Clear the input box for this post after submitting
-    setCommentDrafts((prev) => ({ ...prev, [id]: '' }))
+    setCommentDrafts((prev) => ({
+      ...prev,
+      [id]: "",
+    }));
+  };
 
-    // TODO: replace this with a real API call later (e.g. POST /posts/:id/comments)
+  // --------------------------------
+  // LOADING
+  // --------------------------------
+
+  if (loading) {
+    return (
+      <section className="
+        w-full
+        bg-white/90
+        backdrop-blur-sm
+        rounded-2xl
+        border
+        border-slate-200/80
+        shadow-sm
+        p-5
+        sm:p-6
+      ">
+        <div className="flex items-center justify-center py-12">
+          <p className="text-sm text-slate-500">
+            Loading feed...
+          </p>
+        </div>
+      </section>
+    );
   }
 
   return (
-    <section className="w-full bg-white/90 backdrop-blur-sm rounded-2xl border border-slate-200/80 shadow-sm p-5 sm:p-6 transition-all duration-300">
+    <section className="
+      w-full
+      bg-white/90
+      backdrop-blur-sm
+      rounded-2xl
+      border
+      border-slate-200/80
+      shadow-sm
+      p-5
+      sm:p-6
+    ">
 
-      {/* Feed Header */}
-      <div className="mb-6 flex items-center justify-between border-b border-slate-100 pb-4">
+      {/* ================= HEADER ================= */}
+
+      <div className="
+        mb-6
+        flex
+        items-center
+        justify-between
+        border-b
+        border-slate-100
+        pb-4
+      ">
+
         <div>
-          <h2 className="text-lg font-bold tracking-tight text-slate-800">
+          <h2 className="
+            text-lg
+            font-bold
+            tracking-tight
+            text-slate-800
+          ">
             Discover Community
           </h2>
-          <p className="mt-0.5 text-xs font-medium text-slate-500">
+
+          <p className="
+            mt-0.5
+            text-xs
+            font-medium
+            text-slate-500
+          ">
             Explore ideas, open-source builds, and collaborators across Collabrix
           </p>
         </div>
 
-        <div className="hidden sm:flex w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 via-sky-600 to-teal-500 items-center justify-center shadow-md shadow-sky-500/20">
-          <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+        <div className="
+          hidden
+          sm:flex
+          w-10
+          h-10
+          rounded-xl
+          bg-linear-to-tr
+          from-sky-500
+          via-sky-600
+          to-teal-500
+          items-center
+          justify-center
+          shadow-md
+          shadow-sky-500/20
+        ">
+          <svg
+            className="w-5 h-5 text-white"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M13 10V3L4 14h7v7l9-11h-7z"
+            />
           </svg>
         </div>
+
       </div>
 
-      {/* Filter Buttons */}
-      <div className="flex items-center gap-1 mb-6 p-1 bg-slate-100/80 rounded-xl w-fit border border-slate-200/60">
+      {/* ================= FILTERS ================= */}
+
+      <div className="
+        flex
+        items-center
+        gap-1
+        mb-6
+        p-1
+        bg-slate-100/80
+        rounded-xl
+        w-fit
+        border
+        border-slate-200/60
+      ">
 
         {filters.map(({ key, label }) => (
 
@@ -231,8 +258,8 @@ const DiscoveryFeed = () => {
 
               ${
                 activeFilter === key
-                  ? 'bg-white text-sky-700 shadow-sm ring-1 ring-slate-200/60'
-                  : 'text-slate-500 hover:text-slate-800 hover:bg-white/50'
+                  ? "bg-white text-sky-700 shadow-sm ring-1 ring-slate-200/60"
+                  : "text-slate-500 hover:text-slate-800 hover:bg-white/50"
               }
             `}
           >
@@ -243,32 +270,81 @@ const DiscoveryFeed = () => {
 
       </div>
 
-      {/* Feed Items */}
+      {/* ================= EMPTY STATE ================= */}
+
+      {filteredPosts.length === 0 && (
+
+        <div className="
+          text-center
+          py-12
+          bg-slate-50/50
+          rounded-xl
+          border
+          border-dashed
+          border-slate-200
+        ">
+
+          <p className="
+            text-sm
+            font-medium
+            text-slate-400
+          ">
+            No posts to show right now.
+          </p>
+
+          <p className="
+            text-xs
+            text-slate-400
+            mt-1
+          ">
+            Be the first person to share an idea.
+          </p>
+
+        </div>
+
+      )}
+
+      {/* ================= POSTS ================= */}
+
       <div className="space-y-4">
 
-        {filteredItems.length === 0 && (
-          <div className="text-center py-12 bg-slate-50/50 rounded-xl border border-dashed border-slate-200">
-            <p className="text-xs font-medium text-slate-400">No {activeFilter}s to show right now.</p>
-          </div>
-        )}
+        {filteredPosts.map((post) => {
 
-        {filteredItems.map((item) => {
-          const isLiked = likedItems[item.id]
-          const isInterested = interestedItems[item.id]
-          const likeCount = item.likes + (isLiked ? 1 : 0)
+          /*
+            Backend IDs can be numeric or UUID/string.
+            Use id as the single identifier.
+          */
 
-          // Is this specific post's comment section currently open?
-          const isCommentsOpen = openCommentsFor === item.id
+          const postId = post.id;
 
-          // The list of comments submitted so far for this post (empty array if none yet)
-          const postComments = comments[item.id] || []
+          const isLiked = likedItems[postId];
 
-          // Total comment count = original seed count + any new ones the user added locally
-          const totalComments = item.comments + postComments.length
+          const isInterested =
+            interestedItems[postId];
+
+          const isCommentsOpen =
+            openCommentsFor === postId;
+
+          const postComments =
+            comments[postId] || [];
+
+          /*
+            Backend may not have these counters yet.
+            Therefore we safely fall back to zero.
+          */
+
+          const likeCount =
+            (post.likeCount || 0) +
+            (isLiked ? 1 : 0);
+
+          const commentCount =
+            (post.commentCount || 0) +
+            postComments.length;
 
           return (
+
             <div
-              key={item.id}
+              key={postId}
               className="
                 group
                 p-5
@@ -284,12 +360,22 @@ const DiscoveryFeed = () => {
               "
             >
 
-              {/* Author Section */}
-              <div className="flex items-center justify-between">
+              {/* ================= AUTHOR ================= */}
 
-                <div className="flex items-center gap-3">
+              <div className="
+                flex
+                items-center
+                justify-between
+              ">
+
+                <div className="
+                  flex
+                  items-center
+                  gap-3
+                ">
 
                   {/* Avatar */}
+
                   <div className="
                     w-10
                     h-10
@@ -297,7 +383,7 @@ const DiscoveryFeed = () => {
                     flex
                     items-center
                     justify-center
-                    bg-gradient-to-br
+                    bg-linear-to-br
                     from-sky-500
                     to-teal-500
                     text-white
@@ -307,52 +393,85 @@ const DiscoveryFeed = () => {
                     ring-2
                     ring-white
                   ">
-                    {item.author
-                      .split(' ')
-                      .map((name) => name[0])
-                      .join('')
-                    }
+
+                    {post.author?.fullName
+                      ? post.author.fullName
+                          .split(" ")
+                          .map((name) => name[0])
+                          .join("")
+                          .slice(0, 2)
+                          .toUpperCase()
+                      : "U"}
+
                   </div>
 
-                  {/* Author Information */}
+                  {/* Author information */}
+
                   <div>
-                    <p className="text-xs font-bold text-slate-800 hover:text-sky-600 transition-colors">
-                      {item.author}
+
+                    <p className="
+                      text-xs
+                      font-bold
+                      text-slate-800
+                    ">
+                      {post.author?.fullName ||
+                        post.author?.username ||
+                        "Unknown User"}
                     </p>
-                    <p className="text-[11px] font-medium text-slate-400">
-                      {item.time}
+
+                    <p className="
+                      text-[11px]
+                      font-medium
+                      text-slate-400
+                    ">
+                      {post.createdAt
+                        ? new Date(
+                            post.createdAt
+                          ).toLocaleDateString()
+                        : ""}
                     </p>
+
                   </div>
 
                 </div>
 
-                {/* Type Badge */}
-                <span className={`
-                  inline-flex
-                  items-center
-                  gap-1
-                  px-2.5
-                  py-0.5
-                  rounded-full
-                  text-[11px]
-                  font-bold
-                  tracking-wide
-                  capitalize
-                  border
+                {/* Status */}
 
-                  ${
-                    item.type === 'project'
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200/60'
-                      : 'bg-sky-50 text-sky-700 border-sky-200/60'
-                  }
-                `}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${item.type === 'project' ? 'bg-emerald-500' : 'bg-sky-500'}`} />
-                  {item.type}
-                </span>
+                {post.status && (
+
+                  <span className="
+                    inline-flex
+                    items-center
+                    gap-1
+                    px-2.5
+                    py-0.5
+                    rounded-full
+                    text-[11px]
+                    font-bold
+                    tracking-wide
+                    border
+                    bg-sky-50
+                    text-sky-700
+                    border-sky-200/60
+                  ">
+
+                    <span className="
+                      w-1.5
+                      h-1.5
+                      rounded-full
+                      bg-sky-500
+                    " />
+
+                    {post.status}
+
+                  </span>
+
+                )}
 
               </div>
 
-              {/* Title */}
+              {/* ================= TITLE ================= */}
+
               <h3 className="
                 mt-3.5
                 text-base
@@ -362,21 +481,61 @@ const DiscoveryFeed = () => {
                 transition-colors
                 tracking-tight
               ">
-                {item.title}
+                {post.title}
               </h3>
 
-              {/* Description */}
-              <p className="
-                mt-1.5
-                text-xs
-                sm:text-sm
-                leading-relaxed
-                text-slate-600
-              ">
-                {item.description}
-              </p>
+              {/* ================= DESCRIPTION ================= */}
 
-              {/* Actions */}
+              {post.description && (
+
+                <p className="
+                  mt-1.5
+                  text-xs
+                  sm:text-sm
+                  leading-relaxed
+                  text-slate-600
+                ">
+                  {post.description}
+                </p>
+
+              )}
+
+              {/* ================= TECH STACK ================= */}
+
+              {post.techStack?.length > 0 && (
+
+                <div className="
+                  mt-3
+                  flex
+                  flex-wrap
+                  gap-1.5
+                ">
+
+                  {post.techStack.map((tech, index) => (
+
+                    <span
+                      key={`${postId}-tech-${index}`}
+                      className="
+                        px-2
+                        py-1
+                        rounded-md
+                        bg-slate-100
+                        text-slate-600
+                        text-[10px]
+                        font-medium
+                      "
+                    >
+                      {tech}
+                    </span>
+
+                  ))}
+
+                </div>
+
+              )}
+
+              {/* ================= ACTIONS ================= */}
+
               <div className="
                 mt-4
                 pt-3.5
@@ -387,150 +546,303 @@ const DiscoveryFeed = () => {
                 gap-4
               ">
 
-                {/* Like button */}
+                {/* Like */}
+
                 <button
-                  onClick={() => toggleLike(item.id)}
+                  onClick={() =>
+                    toggleLike(postId)
+                  }
                   className={`
-                    flex items-center gap-1.5
-                    px-2.5 py-1.5 rounded-lg text-xs font-semibold
-                    transition-all active:scale-95
-                    ${isLiked 
-                      ? 'bg-rose-50 text-rose-600' 
-                      : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'}
+                    flex
+                    items-center
+                    gap-1.5
+                    px-2.5
+                    py-1.5
+                    rounded-lg
+                    text-xs
+                    font-semibold
+                    transition-all
+                    active:scale-95
+
+                    ${
+                      isLiked
+                        ? "bg-rose-50 text-rose-600"
+                        : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+                    }
                   `}
                 >
+
                   <svg
-                    className={`w-4 h-4 ${isLiked ? 'scale-110' : ''} transition-transform`}
-                    fill={isLiked ? 'currentColor' : 'none'}
+                    className={`
+                      w-4
+                      h-4
+                      ${isLiked ? "scale-110" : ""}
+                    `}
+                    fill={
+                      isLiked
+                        ? "currentColor"
+                        : "none"
+                    }
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21l-7.682-7.682a4.5 4.5 0 010-6.364z" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M4.318 6.318a4.5 4.5 0 016.364 0L12 7.636l1.318-1.318a4.5 4.5 0 116.364 6.364L12 21l-7.682-7.682a4.5 4.5 0 010-6.364z"
+                    />
                   </svg>
-                  <span>{likeCount}</span>
+
+                  <span>
+                    {likeCount}
+                  </span>
+
                 </button>
 
-                {/* Comment button — toggles the comment section open/closed for this post */}
+                {/* Comments */}
+
                 <button
-                  onClick={() => toggleComments(item.id)}
+                  onClick={() =>
+                    toggleComments(postId)
+                  }
                   className={`
-                    flex items-center gap-1.5
-                    px-2.5 py-1.5 rounded-lg text-xs font-semibold
-                    transition-all active:scale-95
-                    ${isCommentsOpen 
-                      ? 'bg-sky-50 text-sky-600' 
-                      : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800'}
+                    flex
+                    items-center
+                    gap-1.5
+                    px-2.5
+                    py-1.5
+                    rounded-lg
+                    text-xs
+                    font-semibold
+                    transition-all
+                    active:scale-95
+
+                    ${
+                      isCommentsOpen
+                        ? "bg-sky-50 text-sky-600"
+                        : "text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+                    }
                   `}
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                    />
                   </svg>
-                  <span>{totalComments}</span>
+
+                  <span>
+                    {commentCount}
+                  </span>
+
                 </button>
 
-                {item.type === 'project' && (
-                  <button
-                    onClick={() => toggleInterested(item.id)}
-                    className={`
-                      ml-auto
-                      px-3.5
-                      py-1.5
-                      rounded-lg
-                      text-xs
-                      font-bold
-                      transition-all
-                      duration-200
-                      active:scale-95
+                {/* Interested */}
 
-                      ${
-                        isInterested
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-300/80'
-                          : 'bg-sky-600 hover:bg-sky-700 text-white shadow-sm hover:shadow-sky-500/20'
-                      }
-                    `}
-                  >
-                    {isInterested ? '✓ Interested' : 'I\'m Interested'}
-                  </button>
-                )}
+                <button
+                  onClick={() =>
+                    toggleInterested(postId)
+                  }
+                  className={`
+                    ml-auto
+                    px-3.5
+                    py-1.5
+                    rounded-lg
+                    text-xs
+                    font-bold
+                    transition-all
+                    duration-200
+                    active:scale-95
+
+                    ${
+                      isInterested
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-300/80"
+                        : "bg-sky-600 hover:bg-sky-700 text-white"
+                    }
+                  `}
+                >
+                  {isInterested
+                    ? "✓ Interested"
+                    : "I'm Interested"}
+                </button>
 
               </div>
 
-              {/* Comment Section — only rendered when this post's comments are open */}
+              {/* ================= COMMENTS ================= */}
+
               {isCommentsOpen && (
-                <div className="mt-3.5 pt-3.5 border-t border-slate-100 bg-slate-50/50 p-3 rounded-xl">
 
-                  {/* List of existing comments for this post */}
+                <div className="
+                  mt-3.5
+                  pt-3.5
+                  border-t
+                  border-slate-100
+                  bg-slate-50/50
+                  p-3
+                  rounded-xl
+                ">
+
                   {postComments.length > 0 && (
-                    <div className="flex flex-col gap-2.5 mb-3">
-                      {postComments.map((comment) => (
-                        <div key={comment.id} className="flex items-start gap-2">
 
-                          {/* Small avatar for the commenter */}
-                          <div className="w-6 h-6 shrink-0 rounded-full flex items-center justify-center bg-gradient-to-br from-sky-400 to-teal-400 text-white text-[9px] font-bold ring-1 ring-white">
-                            {comment.author[0]}
+                    <div className="
+                      flex
+                      flex-col
+                      gap-2.5
+                      mb-3
+                    ">
+
+                      {postComments.map(
+                        (comment) => (
+
+                          <div
+                            key={comment.id}
+                            className="
+                              flex
+                              items-start
+                              gap-2
+                            "
+                          >
+
+                            <div className="
+                              w-6
+                              h-6
+                              shrink-0
+                              rounded-full
+                              flex
+                              items-center
+                              justify-center
+                              bg-linear-to-br
+                              from-sky-400
+                              to-teal-400
+                              text-white
+                              text-[9px]
+                              font-bold
+                            ">
+                              {comment.author?.[0]}
+                            </div>
+
+                            <div className="
+                              bg-white
+                              rounded-xl
+                              p-2.5
+                              flex-1
+                              border
+                              border-slate-100
+                            ">
+
+                              <p className="
+                                text-[11px]
+                                font-bold
+                                text-slate-800
+                              ">
+                                {comment.author}
+                              </p>
+
+                              <p className="
+                                text-xs
+                                text-slate-600
+                                mt-0.5
+                              ">
+                                {comment.text}
+                              </p>
+
+                            </div>
+
                           </div>
 
-                          {/* Comment bubble */}
-                          <div className="bg-white rounded-xl p-2.5 flex-1 border border-slate-100 shadow-2xs">
-                            <p className="text-[11px] font-bold text-slate-800">{comment.author}</p>
-                            <p className="text-xs text-slate-600 mt-0.5">{comment.text}</p>
-                          </div>
+                        )
+                      )}
 
-                        </div>
-                      ))}
                     </div>
+
                   )}
 
-                  {/* Comment input bar — submitting calls handleCommentSubmit for THIS item's id */}
+                  {/* Comment input */}
+
                   <form
-                    onSubmit={(e) => handleCommentSubmit(item.id, e)}
-                    className="flex items-center gap-2"
+                    onSubmit={(e) =>
+                      handleCommentSubmit(
+                        postId,
+                        e
+                      )
+                    }
+                    className="
+                      flex
+                      items-center
+                      gap-2
+                    "
                   >
+
                     <input
                       type="text"
-                      value={commentDrafts[item.id] || ''}
-                      onChange={(e) => handleCommentChange(item.id, e.target.value)}
+                      value={
+                        commentDrafts[postId] ||
+                        ""
+                      }
+                      onChange={(e) =>
+                        handleCommentChange(
+                          postId,
+                          e.target.value
+                        )
+                      }
                       placeholder="Write a comment..."
                       className="
                         flex-1
                         text-xs
-                        px-3 py-2
+                        px-3
+                        py-2
                         rounded-lg
                         bg-white
-                        border border-slate-200
+                        border
+                        border-slate-200
                         outline-none
-                        focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500
-                        transition-all
-                        placeholder:text-slate-400
+                        focus:ring-2
+                        focus:ring-sky-500/20
+                        focus:border-sky-500
                       "
                     />
+
                     <button
                       type="submit"
                       className="
-                        px-3.5 py-2
+                        px-3.5
+                        py-2
                         rounded-lg
-                        bg-slate-900 hover:bg-sky-600
+                        bg-slate-900
+                        hover:bg-sky-600
                         text-white
-                        text-xs font-semibold
+                        text-xs
+                        font-semibold
                         transition-colors
-                        shadow-2xs
                       "
                     >
                       Post
                     </button>
+
                   </form>
 
                 </div>
+
               )}
 
             </div>
-          )
+
+          );
         })}
 
       </div>
 
     </section>
-  )
-}
+  );
+};
 
-export default DiscoveryFeed
+export default DiscoveryFeed;

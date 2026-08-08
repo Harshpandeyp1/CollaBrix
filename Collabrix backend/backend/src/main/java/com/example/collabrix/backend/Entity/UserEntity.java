@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -45,7 +46,17 @@ public class UserEntity {
 
     private String profileImage;
 
+    
     private String coverImage;
+
+ @ElementCollection
+ @CollectionTable(
+         name = "user_skills",
+         joinColumns = @JoinColumn(name = "user_id")
+ )
+ @Column(name = "skill")
+ private List<String> skills;
+
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

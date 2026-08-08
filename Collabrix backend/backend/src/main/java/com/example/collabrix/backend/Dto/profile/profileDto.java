@@ -2,6 +2,8 @@ package com.example.collabrix.backend.Dto.profile;
 
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,7 +30,11 @@ public class profileDto {
 
     private String linkedin;
 
+
+
     private String profileImage;
 
     private String coverImage;
+
+    private List<String> skills;
 }

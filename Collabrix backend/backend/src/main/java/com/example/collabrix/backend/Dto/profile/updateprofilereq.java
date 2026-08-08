@@ -4,6 +4,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,4 +33,9 @@ public class updateprofilereq {
 
     @Size(max = 255)
     private String linkedin;
+
+
+    @Size(max = 1000)
+    private List<String> skills;
+
 }

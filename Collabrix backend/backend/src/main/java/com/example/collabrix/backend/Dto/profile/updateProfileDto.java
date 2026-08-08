@@ -3,6 +3,8 @@ package com.example.collabrix.backend.Dto.profile;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,4 +32,6 @@ public class updateProfileDto {
 
     @Size(max = 255)
     private String linkedin;
+
+    private List<String> skills;
 }

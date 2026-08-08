@@ -6,10 +6,17 @@ import com.example.collabrix.backend.Entity.UserEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.Collections;
+
 @Component
 public class ProfileMapper {
 
-    public static profileDto toDto(UserEntity user){
+    // =========================================
+    // ENTITY → DTO
+    // =========================================
+
+    public static profileDto toDto(UserEntity user) {
+
         return profileDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
@@ -21,37 +28,65 @@ public class ProfileMapper {
                 .website(user.getWebsite())
                 .github(user.getGithub())
                 .linkedin(user.getLinkedin())
+
+                // Skills
+                .skills(user.getSkills())
+
                 .profileImage(resolveMediaUrl(user.getProfileImage()))
                 .coverImage(resolveMediaUrl(user.getCoverImage()))
                 .build();
     }
 
+
+    // =========================================
+    // RESOLVE MEDIA URL
+    // =========================================
+
     private static String resolveMediaUrl(String path) {
+
         if (path == null || path.isBlank()) {
             return path;
         }
+
         if (path.startsWith("http://") || path.startsWith("https://")) {
             return path;
         }
+
         if (path.startsWith("/uploads/")) {
-            String mediaPath = path.replaceFirst("^/uploads/", "/api/media/");
-            return ServletUriComponentsBuilder.fromCurrentContextPath()
+
+            String mediaPath =
+                    path.replaceFirst("^/uploads/", "/api/media/");
+
+            return ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
                     .path(mediaPath)
                     .toUriString();
         }
+
         if (path.startsWith("uploads/")) {
-            String mediaPath = path.replaceFirst("^uploads/", "/api/media/");
-            return ServletUriComponentsBuilder.fromCurrentContextPath()
+
+            String mediaPath =
+                    path.replaceFirst("^uploads/", "/api/media/");
+
+            return ServletUriComponentsBuilder
+                    .fromCurrentContextPath()
                     .path(mediaPath)
                     .toUriString();
         }
+
         return path;
     }
+
+
+    // =========================================
+    // DTO → ENTITY
+    // =========================================
 
     public void updateEntityFromDto(
             updateprofilereq dto,
             UserEntity user
-    ){
+    ) {
+
         user.setFullName(dto.getFullName());
         user.setHeadline(dto.getHeadline());
         user.setBio(dto.getBio());
@@ -59,5 +94,9 @@ public class ProfileMapper {
         user.setWebsite(dto.getWebsite());
         user.setGithub(dto.getGithub());
         user.setLinkedin(dto.getLinkedin());
+
+        // Skills
+        user.setSkills(dto.getSkills());
     }
 }
+

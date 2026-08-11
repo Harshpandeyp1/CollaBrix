@@ -11,6 +11,53 @@ export const getAllPosts = async () => {
   return response.data;
 };
 
+export const getComments=async(postId)=>{
+  const response = await api.get(`${API}/${postId}/comments`);
+  return response.data;
+}
+export const createComments=async(postId,data)=>{
+  const response = await api.post(`${API}/${postId}/comments`,data);
+  return response.data;
+}
+export const deletecomments=async(commentId)=>{
+  const response = await api.delete(`${API}/comments/${commentId}`);
+  return response.data;
+
+}
+ export const getCommentCount = async (postId) => {
+   const response = await api.get( `${API}/${postId}/comments/count` );
+    return response.data.commentCount; };
+// ======================
+// PROJECT INTEREST
+// ======================
+
+export const sendProjectInterest = async (projectId) => {
+  const response = await api.post(`/projects/${projectId}/interest`);
+  return response.data;
+};
+
+export const getMyProjectInterest = async () => { 
+  const response = await api.get("/projects/interests/me"); 
+    return response.data; 
+  };
+
+export const likePost=async(postId)=>{
+  const response=await api.post(`${API}/${postId}/like`);
+  return response.data; 
+};
+export const unlikePost = async (postId) => {
+  const response = await api.delete(`${API}/${postId}/like`);
+  return response.data;
+};
+export const getLikeCount=async(postId)=>{
+  const response =await api.get(`${API}/${postId}/likes`);
+  return response.data; 
+}
+export const hasLiked = async (postId) => {
+  const response = await api.get(`${API}/${postId}/liked`);
+  return response.data;
+};
+
 export const getMyPosts = async () => {
   const response = await api.get(`${API}/me`);
   return response.data;

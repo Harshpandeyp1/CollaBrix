@@ -22,6 +22,53 @@ export const createProject = async (projectData) => {
   return normalizeResponseData(response);
 };
 
+
+// ======================
+// PROJECT INTEREST MANAGEMENT
+// ======================
+
+// Get all users interested in my project
+
+// ======================
+// PROJECT INTERESTS
+// ======================
+
+// Get all users interested in a project
+export const getProjectInterests = async (projectId) => {
+  const response = await api.get(
+    `/projects/${projectId}/interests`
+  );
+
+  return response.data;
+};
+export const getDiscoveryProjects = async () => {
+  const response = await api.get("/projects/discovery");
+  return response.data;
+};
+
+
+// Accept / Reject project interest
+export const updateProjectInterestStatus = async (
+  interestId,
+  status
+) => {
+  const response = await api.put(
+    `/projects/interests/${interestId}`,
+    null,
+    {
+      params: {
+        status,
+      },
+    }
+  );
+
+  return response.data;
+};
+
+
+
+
+
 // UPDATE project
 export const updateProject = async (id, projectData) => {
   const response = await api.put(`/projects/${id}`, projectData);

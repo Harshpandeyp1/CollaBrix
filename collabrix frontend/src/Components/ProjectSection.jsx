@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from "react";
-
+import ProjectInterestModal from "./ProjectInterestModal.jsx";
 import {
   getProjects,
   deleteProject,
+  getProjectInterests
 } from "../Services/Project.js";
 
 import ProjectCard from "./ProjectCard.jsx";
@@ -14,10 +15,28 @@ const ProjectSection = () => {
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
-
+  const [interestOpen, setInterestOpen] = useState(false);
+  const [interestProject, setInterestProject] = useState(null);
+  const [interests, setInterests] = useState([]);
+const [interestLoading, setInterestLoading] = useState(false);
   // =========================================
   // FETCH PROJECTS
   // =========================================
+const handleViewInterests = async (project) => {
+  try {
+    setInterestProject(project);
+    setInterestLoading(true);
+
+    const data = await getProjectInterests(project.id);
+
+    setInterests(Array.isArray(data) ? data : []);
+  } catch (error) {
+    console.error("Error fetching project interests:", error);
+    setInterests([]);
+  } finally {
+    setInterestLoading(false);
+  }
+};
 
   const fetchProjects = async () => {
     try {
@@ -92,7 +111,7 @@ const ProjectSection = () => {
   // =========================================
 
   return (
-    <section className="     w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80
+    <section className="     w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80 dark:bg-zinc-800
 ">
 
       {/* =====================================
@@ -102,11 +121,11 @@ const ProjectSection = () => {
       <div className="flex items-start justify-between gap-4 mb-5">
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">
             Projects
           </h2>
 
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-zinc-400">
             Manage your projects.
           </p>
         </div>
@@ -183,11 +202,11 @@ const ProjectSection = () => {
           ">
 
               <ProjectCard
-                project={project}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-
+              project={project}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onViewInterests={handleViewInterests}
+            />
             </div>
 
           ))}
@@ -203,8 +222,17 @@ const ProjectSection = () => {
       )}
 
       {/* =====================================
-          MODAL
+          MODALS
       ====================================== */}
+
+      <ProjectInterestModal
+        open={interestOpen}
+        project={interestProject}
+        onClose={() => {
+          setInterestOpen(false);
+          setInterestProject(null);
+        }}
+      />
 
       <ProjectModal
         open={open}

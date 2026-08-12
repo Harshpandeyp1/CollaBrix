@@ -6,13 +6,15 @@ import ProfileCard from "../Components/ProfileCard";
 import DiscoveryFeed from "../Components/DiscoveryFeed";
 import PostModal from "../Components/PostModal";
 import { getAllPosts } from "../Services/Post";
-
+import { getDiscoveryProjects } from "../Services/Project.js";
+import ProjectModal from "../Components/ProjectModal.jsx";
 const Mainpage = () => {
   const [openPostModal, setOpenPostModal] = useState(false);
+  const [createProjectOpen, setCreateProjectOpen] = useState(false);
 
   // Posts for the main feed
   const [posts, setPosts] = useState([]);
-
+  const [projects, setProjects] = useState([]);
   // Feed loading state
   const [loadingPosts, setLoadingPosts] = useState(true);
 
@@ -31,11 +33,26 @@ const Mainpage = () => {
       setLoadingPosts(false);
     }
   };
+  const fetchProjects = async () => {
+  try {
+    const data = await getDiscoveryProjects();
+
+    setProjects(
+      Array.isArray(data)
+        ? data
+        : data?.data ?? []
+    );
+  } catch (error) {
+    console.error("Error fetching discovery projects:", error);
+    setProjects([]);
+  }
+};
 
   // Load posts when Mainpage opens
   useEffect(() => {
-    fetchPosts();
-  }, []);
+  fetchPosts();
+  fetchProjects();
+}, []);
 
   // Called after creating/updating a post
   const handlePostSaved = async () => {
@@ -44,13 +61,16 @@ const Mainpage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-sky-200 via-teal-100 to-blue-100">
+    <div className="min-h-screen bg-linear-to-b from-sky-200 via-teal-400 to-blue-100 dark:bg-black ">
 
       {/* Navbar */}
       <Navbar />
 
       {/* Main Dashboard */}
-      <main className="pt-6 px-6">
+      <main className="pt-6 px-6 min-h-screen bg-slate-50  transition-colors  bg-linear-to-b from-sky-100 via-teal-100 to-blue-100
+  dark:from-black
+  dark:via-black
+  dark:to-black">
 
         <div className="max-w-7xl mx-auto">
 
@@ -66,121 +86,134 @@ const Mainpage = () => {
                 {/* Profile */}
                 <ProfileCard />
 
-                {/* Your Space */}
-                <div className="
-                  bg-white
-                  rounded-2xl
-                  border
-                  border-sky-100
-                  shadow-sm
-                  p-5
+                          
+            {/* Your Space */}
+            <div className="
+              bg-white
+              dark:bg-zinc-900
+              rounded-2xl
+              border
+              border-sky-100
+              dark:border-zinc-800
+              shadow-sm
+              p-5
+            ">
+
+              <h2 className="
+                text-base
+                font-semibold
+                text-slate-800
+                dark:text-white
+                mb-4
+              ">
+                Your Space
+              </h2>
+
+              <div className="space-y-1">
+
+                <button className="
+                  w-full
+                  flex
+                  items-center
+                  gap-3
+                  px-3
+                  py-3
+                  rounded-lg
+                  text-sm
+                  text-slate-600
+                  dark:text-white
+                  hover:bg-sky-50
+                  dark:hover:bg-zinc-800
+                  hover:text-sky-600
+                  transition
                 ">
+                  <span>🔖</span>
+                  <span>Saved Ideas</span>
+                </button>
 
-                  <h2 className="
-                    text-base
-                    font-semibold
-                    text-slate-800
-                    mb-4
-                  ">
-                    Your Space
-                  </h2>
+                <button className="
+                  w-full
+                  flex
+                  items-center
+                  gap-3
+                  px-3
+                  py-3
+                  rounded-lg
+                  text-sm
+                  text-slate-600
+                  dark:text-white
+                  hover:bg-sky-50
+                  dark:hover:bg-zinc-800
+                  hover:text-sky-600
+                  transition
+                ">
+                  <span>📁</span>
+                  <span>Saved Projects</span>
+                </button>
 
-                  <div className="space-y-1">
+                <button className="
+                  w-full
+                  flex
+                  items-center
+                  gap-3
+                  px-3
+                  py-3
+                  rounded-lg
+                  text-sm
+                  text-slate-600
+                  dark:text-white
+                  hover:bg-sky-50
+                  dark:hover:bg-zinc-800
+                  hover:text-sky-600
+                  transition
+                ">
+                  <span>💡</span>
+                  <span>My Ideas</span>
+                </button>
 
-                    <button className="
-                      w-full
-                      flex
-                      items-center
-                      gap-3
-                      px-3
-                      py-3
-                      rounded-lg
-                      text-sm
-                      text-slate-600
-                      hover:bg-sky-50
-                      hover:text-sky-600
-                      transition
-                    ">
-                      <span>🔖</span>
-                      <span>Saved Ideas</span>
-                    </button>
+                <button className="
+                  w-full
+                  flex
+                  items-center
+                  gap-3
+                  px-3
+                  py-3
+                  rounded-lg
+                  text-sm
+                  text-slate-600
+                  dark:text-white
+                  hover:bg-sky-50
+                  dark:hover:bg-zinc-800
+                  hover:text-sky-600
+                  transition
+                ">
+                  <span>🚀</span>
+                  <span>My Projects</span>
+                </button>
 
-                    <button className="
-                      w-full
-                      flex
-                      items-center
-                      gap-3
-                      px-3
-                      py-3
-                      rounded-lg
-                      text-sm
-                      text-slate-600
-                      hover:bg-sky-50
-                      hover:text-sky-600
-                      transition
-                    ">
-                      <span>📁</span>
-                      <span>Saved Projects</span>
-                    </button>
-
-                    <button className="
-                      w-full
-                      flex
-                      items-center
-                      gap-3
-                      px-3
-                      py-3
-                      rounded-lg
-                      text-sm
-                      text-slate-600
-                      hover:bg-sky-50
-                      hover:text-sky-600
-                      transition
-                    ">
-                      <span>💡</span>
-                      <span>My Ideas</span>
-                    </button>
-
-                    <button className="
-                      w-full
-                      flex
-                      items-center
-                      gap-3
-                      px-3
-                      py-3
-                      rounded-lg
-                      text-sm
-                      text-slate-600
-                      hover:bg-sky-50
-                      hover:text-sky-600
-                      transition
-                    ">
-                      <span>🚀</span>
-                      <span>My Projects</span>
-                    </button>
-
-                    <button className="
-                      w-full
-                      flex
-                      items-center
-                      gap-3
-                      px-3
-                      py-3
-                      rounded-lg
-                      text-sm
-                      text-slate-600
-                      hover:bg-sky-50
-                      hover:text-sky-600
-                      transition
-                    ">
-                      <span>👥</span>
-                      <span>My Connections</span>
-                    </button>
-
-                  </div>
-                </div>
+                <button className="
+                  w-full
+                  flex
+                  items-center
+                  gap-3
+                  px-3
+                  py-3
+                  rounded-lg
+                  text-sm
+                  text-slate-600
+                  dark:text-white
+                  hover:bg-sky-50
+                  dark:hover:bg-zinc-800
+                  hover:text-sky-600
+                  transition
+                ">
+                  <span>👥</span>
+                  <span>My Connections</span>
+                </button>
 
               </div>
+            </div>
+            </div>
 
             </aside>
 
@@ -191,14 +224,25 @@ const Mainpage = () => {
               {/* Dashboard Header */}
               <DashboardHeader
                 onShareIdea={() => setOpenPostModal(true)}
+                onCreateProject={() => setCreateProjectOpen(true)}
+              />
+              <ProjectModal
+                open={createProjectOpen}
+                project={null}
+                onClose={() => setCreateProjectOpen(false)}
+                onSave={async () => {
+                  setCreateProjectOpen(false);
+                  await fetchProjects();
+                }}
               />
 
               {/* Discovery Feed */}
-              <DiscoveryFeed
-                posts={posts}
-                loading={loadingPosts}
-                onPostDeleted={fetchPosts}
-              />
+             <DiscoveryFeed
+              posts={posts}
+              projects={projects}
+              loading={loadingPosts}
+              onPostDeleted={fetchPosts}
+            />
 
             </section>
 
@@ -210,17 +254,20 @@ const Mainpage = () => {
               <Peoplemayknow />
 
               {/* Sidebar Footer */}
-              <footer className="
-                p-4
-                rounded-2xl
-                bg-white/60
-                border
-                border-slate-200/60
-                text-slate-500
-              ">
+           <footer className="
+            p-4
+            rounded-2xl
+            bg-white/60
+            dark:bg-zinc-800
+            border
+            border-slate-200/60
+            dark:border-slate-700
+            text-slate-500
+            dark:text-slate-400
+          ">
 
                 {/* Footer Links */}
-                <div className="
+               <div className="
                   flex
                   flex-wrap
                   gap-x-3
@@ -228,6 +275,7 @@ const Mainpage = () => {
                   text-[11px]
                   font-medium
                   text-slate-500
+                  dark:text-slate-400
                 ">
 
                   <a
@@ -278,8 +326,9 @@ const Mainpage = () => {
                 <div className="
                   mt-3
                   pt-3
-                  border-t
-                  border-slate-200/60
+                 border-t
+              border-slate-200/60
+              dark:border-slate-700/60
                   flex
                   items-center
                   justify-between
@@ -291,8 +340,9 @@ const Mainpage = () => {
                     flex
                     items-center
                     gap-1.5
-                    font-semibold
-                    text-slate-700
+                   font-semibold
+                  text-slate-700
+                  dark:text-slate-200
                   ">
 
                     <div className="

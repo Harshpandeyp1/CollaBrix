@@ -130,8 +130,8 @@ const ProfilePage = () => {
         items-center
         justify-center
         bg-linear-to-b
-        from-sky-200
-        via-teal-100
+        from-sky-100
+        via-teal-200
         to-blue-100
       ">
 
@@ -152,12 +152,11 @@ const ProfilePage = () => {
   return (
 
     <div className="
-      min-h-screen
-      bg-linear-to-b
-      from-sky-200
-      via-teal-100
-      to-blue-100
-    ">
+ bg-linear-to-b from-sky-100 via-teal-100 to-blue-100
+  dark:from-black
+  dark:via-black
+  dark:to-black
+">
 
 
       {/* =================================================
@@ -266,7 +265,7 @@ const ProfilePage = () => {
             ================================================= */}
 
             <div className="
-             
+              dark:bg-black
               lg:w-1/4
               shrink-0
               flex-col
@@ -283,224 +282,201 @@ const ProfilePage = () => {
 
 
               {/* ================= FOOTER ================= */}
-               <div className="
-                  bg-white
-                  rounded-2xl
-                  border
-                  border-sky-100
-                  shadow-sm
-                  p-4
-                  mt-5
-                ">
-
-                  <h2 className="
-                    text-base
-                    font-semibold
-                    text-slate-800
-                    mb-4
-                  ">
-                    Your Space
-                  </h2>
-
-                  <div className="space-y-1">
-
-                    <button className="
-                      w-full
-                      flex
-                      items-center
-                      gap-3
-                      px-3
-                      py-3
-                      rounded-lg
-                      text-sm
-                      text-slate-600
-                      hover:bg-sky-50
-                      hover:text-sky-600
-                      transition
-                    ">
-                      <span>🔖</span>
-                      <span>Saved Ideas</span>
-                    </button>
-
-                    <button className="
-                      w-full
-                      flex
-                      items-center
-                      gap-3
-                      px-3
-                      py-3
-                      rounded-lg
-                      text-sm
-                      text-slate-600
-                      hover:bg-sky-50
-                      hover:text-sky-600
-                      transition
-                    ">
-                      <span>📁</span>
-                      <span>Saved Projects</span>
-                    </button>
-
-                    <button className="
-                      w-full
-                      flex
-                      items-center
-                      gap-3
-                      px-3
-                      py-3
-                      rounded-lg
-                      text-sm
-                      text-slate-600
-                      hover:bg-sky-50
-                      hover:text-sky-600
-                      transition
-                    ">
-                      <span>💡</span>
-                      <span>My Ideas</span>
-                    </button>
-
-                    <button className="
-                      w-full
-                      flex
-                      items-center
-                      gap-3
-                      px-3
-                      py-3
-                      rounded-lg
-                      text-sm
-                      text-slate-600
-                      hover:bg-sky-50
-                      hover:text-sky-600
-                      transition
-                    ">
-                      <span>🚀</span>
-                      <span>My Projects</span>
-                    </button>
-
-                    <button className="
-                      w-full
-                      flex
-                      items-center
-                      gap-3
-                      px-3
-                      py-3
-                      rounded-lg
-                      text-sm
-                      text-slate-600
-                      hover:bg-sky-50
-                      hover:text-sky-600
-                      transition
-                    ">
-                      <span>👥</span>
-                      <span>My Connections</span>
-                    </button>
-
-                  </div>
-                </div>
-              <footer className="
-                w-full
-                p-4
-                mt-6
-                rounded-2xl
-                bg-white/70
-                rounded-2xl
-                bg-white/70
-                backdrop-blur-sm
-                border
-                border-slate-200/70
-                text-slate-500
-              ">
-
-                {/* Footer Links */}
-
                 <div className="
+              bg-white
+              dark:bg-zinc-900
+              rounded-2xl
+              mt-4
+              border
+              border-sky-100
+              dark:border-zinc-800
+              shadow-sm
+              p-5
+            ">
+
+              <h2 className="
+                text-base
+                font-semibold
+                text-slate-800
+                dark:text-white
+                mb-4
+              ">
+                Your Space
+              </h2>
+
+              <div className="space-y-1">
+
+                <button className="
+                  w-full
+                  flex
+                  items-center
+                  gap-3
+                  px-3
+                  py-3
+                  rounded-lg
+                  text-sm
+                  text-slate-600
+                  dark:text-white
+                  hover:bg-sky-50
+                  dark:hover:bg-zinc-800
+                  hover:text-sky-600
+                  transition
+                ">
+                  <span>🔖</span>
+                  <span>Saved Ideas</span>
+                </button>
+
+                <button className="
+                  w-full
+                  flex
+                  items-center
+                  gap-3
+                  px-3
+                  py-3
+                  rounded-lg
+                  text-sm
+                  text-slate-600
+                  dark:text-white
+                  hover:bg-sky-50
+                  dark:hover:bg-zinc-800
+                  hover:text-sky-600
+                  transition
+                ">
+                  <span>📁</span>
+                  <span>Saved Projects</span>
+                </button>
+
+                <button className="
+                  w-full
+                  flex
+                  items-center
+                  gap-3
+                  px-3
+                  py-3
+                  rounded-lg
+                  text-sm
+                  text-slate-600
+                  dark:text-white
+                  hover:bg-sky-50
+                  dark:hover:bg-zinc-800
+                  hover:text-sky-600
+                  transition
+                ">
+                  <span>💡</span>
+                  <span>My Ideas</span>
+                </button>
+
+                <button className="
+                  w-full
+                  flex
+                  items-center
+                  gap-3
+                  px-3
+                  py-3
+                  rounded-lg
+                  text-sm
+                  text-slate-600
+                  dark:text-white
+                  hover:bg-sky-50
+                  dark:hover:bg-zinc-800
+                  hover:text-sky-600
+                  transition
+                ">
+                  <span>🚀</span>
+                  <span>My Projects</span>
+                </button>
+
+                <button className="
+                  w-full
+                  flex
+                  items-center
+                  gap-3
+                  px-3
+                  py-3
+                  rounded-lg
+                  text-sm
+                  text-slate-600
+                  dark:text-white
+                  hover:bg-sky-50
+                  dark:hover:bg-zinc-800
+                  hover:text-sky-600
+                  transition
+                ">
+                  <span>👥</span>
+                  <span>My Connections</span>
+                </button>
+
+              </div>
+            
+            </div>
+             <div className="
                   flex
                   flex-wrap
                   gap-x-3
-                  gap-y-2
+                  mt-4
+                  gap-y-1.5
                   text-[11px]
                   font-medium
+                  text-slate-500
+                  dark:text-slate-400
+
+                  
                 ">
 
                   <a
                     href="#about"
-                    className="
-                      hover:text-sky-600
-                      hover:underline
-                      transition
-                    "
+                    className="hover:text-sky-600 hover:underline transition-colors"
                   >
                     About
                   </a>
 
                   <a
                     href="#accessibility"
-                    className="
-                      hover:text-sky-600
-                      hover:underline
-                      transition
-                    "
+                    className="hover:text-sky-600 hover:underline transition-colors"
                   >
                     Accessibility
                   </a>
 
                   <a
                     href="#help"
-                    className="
-                      hover:text-sky-600
-                      hover:underline
-                      transition
-                    "
+                    className="hover:text-sky-600 hover:underline transition-colors"
                   >
                     Help Center
                   </a>
 
                   <a
                     href="#privacy"
-                    className="
-                      hover:text-sky-600
-                      hover:underline
-                      transition
-                    "
+                    className="hover:text-sky-600 hover:underline transition-colors"
                   >
                     Privacy & Terms
                   </a>
 
                   <a
                     href="#ad-choices"
-                    className="
-                      hover:text-sky-600
-                      hover:underline
-                      transition
-                    "
+                    className="hover:text-sky-600 hover:underline transition-colors"
                   >
                     Ad Choices
                   </a>
 
                   <a
                     href="#projects"
-                    className="
-                      hover:text-sky-600
-                      hover:underline
-                      transition
-                    "
+                    className="hover:text-sky-600 hover:underline transition-colors"
                   >
                     Projects
                   </a>
 
                 </div>
 
-
-                {/* Copyright */}
-
+                {/* Brand Copyright */}
                 <div className="
-                  mt-4
+                  mt-3
                   pt-3
-                  border-t
-                  border-slate-200/70
+                 border-t
+              border-slate-200/60
+              dark:border-slate-700/60
                   flex
                   items-center
                   justify-between
-                  gap-2
                   text-[11px]
                   text-slate-400
                 ">
@@ -509,13 +485,14 @@ const ProfilePage = () => {
                     flex
                     items-center
                     gap-1.5
-                    font-semibold
-                    text-slate-700
+                   font-semibold
+                  text-slate-700
+                  dark:text-slate-200
                   ">
 
                     <div className="
-                      w-4
-                      h-4
+                      w-3.5
+                      h-3.5
                       rounded
                       bg-linear-to-tr
                       from-sky-600
@@ -530,20 +507,15 @@ const ProfilePage = () => {
                       C
                     </div>
 
-                    <span>
-                      Collabrix
-                    </span>
+                    <span>Collabrix</span>
 
                   </div>
 
-
                   <span>
-                    © {new Date().getFullYear()}
+                    © {new Date().getFullYear()} All Rights Reserved
                   </span>
 
                 </div>
-
-              </footer>
 
 
             </div>

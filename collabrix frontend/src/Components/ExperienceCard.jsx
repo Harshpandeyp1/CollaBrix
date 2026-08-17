@@ -36,16 +36,19 @@ const ExperienceCard = ({ experience, onEdit, onDelete }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition p-6">
+    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition p-6  dark:bg-linear-to-br
+      dark:from-zinc-800
+      dark:via-teal-900
+      dark:to-zinc-800">
 
       {/* Company & Position */}
       <div className="flex justify-between items-start gap-3">
         <div>
-          <h3 className="text-xl font-bold text-gray-900">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white">
             {experience.company}
           </h3>
 
-          <p className="text-indigo-600 font-semibold mt-1">
+          <p className="text-indigo-600 font-semibold mt-1 dark:text-zinc-400">
             {experience.position}
           </p>
 
@@ -60,7 +63,7 @@ const ExperienceCard = ({ experience, onEdit, onDelete }) => {
         <div className="flex gap-2 shrink-0">
           <button
             onClick={() => onEdit(experience)}
-            className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 transition"
+            className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 transition dark:text-white dark:hover:bg-zinc-800 dark:bg-black"
           >
             <Pencil size={14} /> Edit
           </button>
@@ -76,14 +79,14 @@ const ExperienceCard = ({ experience, onEdit, onDelete }) => {
 
       {/* Location */}
       {experience.location && (
-        <div className="mt-3 flex items-center gap-2 text-sm text-gray-600">
+        <div className="mt-3 flex items-center gap-2 text-sm text-gray-600 dark:text-zinc-400">
           <MapPin size={14} />
           <span>{experience.location}</span>
         </div>
       )}
 
       {/* Date Range + Duration */}
-      <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-gray-500">
+      <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-zinc-400">
         <Calendar size={14} />
         <span>
           {formatDate(experience.startDate)} -{" "}

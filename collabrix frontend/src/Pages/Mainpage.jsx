@@ -61,7 +61,7 @@ const Mainpage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-sky-200 via-teal-400 to-blue-100 dark:bg-black ">
+    <div className="min-h-screen bg-linear-to-b from-teal-200 via-teal-400 to-teal-00 dark:bg-black ">
 
       {/* Navbar */}
       <Navbar />

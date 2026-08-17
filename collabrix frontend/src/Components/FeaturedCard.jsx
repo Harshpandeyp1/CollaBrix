@@ -51,7 +51,10 @@ const FeaturedCard = ({ featured, onEdit, onDelete }) => {
   };
 
   return (
-    <div className="w-full h-full min-h-[300px] flex flex-col bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden">
+    <div className="w-full h-full min-h-[300px] flex flex-col bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden dark:bg-linear-to-br
+      dark:from-zinc-800
+      dark:via-teal-900
+      dark:to-zinc-800">
 
       {/* Thumbnail */}
 
@@ -92,11 +95,11 @@ const FeaturedCard = ({ featured, onEdit, onDelete }) => {
           {formatType(featured.type)}
         </span>
 
-        <h3 className="mt-3 text-lg font-bold text-gray-900 line-clamp-1">
+        <h3 className="mt-3 text-lg font-bold text-gray-900 line-clamp-1 dark:text-white">
           {featured.title}
         </h3>
 
-        <p className="mt-2 text-sm text-gray-600 line-clamp-3 flex-1">
+        <p className="mt-2 text-sm text-gray-600 line-clamp-3 flex-1  dark:text-zinc-400">
           {featured.description}
         </p>
 
@@ -106,7 +109,7 @@ const FeaturedCard = ({ featured, onEdit, onDelete }) => {
             href={featured.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 text-sm font-medium"
+            className="inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 text-sm font-medium dark:text-white"
           >
             <ExternalLink size={15} />
             Visit

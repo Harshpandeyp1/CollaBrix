@@ -144,7 +144,7 @@ const FeaturedSection = () => {
 
     <section
       className="
-            w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80
+            w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80 dark:bg-zinc-800 dark:bg-black dark:hover:bg-zinc-900
 
       "
     >
@@ -172,6 +172,7 @@ const FeaturedSection = () => {
                 text-lg
                 font-bold
                 text-gray-900
+                dark:text-white
               "
             >
               Featured
@@ -180,7 +181,7 @@ const FeaturedSection = () => {
             <p
               className="
                 text-sm
-                text-gray-600
+                text-gray-400
               "
             >
               Manage your featured items.

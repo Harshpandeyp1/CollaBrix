@@ -37,7 +37,7 @@ const ProfileCard = () => {
 
   if (loading) {
     return (
-      <section className="bg-white rounded-2xl border border-sky-100 shadow-sm p-5">
+      <section className="bg-white rounded-2xl border border-sky-100 shadow-sm p-5 dark:">
         <div className="p-6 animate-pulse">
           Loading Profile...
         </div>
@@ -61,7 +61,10 @@ const ProfileCard = () => {
   const initials = getInitials(displayName);
 
   return (
-    <section className="bg-white rounded-2xl border border-sky-100 shadow-sm overflow-hidden">
+    <section className="bg-white rounded-2xl border border-sky-100  dark:text-white shadow-sm overflow-hidden  dark:bg-linear-to-br
+      dark:from-zinc-800
+      dark:via-teal-900
+      dark:to-zinc-800">
 
       {/* Cover Image */}
       <div
@@ -102,6 +105,7 @@ const ProfileCard = () => {
               to-teal-400
               flex
               items-center
+              dark:text-white
               justify-center
               text-white
               text-xl
@@ -114,52 +118,52 @@ const ProfileCard = () => {
         </div>
 
         {/* Name */}
-        <h2 className="text-lg font-semibold text-slate-800">
+        <h2 className="text-lg font-semibold text-slate-800 dark:text-white">
           {displayName}
         </h2>
 
         {/* Headline */}
-        <p className="text-sm text-sky-600 mt-1">
+        <p className="text-sm text-sky-600 mt-1 dark:text-white/25">
           {headline || "Add a headline"}
         </p>
 
         {/* About / Bio */}
-        <p className="text-sm text-slate-500 mt-3 leading-5">
+        <p className="text-sm text-slate-500 mt-3 leading-5 dark:text-black">
           {bio || "Tell people about yourself."}
         </p>
 
         {/* Divider */}
-        <div className="border-t border-slate-100 my-4"></div>
+        <div className="border-t border-zinc-900 my-4"></div>
 
         {/* Profile Stats */}
-        <div className="flex justify-between text-center">
+        <div className="flex justify-between text-center dark:text-white">
 
           <div>
-            <p className="text-sm font-semibold text-slate-800">
+            <p className="text-sm font-semibold text-slate-800 dark:text-white">
               12
             </p>
 
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-white/25">
               Projects
             </p>
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-slate-800">
+            <p className="text-sm font-semibold text-slate-800 dark:text-white">
               248
             </p>
 
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-white/25">
               Connections
             </p>
           </div>
 
           <div>
-            <p className="text-sm font-semibold text-slate-800">
+            <p className="text-sm font-semibold text-slate-800 dark:text-white">
               8
             </p>
 
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-white/25">
               Ideas
             </p>
           </div>

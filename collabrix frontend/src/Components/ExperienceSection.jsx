@@ -157,7 +157,7 @@ const ExperienceSection = () => {
   return (
 
     <section className="
-     w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80
+     w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80 dark:bg-zinc-800 dark:hover:bg-zinc-900
     ">
 
 
@@ -179,6 +179,7 @@ const ExperienceSection = () => {
             text-xl
             font-bold
             text-gray-900
+            dark:text-white
           ">
             Experience
           </h2>
@@ -186,6 +187,7 @@ const ExperienceSection = () => {
           <p className="
             text-sm
             text-gray-600
+            dark:text-zinc-400
             mt-1
           ">
             Manage your work history and roles.

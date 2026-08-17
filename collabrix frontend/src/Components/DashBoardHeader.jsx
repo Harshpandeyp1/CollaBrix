@@ -1,11 +1,13 @@
 import React from 'react'
-
-const DashboardHeader = ({onShareIdea}) => {
+const DashboardHeader = ({ onShareIdea, onCreateProject }) => {
   return (
     <section>
       <div className="
         relative overflow-hidden
-        bg-linear-to-br from-sky-500 via-sky-400 to-teal-400
+        bg-linear-to-br from-sky-500 via-sky-400 to-teal-400  dark:bg-linear-to-br
+      dark:from-zinc-800
+      dark:via-teal-900
+      dark:to-zinc-800
         rounded-2xl
         border border-sky-100
         p-6 md:p-8
@@ -33,7 +35,8 @@ const DashboardHeader = ({onShareIdea}) => {
 
           {/* Action buttons */}
           <div className="flex items-center gap-3 shrink-0">
-            <button className="
+            <button onClick={onCreateProject}
+             className="
               flex items-center gap-2
               bg-white text-sky-600
               text-sm font-bold
@@ -42,6 +45,7 @@ const DashboardHeader = ({onShareIdea}) => {
               hover:-translate-y-0.5 hover:shadow-lg
               transition-all
             ">
+              
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
               </svg>

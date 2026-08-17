@@ -85,7 +85,7 @@ const FeaturedModal = ({ open, onClose, onSave, featured }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-6 max-h-[90vh] overflow-y-auto">
+      <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-6 max-h-[90vh] overflow-y-auto dark:bg-black">
 
         <h2 className="text-2xl font-bold mb-5">
           {featured ? "Edit Featured" : "Add Featured"}

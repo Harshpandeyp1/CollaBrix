@@ -3,7 +3,7 @@ import React from "react";
 
 const Activity = ({ posts = [] }) => {
   return (
-    <section className="     w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80
+    <section className="     w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80 dark:bg-zinc-800 dark:hover:bg-zinc-900
 ">
 
       {/* ================================
@@ -13,11 +13,11 @@ const Activity = ({ posts = [] }) => {
       <div className="flex items-start justify-between gap-4 mb-5">
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">
             Activity
           </h2>
 
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 mt-1 dark:text-zinc-400">
             Your recent posts and ideas
           </p>
         </div>
@@ -63,6 +63,7 @@ const Activity = ({ posts = [] }) => {
             scroll-smooth
             snap-x
             snap-mandatory
+            
           "
           style={{
             scrollbarWidth: "none",
@@ -87,14 +88,18 @@ const Activity = ({ posts = [] }) => {
                 shadow-sm
                 hover:shadow-md
                 transition-shadow
-              "
+                dark:bg-linear-to-br
+              dark:from-zinc-800
+              dark:via-teal-900
+              dark:to-zinc-800
+                      "
             >
 
               {/* ================================
                   POST HEADER
               ================================= */}
 
-              <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center justify-between gap-3 ">
 
                 <span className="
                   text-xs
@@ -133,6 +138,7 @@ const Activity = ({ posts = [] }) => {
                 font-bold
                 text-gray-900
                 line-clamp-2
+                dark:text-white
               ">
                 {post.title}
               </h3>
@@ -148,6 +154,7 @@ const Activity = ({ posts = [] }) => {
                   text-gray-600
                   leading-relaxed
                   line-clamp-5
+                  dark:text-zinc-400
                 ">
                   {post.description}
                 </p>

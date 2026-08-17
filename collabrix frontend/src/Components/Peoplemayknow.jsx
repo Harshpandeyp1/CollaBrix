@@ -163,6 +163,9 @@ const PeopleMayKnow = () => {
       rounded-2xl
       border
       border-sky-100
+      dark:bg-zinc-800
+      dark:border-slate-700
+      dark:text-white
       shadow-sm
       p-5
     ">
@@ -175,6 +178,7 @@ const PeopleMayKnow = () => {
           text-base
           font-semibold
           text-slate-800
+          dark:text-white
         ">
           People You May Know
         </h2>
@@ -183,6 +187,7 @@ const PeopleMayKnow = () => {
           mt-1
           text-xs
           text-slate-500
+          dark:text-white
         ">
           Connect with people in your network.
         </p>
@@ -202,6 +207,7 @@ const PeopleMayKnow = () => {
           py-2
           text-xs
           text-red-700
+          dark:text-white
           mb-3
         ">
           {error}
@@ -222,6 +228,7 @@ const PeopleMayKnow = () => {
           py-4
           text-sm
           text-slate-500
+          dark:text-white
           text-center
         ">
           Loading suggestions...
@@ -236,6 +243,7 @@ const PeopleMayKnow = () => {
           border
           border-slate-200
           bg-slate-50
+          dark:text-white
           px-3
           py-4
           text-sm
@@ -255,6 +263,7 @@ const PeopleMayKnow = () => {
           flex
           flex-col
           gap-1.5
+          dark:text-white
           pr-1
         ">
 
@@ -276,6 +285,7 @@ const PeopleMayKnow = () => {
                   flex
                   items-center
                   justify-between
+                  dark:text-white
                   gap-2
                   p-2
                   rounded-xl
@@ -293,6 +303,7 @@ const PeopleMayKnow = () => {
                 <div className="
                   flex
                   items-center
+                  dark:text-white
                   gap-3
                   min-w-0
                   flex-1
@@ -307,6 +318,7 @@ const PeopleMayKnow = () => {
                     rounded-full
                     bg-sky-100
                     text-sky-700
+                    
                     flex
                     items-center
                     justify-center
@@ -322,12 +334,15 @@ const PeopleMayKnow = () => {
                   <div className="
                     min-w-0
                     flex-1
+                    dark:text-white
                   ">
 
                     <p className="
                       text-sm
                       font-semibold
                       text-slate-800
+                      dark:text-white
+                      dark:group-hover:text-black
                       truncate
                     ">
                       {person.username}
@@ -336,6 +351,7 @@ const PeopleMayKnow = () => {
                     <p className="
                       text-[11px]
                       text-slate-500
+                      
                       truncate
                     ">
                       {person.email}

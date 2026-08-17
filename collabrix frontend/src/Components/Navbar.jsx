@@ -1,17 +1,55 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-
+import ThemeTransition from './ThemeTransition';
 const DashboardNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+const [isAnimating, setIsAnimating] = useState(false);
+const [animationType, setAnimationType] = useState(null);
 
+  React.useEffect(() => {
+    document.documentElement.classList.add('dark');
+    setDarkMode(true);
+  }, []);
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/login');
   };
+ 
+
+  
+
+const toggleDarkMode = () => {
+  const newMode = !darkMode;
+
+  // Decide which object should appear
+  setAnimationType(newMode ? "moon" : "sun");
+
+  // Start animation
+  setIsAnimating(true);
+
+  // Change actual theme while the object is travelling
+  setTimeout(() => {
+    setDarkMode(newMode);
+
+    document.documentElement.classList.toggle(
+      "dark",
+      newMode
+    );
+  }, 700);
+
+  // Remove animation after it reaches the top
+  setTimeout(() => {
+    setIsAnimating(false);
+    setAnimationType(null);
+  }, 1400);
+};
+
+
+
 
   const navItems = [
     {
@@ -45,9 +83,9 @@ const DashboardNavbar = () => {
       )
     },
     {
-      id: 'team',
+      id: 'connection',
       label: 'Network',
-      path: '/team',
+      path: '/connection',
       icon: (
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -78,20 +116,27 @@ const DashboardNavbar = () => {
   ];
 
   return (
-    <nav className="bg-teal-50 border-b border-slate-200 sticky top-0 z-50">
+    <>
+   <ThemeTransition
+  type={animationType}
+  isAnimating={isAnimating}
+/>
+
+
+    <nav className="bg-sky-300 border-b border-slate-200 sticky top-0 z-50   dark:bg-black dark:border-slate-700">
       <div className="max-w-7xl mx-auto flex items-center justify-between h-14 px-4 gap-4">
         
         {/* Logo & Search */}
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={() => navigate('/mainpage')}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 dark:text-white text-slate-800 hover:text-sky-600 transition-colors"
           >
             {/* Logo Icon: C in Sky-Blue to Teal */}
             <div className="w-8 h-8 rounded-lg bg-linear-to-tr from-sky-500 to-teal-400 flex items-center justify-center text-white font-bold text-lg shadow-sm">
               C
             </div>
-            <span className="text-lg font-bold text-slate-800 tracking-tight">
+            <span className="text-lg font-bold text-slate-800 tracking-tight dark:text-white">
               Collabrix
             </span>
           </button>
@@ -106,7 +151,7 @@ const DashboardNavbar = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search..."
-              className="w-full bg-transparent outline-none text-xs text-slate-800 placeholder-slate-400"
+              className="w-full bg-transparent outline-none text-xs dark:text-white text-slate-800 placeholder-slate-400"
             />
           </div>
         </div>
@@ -120,7 +165,7 @@ const DashboardNavbar = () => {
                 key={item.id}
                 onClick={() => navigate(item.path)}
                 className={`
-                  flex flex-col items-center justify-center px-3 h-14 transition-colors
+                  flex flex-col items-center justify-center px-3 h-14 transition-colors dark:text-white
                   ${isActive ? 'text-sky-600 border-b-2 border-sky-600' : 'text-slate-800 hover:text-sky-600'}
                 `}
               >
@@ -139,7 +184,7 @@ const DashboardNavbar = () => {
           {/* Profile Button */}
           <button
             onClick={() => navigate('/profile')}
-            className="flex flex-col items-center justify-center px-2 text-slate-800 hover:text-sky-600"
+            className="flex flex-col items-center justify-center px-2 text-slate-800 hover:text-sky-600 dark:text-white"
           >
             <div className="w-6 h-6 rounded-full bg-slate-800 text-white text-[11px] font-bold flex items-center justify-center">
               H
@@ -148,27 +193,96 @@ const DashboardNavbar = () => {
           </button>
 
           {/* Dark/Light Mode Button */}
-          <button
-            onClick={() => setDarkMode(!darkMode)}
-            title="Toggle Theme"
-            className="p-1.5 text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
-          >
-            {darkMode ? (
-              <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-              </svg>
-            ) : (
-              <svg className="w-5 h-5 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-              </svg>
-            )}
-          </button>
+         {/* Dark/Light Mode Button */}
+        
+{/* ================= THEME TOGGLE ================= */}
+
+<button
+  onClick={toggleDarkMode}
+  title="Toggle Theme"
+  className="
+    relative
+    w-9
+    h-9
+    overflow-hidden
+    rounded-lg
+    text-black
+    dark:text-white
+    hover:bg-slate-100
+    dark:hover:bg-zinc-800
+    transition-colors
+    duration-500
+  "
+>
+  {/* Moon */}
+  <svg
+    className={`
+      absolute
+      left-1/2
+      top-1/2
+      w-5
+      h-5
+      -translate-x-1/2
+      transition-all
+      duration-500
+      ease-in-out
+      ${
+        darkMode
+          ? "-translate-y-1/2 opacity-100"
+          : "translate-y-6 opacity-0"
+      }
+    `}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M20.354 15.354A9.003 9.003 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
+    />
+  </svg>
+
+  {/* Sun */}
+  <svg
+    className={`
+      absolute
+      left-1/2
+      top-1/2
+      w-5
+      h-5
+      -translate-x-1/2
+      transition-all
+      duration-500
+      ease-in-out
+      text-amber-400
+      ${
+        darkMode
+          ? "-translate-y-7 opacity-0"
+          : "-translate-y-1/2 opacity-100"
+      }
+    `}
+    fill="none"
+    stroke="currentColor"
+    viewBox="0 0 24 24"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+    />
+  </svg>
+</button>
+
+
 
           {/* Logout Button */}
           <button
             onClick={handleLogout}
             title="Logout"
-            className="p-1.5 text-slate-800 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            className="p-1.5 text-slate-800 dark:text-white hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
@@ -179,6 +293,7 @@ const DashboardNavbar = () => {
 
       </div>
     </nav>
+    </>
   );
 };
 

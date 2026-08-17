@@ -9,6 +9,7 @@ import {
   likePost,
   unlikePost,
   getLikeCount,
+ 
   hasLiked,
 } from "../Services/Post";
 
@@ -17,6 +18,11 @@ const DiscoveryFeed = ({
   projects = [],
   loading = false,
 }) => {
+
+   const currentUser = JSON.parse(localStorage.getItem("user"));
+const currentUserId = currentUser?.id;
+
+
 
   // Currently selected filter
   const [activeFilter, setActiveFilter] = useState("all");
@@ -392,10 +398,16 @@ return (
           const isProjectPost = !!post.project;
           const projectId =
             post.project?.id ?? post.projectId ?? post.project?._id;
-
+          const isOwner =Number(post.project?.userId) === Number(currentUserId);
           const isLiked = likedItems[postId] || false;
           const likeCount = likeCounts[postId] ?? post.likeCount ?? 0;
-
+          console.log("PROJECT FROM FEED:", post.project);
+console.log("PROJECT OWNER ID:", post.project?.userId);
+console.log("CURRENT USER ID:", currentUserId);
+console.log(
+  "IS OWNER:",
+  Number(post.project?.userId) === Number(currentUserId)
+);
           const isCommentsOpen = openCommentsFor === postId;
           const postComments = comments[postId] || [];
 
@@ -576,9 +588,11 @@ return (
 
             )}
 
-                        {/* ================= PROJECT ================= */}
+{/* ================= PROJECT ================= */}
+
 {isProjectPost && post.project.lookingForCollaborators && (
   <div className="mb-3">
+
     <p className="text-xs font-semibold uppercase text-gray-500">
       Project
     </p>
@@ -599,25 +613,30 @@ return (
       </p>
     )}
 
-    <button
-      onClick={() => handleInterest(postId, projectId)}
-      disabled={
-        !projectId ||
-        interestLoadingItems[postId] ||
-        interestedItems[projectId]
-      }
-      className={`mt-3 rounded-lg px-4 py-2 text-sm font-medium transition ${
-        interestedItems[projectId]
-          ? "bg-emerald-100 text-emerald-700 cursor-default"
-          : "bg-indigo-600 text-white hover:bg-indigo-700"
-      }`}
-    >
-      {interestLoadingItems[postId]
-        ? "Sending..."
-        : interestedItems[projectId]
-        ? "✓ Interest Sent"
-        : "I'm Interested"}
-    </button>
+    {/* ================= INTEREST BUTTON ================= */}
+
+    {!isOwner && (
+      <button
+        onClick={() => handleInterest(postId, projectId)}
+        disabled={
+          !projectId ||
+          interestLoadingItems[postId] ||
+          interestedItems[projectId]
+        }
+        className={`mt-3 rounded-lg px-4 py-2 text-sm font-medium transition ${
+          interestedItems[projectId]
+            ? "bg-emerald-100 text-emerald-700 cursor-default"
+            : "bg-indigo-600 text-white hover:bg-indigo-700"
+        }`}
+      >
+        {interestLoadingItems[postId]
+          ? "Sending..."
+          : interestedItems[projectId]
+          ? "✓ Interest Sent"
+          : "I'm Interested"}
+      </button>
+    )}
+
   </div>
 )}
 

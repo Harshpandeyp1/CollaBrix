@@ -147,14 +147,17 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
   };
 
   return (
-    <div className="w-full max-w-4xl overflow-hidden rounded-2xl bg-white border border-gray-200 shadow-lg mr-80">
+    <div className="w-full max-w-4xl overflow-hidden dark:bg-linear-to-br
+      dark:from-zinc-800
+      dark:via-teal-900
+      dark:to-zinc-800 rounded-2xl bg-white border border-gray-200 shadow-lg mr-80">
 
       {/* ==================================================
               COVER IMAGE
       =================================================== */}
 
       <div
-        className="relative h-52 bg-linear-to-r from-indigo-600 via-violet-600 to-blue-600 bg-cover bg-center"
+        className="relative h-52 bg-linear-to-r from-indigo-600 via-violet-600 to-blue-600 bg-cover "
         style={
           coverImage
             ? {
@@ -169,9 +172,9 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
         {onEdit && (
           <button
             onClick={onEdit}
-            className="absolute right-4 top-4 rounded-full bg-white/80 px-4 py-2 text-sm font-medium backdrop-blur hover:bg-white transition"
+            className="absolute right-4 top-4 rounded-full bg-white/80 px-4 py-2 text-sm font-medium backdrop-blur hover:bg-white transition dark:bg-black dark:hover:bg-zinc-900"
           >
-            ✏ Edit Profile
+            Edit
           </button>
         )}
 
@@ -190,10 +193,10 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
           onClick={handleCoverCameraClick}
           disabled={isCoverUploading}
           aria-label="Change cover photo"
-          className="absolute right-4 bottom-4 flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-medium backdrop-blur hover:bg-white transition disabled:opacity-50"
+          className="absolute right-4 bottom-4 flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-medium backdrop-blur hover:bg-white transition disabled:opacity-50 dark:bg-black dark:hover:bg-zinc-900"
         >
           {isCoverUploading ? (
-            <span className="h-3 w-3 animate-spin rounded-full border-2 border-gray-500 border-t-transparent" />
+            <span className="h-3 w-3 animate-spin rounded-full border-2 border-gray-500 border-t-transparent " />
           ) : (
             <span>📷</span>
           )}
@@ -219,7 +222,7 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
                 className="h-32 w-32 rounded-full border-4 border-white object-cover shadow-lg"
               />
             ) : (
-              <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white bg-linear-to-br from-indigo-500 to-purple-600 text-4xl font-bold text-white shadow-lg">
+              <div className="flex h-32 w-32 items-center justify-center rounded-full border-4 border-white bg-linear-to-br from-indigo-500 to-purple-600 text-4xl font-bold text-white shadow-lg dark:bg-black dark:hover:bg-zinc-900 dark:text-white">
                 {initials}
               </div>
             )}
@@ -261,7 +264,7 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
               {displayName}
             </h1>
 
-            <p className="text-indigo-600 font-medium">
+            <p className="text-indigo-600 font-medium dark:text-white">
               {headline || "Add a professional headline"}
             </p>
           </div>

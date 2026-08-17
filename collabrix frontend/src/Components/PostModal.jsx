@@ -110,7 +110,7 @@ const PostModal = ({ open, onClose, onSave, post }) => {
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex justify-center items-center p-5">
 
-      <div className="bg-white rounded-2xl w-full max-w-3xl p-6 max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-2xl w-full max-w-3xl p-6 max-h-[90vh] overflow-y-auto dark:bg-black ">
 
         <h2 className="text-2xl font-bold mb-6">
           {post ? "Edit Idea" : "Share an Idea"}

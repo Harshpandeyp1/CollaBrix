@@ -4,7 +4,7 @@ import ProjectInterestModal from "./ProjectInterestModal.jsx";
 import {
   getProjects,
   deleteProject,
-  getProjectInterests
+
 } from "../Services/Project.js";
 
 import ProjectCard from "./ProjectCard.jsx";
@@ -17,25 +17,13 @@ const ProjectSection = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [interestOpen, setInterestOpen] = useState(false);
   const [interestProject, setInterestProject] = useState(null);
-  const [interests, setInterests] = useState([]);
-const [interestLoading, setInterestLoading] = useState(false);
+ 
   // =========================================
   // FETCH PROJECTS
   // =========================================
-const handleViewInterests = async (project) => {
-  try {
-    setInterestProject(project);
-    setInterestLoading(true);
-
-    const data = await getProjectInterests(project.id);
-
-    setInterests(Array.isArray(data) ? data : []);
-  } catch (error) {
-    console.error("Error fetching project interests:", error);
-    setInterests([]);
-  } finally {
-    setInterestLoading(false);
-  }
+const handleViewInterests = (project) => {
+  setInterestProject(project);
+  setInterestOpen(true);
 };
 
   const fetchProjects = async () => {

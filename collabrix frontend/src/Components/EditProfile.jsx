@@ -55,11 +55,11 @@ const EditProfile = ({  open,profile,  onClose, onSave }) => {
       {/* Modal Backdrop & Content */}
      
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-xl border border-gray-200">
+          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-xl border border-gray-200 dark:bg-black">
 
             {/* Header */}
             <div className="flex items-center justify-between border-b pb-3 mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Edit Profile</h2>
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Edit Profile</h2>
               <button
                 type="button"
                 onClick={() => onClose()}

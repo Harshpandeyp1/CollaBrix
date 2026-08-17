@@ -88,7 +88,7 @@ const EducationSection = () => {
   };
 
   return (
-    <section className="     w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80
+    <section className="     w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80 dark:bg-zinc-800 dark:hover:bg-zinc-900
 ">
 
       {/* ================================
@@ -98,11 +98,11 @@ const EducationSection = () => {
       <div className="flex items-start justify-between gap-4 mb-5">
 
         <div>
-          <h2 className="text-lg font-bold text-gray-900">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">
             Education
           </h2>
 
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-600 dark:text-zinc-400">
             Manage your educational background.
           </p>
         </div>

@@ -8,10 +8,12 @@ const Login = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [isLogin, setIsLogin] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
   const navigate = useNavigate()
 
   const handleSubmit = async (data) => {
     data.preventDefault();
+    setErrorMessage('')
     try {
         const response = await api.post("/auth/login", {
             email,
@@ -22,12 +24,19 @@ const Login = () => {
         console.log("Login successful");
         navigate('/mainpage');
     } catch (error) {
-        console.error("Error submitting form:", error);
+        const serverMessage = error?.response?.data?.message || error?.response?.data || error?.message || 'Unknown server error';
+        setErrorMessage(serverMessage);
+        console.error("Error submitting form:", {
+          status: error?.response?.status,
+          data: error?.response?.data,
+          message: error?.message,
+        });
     }
   };
 
   const handleSignup = async (data) => {
     data.preventDefault();
+    setErrorMessage('')
     try {
         const response = await api.post("/auth/register", {
             username,
@@ -39,7 +48,13 @@ const Login = () => {
         navigate('/mainpage');
         console.log("Signup successful");
     } catch (error) {
-        console.error("Error submitting form:", error);
+        const serverMessage = error?.response?.data?.message || error?.response?.data || error?.message || 'Unknown server error';
+        setErrorMessage(serverMessage);
+        console.error("Error submitting form:", {
+          status: error?.response?.status,
+          data: error?.response?.data,
+          message: error?.message,
+        });
     }
   };
 
@@ -145,6 +160,12 @@ const Login = () => {
         >
           {isLogin ? 'Login to collaBRIX' : 'Register Account'}
         </button>
+
+        {errorMessage && (
+          <div className="rounded-xl border border-red-500/20 bg-red-500/10 text-red-100 px-4 py-3 text-sm">
+            {errorMessage}
+          </div>
+        )}
 
         {/* Divider */}
         <div className="flex items-center gap-3 my-1">

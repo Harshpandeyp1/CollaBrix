@@ -151,11 +151,11 @@ const ProfilePage = () => {
 
   return (
 
-    <div className="
- bg-linear-to-b from-sky-100 via-teal-100 to-blue-100
-  dark:from-black
-  dark:via-black
-  dark:to-black
+    <div className="  bg-linear-to-b from-sky-100 via-teal-100 to-blue-100
+        dark:from-black
+        dark:via-black
+        dark:to-black
+ 
 ">
 
 

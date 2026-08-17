@@ -3,8 +3,10 @@ package com.example.collabrix.backend.mapper;
 import com.example.collabrix.backend.Dto.Post.CreatePost;
 import com.example.collabrix.backend.Dto.Post.PostDto;
 import com.example.collabrix.backend.Dto.Post.UpdatePost;
+import com.example.collabrix.backend.Dto.Project.ProjectDto;
 import com.example.collabrix.backend.Entity.Post;
 import com.example.collabrix.backend.Entity.UserEntity;
+import com.example.collabrix.backend.Entity.Project;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -65,8 +67,7 @@ public class PostMapper {
                                 ? post.getProject().getId()
                                 : null
                 )
-
-                .build();
+                .project(toProjectDto(post.getProject())).build();
     }
 
     public void updateEntityFromDto(UpdatePost request, Post post) {
@@ -103,5 +104,27 @@ public class PostMapper {
 
         if (request.getTags() != null)
             post.setTags(request.getTags());
+    }
+    private ProjectDto toProjectDto(Project project) {
+
+        if (project == null) {
+            return null;
+        }
+
+        ProjectDto dto = new ProjectDto();
+
+        dto.setId(project.getId());
+        dto.setTitle(project.getTitle());
+        dto.setDescription(project.getDescription());
+        dto.setTechStack(project.getTechStack());
+        dto.setGithubUrl(project.getGithubUrl());
+        dto.setLiveUrl(project.getLiveUrl());
+        dto.setImage(project.getImage());
+        dto.setStatus(project.getStatus());
+        dto.setLookingForCollaborators(
+                project.isLookingForCollaborators()
+        );
+
+        return dto;
     }
 }

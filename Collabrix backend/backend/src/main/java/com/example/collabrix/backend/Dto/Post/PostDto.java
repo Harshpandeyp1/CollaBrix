@@ -1,6 +1,7 @@
 package com.example.collabrix.backend.Dto.Post;
 
 
+import com.example.collabrix.backend.Dto.Project.ProjectDto;
 import com.example.collabrix.backend.Entity.Post;
 import com.example.collabrix.backend.Enum.PostStatus;
 import lombok.Builder;
@@ -51,4 +52,6 @@ public class PostDto {
     private String profileImage;
 
     private Long projectId;
+
+    private ProjectDto project;
 }

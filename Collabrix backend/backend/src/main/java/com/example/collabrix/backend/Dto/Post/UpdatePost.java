@@ -31,4 +31,7 @@ public class UpdatePost {
 
     private List<String> tags;
 
+
+    private Long projectId;
 }
+

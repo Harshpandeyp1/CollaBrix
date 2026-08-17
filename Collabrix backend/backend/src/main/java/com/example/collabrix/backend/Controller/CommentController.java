@@ -8,7 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -64,5 +66,24 @@ public class CommentController {
         return ResponseEntity.ok(
                 "Comment deleted successfully"
         );
+    }
+
+
+    // =========================================
+    // GET COMMENT COUNT FOR POST
+    // =========================================
+
+    @GetMapping("/api/posts/{postId}/comments/count")
+    public ResponseEntity<Map<String, Long>> getCommentCount(
+            @PathVariable Long postId
+    ) {
+
+        long count = commentService.getCommentCountByPost(postId);
+
+        Map<String, Long> response = new HashMap<>();
+        response.put("postId", postId);
+        response.put("commentCount", count);
+
+        return ResponseEntity.ok(response);
     }
 }

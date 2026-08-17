@@ -45,6 +45,21 @@ public class ProjectController {
 
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/discovery")
+    public ResponseEntity<ApiResponse<List<ProjectDto>>> getAllProjects() {
+
+        List<ProjectDto> projects =
+                projectService.getAllProjects();
+
+        ApiResponse<List<ProjectDto>> response =
+                new ApiResponse<>(
+                        true,
+                        "Projects fetched successfully",
+                        projects
+                );
+
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<ProjectDto>> getProjectById(

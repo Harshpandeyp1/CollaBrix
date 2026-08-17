@@ -23,4 +23,6 @@ public class ProjectDto {
     private ProjectStatus status;
 
     private boolean lookingForCollaborators;
+
+    private Long userId;
 }

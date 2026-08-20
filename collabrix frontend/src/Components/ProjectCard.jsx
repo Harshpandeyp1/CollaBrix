@@ -1,4 +1,3 @@
-
 import React from "react";
 import {
   Pencil,
@@ -7,346 +6,262 @@ import {
   ExternalLink,
   Users,
   UserCheck,
+  Eye,
+  Layers,
 } from "lucide-react";
 
-const STATUS_STYLES = {
-  PLANNING: "text-gray-700 bg-gray-100",
-  IN_PROGRESS: "text-blue-700 bg-blue-50",
-  COMPLETED: "text-green-700 bg-green-50",
-  ON_HOLD: "text-yellow-700 bg-yellow-50",
-  ARCHIVED: "text-gray-500 bg-gray-100",
+const STATUS_CONFIG = {
+  PLANNING: {
+    label: "Planning",
+    badge: "bg-slate-900/80 text-slate-200 border-slate-700/50 backdrop-blur-md",
+    dot: "bg-slate-400",
+  },
+  IN_PROGRESS: {
+    label: "In Progress",
+    badge: "bg-blue-950/80 text-blue-200 border-blue-800/50 backdrop-blur-md",
+    dot: "bg-blue-400 animate-pulse",
+  },
+  COMPLETED: {
+    label: "Completed",
+    badge: "bg-emerald-950/80 text-emerald-200 border-emerald-800/50 backdrop-blur-md",
+    dot: "bg-emerald-400",
+  },
+  ON_HOLD: {
+    label: "On Hold",
+    badge: "bg-amber-950/80 text-amber-200 border-amber-800/50 backdrop-blur-md",
+    dot: "bg-amber-400",
+  },
+  ARCHIVED: {
+    label: "Archived",
+    badge: "bg-zinc-900/80 text-zinc-400 border-zinc-700/50 backdrop-blur-md",
+    dot: "bg-zinc-500",
+  },
 };
 
-const formatStatus = (status) => {
-  if (!status) return "";
-
-  return status
-    .toLowerCase()
-    .split("_")
-    .map(
-      (word) =>
-        word.charAt(0).toUpperCase() + word.slice(1)
-    )
-    .join(" ");
+const normalizeUrl = (url) => {
+  if (!url) return "";
+  return url.startsWith("http://") || url.startsWith("https://")
+    ? url
+    : `https://${url}`;
 };
 
-const ProjectCard = ({ project, onEdit, onDelete, onViewInterests }) => {
+const ProjectCard = ({
+  project = {},
+  onEdit,
+  onDelete,
+  onViewInterests,
+  onViewProject,
+}) => {
+  // Safe authentication parsing
+  let currentUserId = null;
+  try {
+    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
+    currentUserId = currentUser?.id ?? currentUser?._id;
+  } catch (err) {
+    console.error("Failed to parse user from localStorage:", err);
+  }
 
-  const currentUser = JSON.parse(localStorage.getItem("user"));
-  const currentUserId = currentUser?.id;
+  const isOwner = Boolean(
+    currentUserId && Number(project?.userId) === Number(currentUserId)
+  );
 
-  const isOwner = Number(project.userId) === Number(currentUserId);
-
-  // rest of your code...
-
-  const handleDelete = () => {
-    if (window.confirm(`Delete project "${project.title}"?`)) {
-      onDelete(project);
+  const handleDelete = (e) => {
+    e.stopPropagation();
+    if (window.confirm(`Are you sure you want to delete "${project?.title}"?`)) {
+      onDelete?.(project);
     }
   };
 
-  const techList = project.techStack
+  const techList = Array.isArray(project?.techStack)
+    ? project.techStack
+    : project?.techStack
     ? project.techStack
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean)
     : [];
 
-  const statusStyle =
-    STATUS_STYLES[project.status] ||
-    "text-gray-700 bg-gray-100";
- console.log(
-  "Current User:",
-  currentUserId,
-  "Project Owner:",
-  project.userId,
-  "Is Owner:",
-  isOwner
-);
+  const statusKey = project?.status?.toUpperCase();
+  const statusDetails = STATUS_CONFIG[statusKey] || {
+    label: project?.status || "Draft",
+    badge: "bg-slate-900/80 text-slate-200 border-slate-700/50 backdrop-blur-md",
+    dot: "bg-slate-400",
+  };
+
+  const interestCount =
+    project?.interestCount ??
+    (Array.isArray(project?.interests) ? project.interests.length : null);
+
   return (
-   
-    <div className="flex flex-col h-full bg-white border-zinc-500 dark:bg-zinc-900 rounded-xl overflow-hidden  dark:bg-linear-to-br
-      dark:from-zinc-800
-      dark:via-teal-900
-      dark:to-zinc-800">
-
-      {/* ================= IMAGE ================= */}
-
-      {project.image ? (
-        <div className="w-full h-40 bg-gray-100 shrink-0">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700">
+      {/* ================= CARD MEDIA / BANNER ================= */}
+      <div className="relative h-48 w-full shrink-0 overflow-hidden bg-slate-100 dark:bg-zinc-800">
+        {project?.image ? (
           <img
             src={project.image}
-            alt={project.title}
-            className="w-full h-full object-cover"
+            alt={project.title || "Project preview"}
+            className="h-full w-full object-cover transition-transform duration-500 will-change-transform group-hover:scale-105"
+            loading="lazy"
           />
-        </div>
-      ) : (
-        <div className="w-full h-40 bg-gray-50 dark:bg-zinc-800 shrink-0" />
-      )}
+        ) : (
+          <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-indigo-50/50 via-slate-100 to-sky-50 dark:from-zinc-900 dark:via-zinc-800/60 dark:to-zinc-900">
+            <div className="rounded-xl bg-white/80 p-3 shadow-xs backdrop-blur-xs dark:bg-zinc-800/80">
+              <Layers className="h-6 w-6 text-indigo-500 dark:text-indigo-400" />
+            </div>
+            <span className="mt-2 text-xs font-medium text-slate-400 dark:text-zinc-500">
+              No preview available
+            </span>
+          </div>
+        )}
 
-
-      {/* ================= CONTENT ================= */}
-
-      <div className="p-6 flex flex-col flex-1">
-
-        
-{/* ================= TITLE & BUTTONS ================= */}
-
-<div className="flex justify-between items-start gap-4">
-
-  {/* ================= PROJECT INFO ================= */}
-
-  <div className="min-w-0 flex-1">
-
-    <h3 className="text-xl font-bold text-gray-900 dark:text-white break-words">
-      {project.title}
-    </h3>
-
-    <div className="mt-2 flex flex-wrap items-center gap-2">
-
-      {project.status && (
-        <span
-          className={`
-            inline-block
-            text-xs
-            font-medium
-            px-2.5
-            py-1
-            rounded-full
-            ${statusStyle}
-          `}
-        >
-          {formatStatus(project.status)}
-        </span>
-      )}
-
-      {project.lookingForCollaborators && (
-        <span
-          className="
-            inline-flex
-            items-center
-            gap-1
-            text-xs
-            font-medium
-            text-indigo-700
-            bg-indigo-50
-            px-2.5
-            py-1
-            rounded-full
-          "
-        >
-          <Users size={12} />
-          Looking for collaborators
-        </span>
-      )}
-
-    </div>
-
-  </div>
-
-
-  {/* ================= ACTION BUTTONS ================= */}
-
-  <div className="flex flex-col gap-2 shrink-0">
-
-    {/* Edit + Delete */}
-
-    <div className="flex gap-2">
-
-      <button
-        onClick={() => onEdit(project)}
-        className="
-          flex
-          items-center
-          gap-1
-          rounded-lg
-          border
-          border-gray-300
-          px-3
-          py-1.5
-          text-sm
-          text-gray-700
-          hover:bg-gray-100
-          transition
-          dark:bg-black
-          dark:text-white
-          dark:hover:bg-zinc-800
-        "
-      >
-        <Pencil size={14} />
-        Edit
-      </button>
-
-      <button
-        onClick={handleDelete}
-        className="
-          flex
-          items-center
-          gap-1
-          rounded-lg
-          border
-          border-red-300
-          px-3
-          py-1.5
-          text-sm
-          text-red-600
-          hover:bg-red-50
-          transition
-        "
-      >
-        <Trash2 size={14} />
-        Delete
-      </button>
-
-    </div>
-
-
-    {/* Interests */}
-
-    {project.lookingForCollaborators && isOwner&&(
-      <button
-        type="button"
-        onClick={() => onViewInterests(project)}
-        className="
-          w-full
-          flex
-          items-center
-          justify-center
-          gap-1.5
-          rounded-lg
-          border
-          border-indigo-300
-          px-3
-          py-1.5
-          text-sm
-          font-medium
-          text-indigo-600
-          hover:bg-indigo-50
-          transition
-          dark:border-indigo-800
-          dark:text-indigo-400
-          dark:hover:bg-indigo-950
-        "
-      >
-        <UserCheck size={14} />
-        Interests
-      </button>
-    )}
-
-  </div>
-
-</div>
-
-
-
-
-        {/* ================= DESCRIPTION ================= */}
-
-        <div className="mt-3 h-20 overflow-hidden dark:text-zinc-400">
-
-          {project.description && (
-            <p className="text-gray-700 leading-relaxed dark:text-zinc-400">
-              {project.description}
-            </p>
+        {/* Top Badges Overlay */}
+        <div className="absolute inset-x-3 top-3 flex items-center justify-between gap-2">
+          {/* Status Badge */}
+          {project?.status && (
+            <span
+              className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${statusDetails.badge}`}
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${statusDetails.dot}`} />
+              {statusDetails.label}
+            </span>
           )}
 
-        </div>
-
-
-        {/* ================= TECH STACK ================= */}
-
-        <div className="mt-4 min-h-8">
-
-          {techList.length > 0 && (
-            <div className="flex flex-wrap gap-1.5">
-
-              {techList.map((tech, i) => (
-                <span
-                  key={i}
-                  className="
-                    text-xs
-                    bg-gray-100
-                    dark:bg-zinc-800
-                    text-gray-700
-                    dark:text-zinc-300
-                    px-2.5
-                    py-1
-                    rounded-full
-                  "
-                >
-                  {tech}
-                </span>
-              ))}
-
+          {/* Owner Quick Controls */}
+          {isOwner && (
+            <div className="ml-auto flex items-center gap-1 rounded-full border border-white/20 bg-black/60 p-1 backdrop-blur-md transition-opacity">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit?.(project);
+                }}
+                aria-label="Edit project"
+                className="rounded-full p-1.5 text-white/80 transition hover:bg-white/20 hover:text-white"
+              >
+                <Pencil size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                aria-label="Delete project"
+                className="rounded-full p-1.5 text-rose-300 transition hover:bg-rose-500/30 hover:text-rose-100"
+              >
+                <Trash2 size={13} />
+              </button>
             </div>
           )}
-
         </div>
 
+        {/* Collaborators Floating Pill */}
+        {project?.lookingForCollaborators && (
+          <div className="absolute bottom-3 left-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-500/30 bg-indigo-950/80 px-2.5 py-1 text-[11px] font-semibold text-indigo-200 shadow-sm backdrop-blur-md">
+              <Users size={12} className="text-indigo-400" />
+              Recruiting
+            </span>
+          </div>
+        )}
+      </div>
 
-        {/* ================= INTEREST BUTTON ================= */}
+      {/* ================= CARD BODY ================= */}
+      <div className="flex flex-1 flex-col p-5">
+        {/* Title */}
+        <h3
+          title={project?.title}
+          className="line-clamp-1 text-lg font-bold tracking-tight text-slate-900 transition-colors group-hover:text-indigo-600 dark:text-white dark:group-hover:text-indigo-400"
+        >
+          {project?.title || "Untitled Project"}
+        </h3>
 
-       
+        {/* Description */}
+        <p className="mt-2.5 line-clamp-3 text-xs leading-relaxed text-slate-600 dark:text-zinc-400">
+          {project?.description ||
+            "No description provided for this project yet."}
+        </p>
 
-        {/* ================= LINKS ================= */}
+        {/* Tech Stack Pills */}
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {techList.slice(0, 4).map((tech, i) => (
+            <span
+              key={i}
+              className="rounded-lg border border-slate-100 bg-slate-50 px-2 py-0.5 text-[11px] font-medium text-slate-600 dark:border-zinc-800 dark:bg-zinc-800/80 dark:text-zinc-300"
+            >
+              {tech}
+            </span>
+          ))}
+          {techList.length > 4 && (
+            <span className="rounded-lg border border-slate-100 bg-slate-50 px-1.5 py-0.5 text-[11px] font-medium text-slate-400 dark:border-zinc-800 dark:bg-zinc-800/80 dark:text-zinc-500">
+              +{techList.length - 4}
+            </span>
+          )}
+        </div>
 
-        <div className="mt-auto">
-
-          {(project.githubUrl || project.liveUrl) && (
-            <div className="mt-4 border-t pt-4 flex flex-wrap gap-4">
-
+        {/* ================= CARD FOOTER ================= */}
+        <div className="mt-auto pt-5">
+          {/* External Code/Live Links */}
+          {(project?.githubUrl || project?.liveUrl) && (
+            <div className="mb-3.5 flex items-center gap-4 border-t border-slate-100 pt-3 text-xs text-slate-500 dark:border-zinc-800 dark:text-zinc-400">
               {project.githubUrl && (
                 <a
-                  href={project.githubUrl}
+                  href={normalizeUrl(project.githubUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="
-                    flex
-                    items-center
-                    gap-1.5
-                    text-sm
-                    text-gray-700
-                    dark:text-zinc-300
-                    hover:text-indigo-600
-                    transition
-                  "
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center gap-1 font-medium transition hover:text-slate-900 dark:hover:text-white"
                 >
-                  <GitBranch size={16} />
-                  GitHub
+                  <GitBranch size={13} className="text-slate-400" />
+                  Repository
                 </a>
               )}
 
               {project.liveUrl && (
                 <a
-                  href={project.liveUrl}
+                  href={normalizeUrl(project.liveUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="
-                    flex
-                    items-center
-                    gap-1.5
-                    text-sm
-                    text-gray-700
-                    dark:text-zinc-300
-                    hover:text-indigo-600
-                    transition
-                  "
+                  onClick={(e) => e.stopPropagation()}
+                  className="inline-flex items-center gap-1 font-medium transition hover:text-indigo-600 dark:hover:text-indigo-400"
                 >
-                  <ExternalLink size={16} />
-                  Live Demo
+                  <ExternalLink size={13} className="text-slate-400" />
+                  Live Preview
                 </a>
               )}
-
             </div>
           )}
 
+          {/* Action Row */}
+          <div className="flex items-center gap-2">
+            {onViewProject && (
+              <button
+                type="button"
+                onClick={() => onViewProject(project)}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-2xs transition hover:bg-slate-50 active:scale-[0.98] dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200 dark:hover:bg-zinc-700"
+              >
+                <Eye size={14} />
+                Details
+              </button>
+            )}
+
+            {project?.lookingForCollaborators && isOwner && onViewInterests && (
+              <button
+                type="button"
+                onClick={() => onViewInterests(project)}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-indigo-50 px-3 py-2 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100 active:scale-[0.98] dark:bg-indigo-950/70 dark:text-indigo-300 dark:hover:bg-indigo-900/60"
+              >
+                <UserCheck size={14} />
+                <span>Interests</span>
+                {interestCount !== null && interestCount > 0 && (
+                  <span className="ml-0.5 rounded-full bg-indigo-200/70 px-1.5 py-0.2 text-[10px] font-bold text-indigo-800 dark:bg-indigo-800 dark:text-indigo-200">
+                    {interestCount}
+                  </span>
+                )}
+              </button>
+            )}
+          </div>
         </div>
-
       </div>
-
-    </div>
+    </article>
   );
 };
 
 export default ProjectCard;
-

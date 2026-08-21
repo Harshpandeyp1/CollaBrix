@@ -15,6 +15,8 @@ const ProjectInterestModal = ({
   const [interests, setInterests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [updatingId, setUpdatingId] = useState(null);
+  const[error,setError]=useState(null);
+  
 
   // =========================================
   // FETCH INTERESTS
@@ -27,7 +29,7 @@ const ProjectInterestModal = ({
     try {
 
       setLoading(true);
-
+      setError("");
       const data = await getProjectInterests(
         project.id
       );
@@ -52,6 +54,11 @@ const ProjectInterestModal = ({
 
       setInterests([]);
 
+      setError(
+        error?.response.data.message||
+        "unable to load interested people"
+      )
+
     } finally {
 
       setLoading(false);
@@ -63,6 +70,23 @@ const ProjectInterestModal = ({
   // =========================================
   // FETCH WHEN MODAL OPENS
   // =========================================
+useEffect(() => {
+  if (!open) return;
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Escape") {
+      onClose();
+    }
+  };
+
+  document.addEventListener("keydown", handleKeyDown);
+  document.body.style.overflow = "hidden";
+
+  return () => {
+    document.removeEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "unset";
+  };
+}, [open, onClose]);
 
   useEffect(() => {
 
@@ -258,7 +282,15 @@ const ProjectInterestModal = ({
 
             </div>
 
-          ) : interests.length === 0 ? (
+          ): error ? (
+
+        <div className="py-10 text-center">
+          <p className="text-sm text-red-500 dark:text-red-400">
+            {error}
+          </p>
+        </div>
+
+    ) : interests.length === 0 ? (
 
             <div className="py-10 text-center">
 

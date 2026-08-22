@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import {
   getProjectInterests,
   updateProjectInterestStatus,
+  removeProjectInterest
 } from "../Services/Project.js";
 
 const ProjectInterestModal = ({
@@ -55,9 +56,9 @@ const ProjectInterestModal = ({
       setInterests([]);
 
       setError(
-        error?.response.data.message||
-        "unable to load interested people"
-      )
+  error?.response?.data?.message ||
+  "Unable to load interested people"
+);
 
     } finally {
 
@@ -90,11 +91,13 @@ useEffect(() => {
 
   useEffect(() => {
 
-    if (open && project) {
+    if (open && project?.id) {
+       setInterests([]);
       fetchInterests();
+
     }
 
-  }, [open, project]);
+  }, [open, project?.id]);
 
 
   // =========================================
@@ -142,6 +145,27 @@ useEffect(() => {
 
     }
   };
+  const handleRemoveInterest=async(interestId)=>{
+    try{
+      setUpdatingId(interestId);
+
+      await removeProjectInterest(interestId);
+
+      setInterests((prev)=>
+        prev.filter((interest)=>interest.id!==interestId)
+    );
+      
+    }catch(err){
+      console.error("Failed to remove interest:", error);
+
+       alert(
+      error?.response?.data?.message ||
+      "Failed to remove interest"
+    );
+    }finally{
+      setUpdatingId(null);
+    }
+  }
 
   if (!open) {
     return null;
@@ -471,84 +495,103 @@ useEffect(() => {
 
                   {/* ACTIONS */}
 
-                  {interest.status ===
-                    "PENDING" && (
+                              {/* ACTIONS */}
+              <div className="mt-3 flex gap-2">
 
-                    <div
+                {/* Accept / Reject only for pending interests */}
+                {interest.status === "PENDING" && (
+                  <>
+                    <button
+                      disabled={updatingId === interest.id}
+                      onClick={() =>
+                        handleStatusUpdate(interest.id, "ACCEPTED")
+                      }
                       className="
-                        mt-3
-                        flex
-                        gap-2
+                        flex-1
+                        rounded-lg
+                        bg-emerald-600
+                        px-3
+                        py-2
+                        text-xs
+                        font-semibold
+                        text-white
+                        transition
+                        hover:bg-emerald-700
+                        disabled:opacity-50
                       "
                     >
+                      {updatingId === interest.id
+                        ? "Updating..."
+                        : "Accept"}
+                    </button>
 
-                      <button
-                        disabled={
-                          updatingId ===
-                          interest.id
-                        }
-                        onClick={() =>
-                          handleStatusUpdate(
-                            interest.id,
-                            "ACCEPTED"
-                          )
-                        }
-                        className="
-                          flex-1
-                          rounded-lg
-                          bg-emerald-600
-                          px-3
-                          py-2
-                          text-xs
-                          font-semibold
-                          text-white
-                          transition
-                          hover:bg-emerald-700
-                          disabled:opacity-50
-                        "
-                      >
-                        {updatingId ===
-                        interest.id
-                          ? "Updating..."
-                          : "Accept"}
-                      </button>
+                    <button
+                      disabled={updatingId === interest.id}
+                      onClick={() =>
+                        handleStatusUpdate(interest.id, "REJECTED")
+                      }
+                      className="
+                        flex-1
+                        rounded-lg
+                        border
+                        border-red-200
+                        px-3
+                        py-2
+                        text-xs
+                        font-semibold
+                        text-red-600
+                        transition
+                        hover:bg-red-50
+                        disabled:opacity-50
+                        dark:border-red-900
+                        dark:text-red-400
+                        dark:hover:bg-red-950/40
+                      "
+                    >
+                      Reject
+                    </button>
+                  </>
+                )}
 
+                {/* Remove */}
+                <button
+                  disabled={updatingId === interest.id}
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        "Remove this person's interest from the project?"
+                      )
+                    ) {
+                      handleRemoveInterest(interest.id);
+                    }
+                  }}
+                  className="
+                    rounded-lg
+                    border
+                    border-slate-200
+                    px-3
+                    py-2
+                    text-xs
+                    font-semibold
+                    text-slate-600
+                    transition
+                    hover:bg-slate-100
+                    disabled:opacity-50
+                    dark:border-zinc-700
+                    dark:text-zinc-300
+                    dark:hover:bg-zinc-800
+                  "
+                >
+                  {updatingId === interest.id
+                    ? "Removing..."
+                    : "Remove"}
+                </button>
 
-                      <button
-                        disabled={
-                          updatingId ===
-                          interest.id
-                        }
-                        onClick={() =>
-                          handleStatusUpdate(
-                            interest.id,
-                            "REJECTED"
-                          )
-                        }
-                        className="
-                          flex-1
-                          rounded-lg
-                          border
-                          border-red-200
-                          dark:border-red-900
-                          px-3
-                          py-2
-                          text-xs
-                          font-semibold
-                          text-red-600
-                          dark:text-red-400
-                          transition
-                          hover:bg-red-50
-                          dark:hover:bg-red-950/40
-                          disabled:opacity-50
-                        "
-                      >
-                        Reject
-                      </button>
+              </div>
 
-                    </div>
+                              
 
-                  )}
+                  
 
                 </div>
 

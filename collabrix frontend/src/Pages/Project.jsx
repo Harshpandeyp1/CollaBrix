@@ -43,6 +43,10 @@ const Project = () => {
     setSelectedProject(project);
     setInterestModalOpen(true);
   };
+  const handleViewProject = (project) => {
+  setSelectedProject(project);
+  setDetailModalOpen(true);
+};
 
   const handleDelete = async (projectId) => {
     if (!window.confirm("Are you sure you want to delete this project?")) return;
@@ -121,7 +125,7 @@ const Project = () => {
                   onEdit={() => handleEdit(project)}
                   onDelete={() => handleDelete(project.id)}
                   onViewInterests={() => handleViewInterests(project)}
-                  onViewProject={(project) => setSelectedProject(project)}
+                  onViewProject={handleViewProject}
                 />
               ))}
             </div>
@@ -152,11 +156,14 @@ const Project = () => {
           setSelectedProject(null);
         }}
       />
-      <ProjectDetailModal
-        project={selectedProject}
-        open={selectedProject !== null}
-        onClose={() => setSelectedProject(null)}
-      />
+     <ProjectDetailModal 
+      project={selectedProject}
+      open={detailModalOpen}
+      onClose={() => {
+        setDetailModalOpen(false);
+        setSelectedProject(null);
+      }}
+    />
     </>
   );
 };

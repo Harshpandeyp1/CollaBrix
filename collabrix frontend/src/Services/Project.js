@@ -124,3 +124,8 @@ export const updateProject = async (
 export const deleteProject = async (id) => {
   await api.delete(`/projects/${id}`);
 };
+
+export const removeProjectInterest = async (interestId) => {
+  const response = await api.delete(`/projects/interests/${interestId}`);
+  return response.data;
+};

@@ -6,6 +6,9 @@ import com.example.collabrix.backend.Service.ProjectInterestService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import java.util.List;
 @RestController
@@ -60,5 +63,13 @@ public class ProjectInterestController {
                         status
                 )
         );
+    }
+    @DeleteMapping("/interests/{interestId}")
+    public ResponseEntity<Void> removeInterest(
+            @PathVariable Long interestId
+    ) {
+        interestService.removeInterest(interestId);
+
+        return ResponseEntity.noContent().build();
     }
 }

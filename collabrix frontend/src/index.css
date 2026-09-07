@@ -1,3 +1,5 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@keyframes moonRise { 0% { transform: translateY(0) scale(0.8); opacity: 0; } 15% { opacity: 1; } 70% { transform: translateY(-80vh) scale(1); opacity: 1; } 100% { transform: translateY(-115vh) scale(1.1); opacity: 0; } } @keyframes sunRise { 0% { transform: translateY(0) scale(0.8); opacity: 0; } 15% { opacity: 1; } 70% { transform: translateY(-80vh) scale(1); opacity: 1; } 100% { transform: translateY(-115vh) scale(1.1); opacity: 0; } } .animate-moon-rise { animation: moonRise 1.4s ease-in-out forwards; } .animate-sun-rise { animation: sunRise 1.4s ease-in-out forwards; }

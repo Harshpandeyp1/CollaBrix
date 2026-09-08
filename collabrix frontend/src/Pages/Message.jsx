@@ -19,6 +19,7 @@ const Messages = () => {
      
     const [messages, setMessages] = useState([]);
 
+    const [messageInput, setMessageInput] = useState("");
     // ----------------------------------------
     // FETCH DATA WHEN PAGE LOADS
     // ----------------------------------------
@@ -106,6 +107,28 @@ const Messages = () => {
         }
     }, [selectedUser]);
 
+    const sendMessage = async () => {
+    if (!messageInput.trim() || !selectedUser) {
+        return;
+    }
+
+    try {
+        const response = await api.post("/messages", {
+            receiverId: selectedUser.id,
+            content: messageInput
+        });
+
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            response.data
+        ]);
+
+        setMessageInput("");
+
+    } catch (error) {
+        console.error("Error sending message:", error);
+    }
+};
 
     // ----------------------------------------
     // UI
@@ -187,9 +210,10 @@ const Messages = () => {
 
                                         <button
                                             key={connection.id}
-                                            onClick={() =>
-                                                setSelectedUser(otherUser)
-                                            }
+                                           onClick={() => {
+                                            setSelectedUser(otherUser);
+                                            setMessageInput("");
+                                        }}
                                             className="
                                                 w-full
                                                 flex
@@ -452,6 +476,8 @@ const Messages = () => {
                                                 focus:ring-2
                                                 focus:ring-blue-500
                                             "
+                                             value={messageInput}
+                                            onChange={(e) => setMessageInput(e.target.value)}
                                         />
 
                                         <button
@@ -464,6 +490,7 @@ const Messages = () => {
                                                 hover:bg-blue-700
                                                 transition
                                             "
+                                              onClick={sendMessage}
                                         >
                                             Send
                                         </button>

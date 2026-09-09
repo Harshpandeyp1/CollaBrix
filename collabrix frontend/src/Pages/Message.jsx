@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import api from "../Services/api" // Adjust the import path based on your project structure
 import Navbar from "../Components/Navbar"; // Adjust the import path based on your project structure
 const Messages = () => {
@@ -20,6 +20,8 @@ const Messages = () => {
     const [messages, setMessages] = useState([]);
 
     const [messageInput, setMessageInput] = useState("");
+
+    const [loadingMessages, setLoadingMessages] = useState(false);
     // ----------------------------------------
     // FETCH DATA WHEN PAGE LOADS
     // ----------------------------------------
@@ -93,14 +95,18 @@ const Messages = () => {
     };
 
     const fetchMessages = async (userId) => {
+    setLoadingMessages(true);
 
-        try {
-            const response = await api.get(`/messages/${userId}`);
-            setMessages(response.data);
-        } catch (error) {
-            console.error("Error fetching messages:", error);
-        }
-    };
+    try {
+        const response = await api.get(`/messages/${userId}`);
+        setMessages(response.data);
+    } catch (error) {
+        console.error("Error fetching messages:", error);
+    } finally {
+        setLoadingMessages(false);
+    }
+};
+
  useEffect(() => {
         if (selectedUser) {
             fetchMessages(selectedUser.id);
@@ -115,7 +121,7 @@ const Messages = () => {
     try {
         const response = await api.post("/messages", {
             receiverId: selectedUser.id,
-            content: messageInput
+            content: messageInput.trim()
         });
 
         setMessages((prevMessages) => [
@@ -130,6 +136,11 @@ const Messages = () => {
     }
 };
 
+const bottomRef=useRef(null);
+
+useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+}, [messages]);
     // ----------------------------------------
     // UI
     // ----------------------------------------
@@ -380,41 +391,33 @@ const Messages = () => {
 
                                 {/* Messages Area */}
 
-                    <div className="
-                        flex-1
-                        p-5
-                        overflow-y-auto
-                    ">
+                    <div className="flex-1 p-5 overflow-y-auto">
 
-                        {messages.length === 0 ? (
+                    {loadingMessages ? (
+                        <div className="h-full flex items-center justify-center text-slate-500 dark:text-zinc-400">
+                            Loading messages...
+                        </div>
 
-                            <div className="
-                                h-full
-                                flex
-                                items-center
-                                justify-center
-                                text-slate-500
-                                dark:text-zinc-400
-                            ">
-                                No messages yet
-                            </div>
+                    ) : messages.length === 0 ? (
 
-                        ) : (
+                        <div className="h-full flex items-center justify-center text-slate-500 dark:text-zinc-400">
+                            No messages yet
+                        </div>
 
-                            <div className="space-y-3">
+                    ) : (
 
-                                {messages.map((message) => (
-
+                        <div className="space-y-3">
+                            {messages.map((message) => (
+                                <div
+                                    key={message.id}
+                                    className={
+                                        message.senderId === currentUser.id
+                                            ? "flex justify-end"
+                                            : "flex justify-start"
+                                    }
+                                >
                                     <div
-                                        key={message.id}
-                                        className={
-                                            message.senderId === currentUser.id
-                                                ? "flex justify-end"
-                                                : "flex justify-start"
-                                        }
-                                    >
-
-                                        <div className={`
+                                        className={`
                                             max-w-[70%]
                                             px-4
                                             py-2
@@ -424,24 +427,18 @@ const Messages = () => {
                                                     ? "bg-blue-600 text-white rounded-br-md"
                                                     : "bg-slate-200 dark:bg-zinc-800 text-slate-900 dark:text-white rounded-bl-md"
                                             }
-                                        `}>
-
-                                            <p>
-                                                {message.content}
-                                            </p>
-
-                                        </div>
-
+                                        `}
+                                    >
+                                        <p>{message.content}</p>
                                     </div>
+                                </div>
+                            ))}
 
-                                ))}
+                            <div ref={bottomRef} />
+                        </div>
+                    )}
 
-                            </div>
-
-                        )}
-
-                    </div>
-
+                </div>
 
                                 {/* Message Input */}
 
@@ -452,7 +449,12 @@ const Messages = () => {
                                     dark:border-zinc-800
                                 ">
 
-                                    <div className="
+                                    <form
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            sendMessage();
+                                        }}
+                                        className="
                                         flex
                                         gap-3
                                     ">
@@ -481,6 +483,7 @@ const Messages = () => {
                                         />
 
                                         <button
+                                            type="submit"
                                             className="
                                                 px-5
                                                 py-3
@@ -488,14 +491,18 @@ const Messages = () => {
                                                 bg-blue-600
                                                 text-white
                                                 hover:bg-blue-700
+                                                disabled:cursor-not-allowed
+                                                disabled:opacity-50
+                                                disabled:hover:bg-blue-600
                                                 transition
                                             "
                                               onClick={sendMessage}
+                                            disabled={!messageInput.trim() || !selectedUser}
                                         >
                                             Send
                                         </button>
 
-                                    </div>
+                                    </form>
 
                                 </div>
 

@@ -22,6 +22,10 @@ const Messages = () => {
     const [messageInput, setMessageInput] = useState("");
 
     const [loadingMessages, setLoadingMessages] = useState(false);
+
+    const [sendingMessage, setSendingMessage] = useState(false);
+
+    const [messageError, setMessageError] = useState("");
     // ----------------------------------------
     // FETCH DATA WHEN PAGE LOADS
     // ----------------------------------------
@@ -114,9 +118,12 @@ const Messages = () => {
     }, [selectedUser]);
 
     const sendMessage = async () => {
-    if (!messageInput.trim() || !selectedUser) {
+    if (!messageInput.trim() || !selectedUser || sendingMessage) {
         return;
     }
+
+    setSendingMessage(true);
+    setMessageError("");
 
     try {
         const response = await api.post("/messages", {
@@ -133,6 +140,9 @@ const Messages = () => {
 
     } catch (error) {
         console.error("Error sending message:", error);
+        setMessageError("Failed to send message. Please try again.");
+    } finally {
+        setSendingMessage(false);
     }
 };
 
@@ -448,6 +458,11 @@ useEffect(() => {
                                     border-slate-200
                                     dark:border-zinc-800
                                 ">
+                                     {messageError && (
+                                <p className="text-sm text-red-500 mb-2">
+                                    {messageError}
+                                </p>
+                            )}
 
                                     <form
                                         onSubmit={(e) => {
@@ -497,9 +512,9 @@ useEffect(() => {
                                                 transition
                                             "
                                               onClick={sendMessage}
-                                            disabled={!messageInput.trim() || !selectedUser}
+                                            disabled={!messageInput.trim() || !selectedUser || sendingMessage}
                                         >
-                                            Send
+                                            {sendingMessage ? "Sending..." : "Send"}
                                         </button>
 
                                     </form>

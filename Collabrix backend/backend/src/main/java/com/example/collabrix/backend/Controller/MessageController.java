@@ -1,5 +1,6 @@
 package com.example.collabrix.backend.Controller;
 
+import com.example.collabrix.backend.Dto.Message.ConversationresponseDto;
 import com.example.collabrix.backend.Dto.Message.MessageResponseDto;
 import com.example.collabrix.backend.Dto.Message.SendMessageDto;
 import com.example.collabrix.backend.Service.MessageService;
@@ -15,6 +16,7 @@ import java.util.List;
 public class MessageController {
 
     private final MessageService messageService;
+
 
     // =========================================
     // SEND MESSAGE
@@ -35,8 +37,26 @@ public class MessageController {
         );
     }
 
+
     // =========================================
-    // GET CONVERSATION
+    // GET ALL CONVERSATIONS
+    // =========================================
+
+    @GetMapping("/conversations")
+    public List<ConversationresponseDto> getConversations(
+            Authentication authentication
+    ) {
+
+        String currentUserEmail = authentication.getName();
+
+        return messageService.getConversations(
+                currentUserEmail
+        );
+    }
+
+
+    // =========================================
+    // GET CONVERSATION WITH ONE USER
     // =========================================
 
     @GetMapping("/{userId}")
@@ -52,4 +72,5 @@ public class MessageController {
                 userId
         );
     }
+
 }

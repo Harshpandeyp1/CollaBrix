@@ -35,18 +35,24 @@ public class MessageService {
             String content
     ) {
 
+        // Find sender
         UserEntity sender = userRepo.findByEmail(senderEmail)
                 .orElseThrow(() ->
                         new RuntimeException("Sender not found")
                 );
 
+
+        // Find receiver
         UserEntity receiver = userRepo.findById(receiverId)
                 .orElseThrow(() ->
                         new RuntimeException("Receiver not found")
                 );
 
 
-        // Check connection
+        // =========================================
+        // CHECK CONNECTION
+        // =========================================
+
         ConnectionEntity connection =
                 connectionRepo.findConnectionBetweenUsers(
                         sender,
@@ -58,7 +64,10 @@ public class MessageService {
                 );
 
 
-        // Only accepted connections can message
+        // =========================================
+        // ONLY ACCEPTED CONNECTIONS CAN MESSAGE
+        // =========================================
+
         if (connection.getStatus() != ConnectionStatus.ACCEPTED) {
 
             throw new RuntimeException(
@@ -67,7 +76,10 @@ public class MessageService {
         }
 
 
-        // Validate message
+        // =========================================
+        // VALIDATE MESSAGE
+        // =========================================
+
         if (content == null || content.trim().isEmpty()) {
 
             throw new RuntimeException(
@@ -76,7 +88,10 @@ public class MessageService {
         }
 
 
-        // Create message
+        // =========================================
+        // CREATE MESSAGE
+        // =========================================
+
         MessageEntity message = MessageEntity.builder()
                 .sender(sender)
                 .receiver(receiver)
@@ -84,48 +99,85 @@ public class MessageService {
                 .build();
 
 
-        // Save message
-        return messageMapper.toDto(messageRepo.save(message));
+        // =========================================
+        // SAVE MESSAGE
+        // =========================================
+
+        MessageEntity savedMessage =
+                messageRepo.save(message);
+
+
+        // Convert Entity → DTO
+        return messageMapper.toDto(savedMessage);
     }
 
 
     // =========================================
-    // GET CONVERSATION
+    // GET ALL CONVERSATIONS
     // =========================================
-// =========================================
-// GET CONVERSATIONS
-// =========================================
 
     public List<ConversationresponseDto> getConversations(
             String currentUserEmail
     ) {
 
-        UserEntity currentUser = userRepo.findByEmail(currentUserEmail)
-                .orElseThrow(() ->
-                        new RuntimeException("Current user not found")
-                );
+        // =========================================
+        // FIND CURRENT USER
+        // =========================================
 
-        // Get accepted connections where current user sent the request
+        UserEntity currentUser =
+                userRepo.findByEmail(currentUserEmail)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Current user not found"
+                                )
+                        );
+
+
+        // =========================================
+        // ACCEPTED CONNECTIONS WHERE
+        // CURRENT USER IS SENDER
+        // =========================================
+
         List<ConnectionEntity> sent =
                 connectionRepo.findBySenderAndStatus(
                         currentUser,
                         ConnectionStatus.ACCEPTED
                 );
 
-        // Get accepted connections where current user received the request
+
+        // =========================================
+        // ACCEPTED CONNECTIONS WHERE
+        // CURRENT USER IS RECEIVER
+        // =========================================
+
         List<ConnectionEntity> received =
                 connectionRepo.findByReceiverAndStatus(
                         currentUser,
                         ConnectionStatus.ACCEPTED
                 );
 
-        // Combine both sides
+
+        // =========================================
+        // COMBINE BOTH LISTS
+        // =========================================
+
         sent.addAll(received);
+
+
+        // =========================================
+        // CREATE CONVERSATION DTO
+        // FOR EACH CONNECTION
+        // =========================================
 
         return sent.stream()
                 .map(connection -> {
 
                     UserEntity otherUser;
+
+
+                    // =====================================
+                    // FIND THE OTHER USER
+                    // =====================================
 
                     if (connection.getSender().getId()
                             ==(currentUser.getId())) {
@@ -137,18 +189,27 @@ public class MessageService {
                         otherUser = connection.getSender();
                     }
 
-                    // Get messages between current user and other user
+
+                    // =====================================
+                    // GET LATEST MESSAGE
+                    // =====================================
+
                     List<MessageEntity> latestMessages =
                             messageRepo.findLatestConversationMessage(
                                     currentUser,
                                     otherUser
                             );
 
-                    // First message is the newest because repository uses DESC
+
                     MessageEntity latestMessage =
                             latestMessages.isEmpty()
                                     ? null
                                     : latestMessages.get(0);
+
+
+                    // =====================================
+                    // BUILD CONVERSATION DTO
+                    // =====================================
 
                     return ConversationresponseDto.builder()
                             .userId(otherUser.getId())
@@ -165,8 +226,91 @@ public class MessageService {
                                             : null
                             )
                             .build();
+
                 })
                 .toList();
+    }
+
+
+    // =========================================
+    // GET CONVERSATION WITH ONE USER
+    // =========================================
+
+    public List<MessageResponseDto> getConversation(
+            String currentUserEmail,
+            Long otherUserId
+    ) {
+
+        // =========================================
+        // FIND CURRENT USER
+        // =========================================
+
+        UserEntity currentUser =
+                userRepo.findByEmail(currentUserEmail)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Current user not found"
+                                )
+                        );
+
+
+        // =========================================
+        // FIND OTHER USER
+        // =========================================
+
+        UserEntity otherUser =
+                userRepo.findById(otherUserId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "User not found"
+                                )
+                        );
+
+
+        // =========================================
+        // CHECK CONNECTION
+        // =========================================
+
+        ConnectionEntity connection =
+                connectionRepo.findConnectionBetweenUsers(
+                        currentUser,
+                        otherUser
+                ).orElseThrow(() ->
+                        new RuntimeException(
+                                "You are not connected with this user"
+                        )
+                );
+
+
+        // =========================================
+        // ONLY ACCEPTED CONNECTIONS CAN VIEW
+        // MESSAGES
+        // =========================================
+
+        if (connection.getStatus() != ConnectionStatus.ACCEPTED) {
+
+            throw new RuntimeException(
+                    "You can view messages only with accepted connections"
+            );
+        }
+
+
+        // =========================================
+        // GET ALL MESSAGES BETWEEN BOTH USERS
+        // =========================================
+
+        List<MessageEntity> messages =
+                messageRepo.findConversation(
+                        currentUser,
+                        otherUser
+                );
+
+
+        // =========================================
+        // ENTITY → DTO
+        // =========================================
+
+        return messageMapper.toDtoList(messages);
     }
 
 }

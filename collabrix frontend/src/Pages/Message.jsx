@@ -43,6 +43,11 @@ const Messages = () => {
     }
   };
 
+  const formatMessageTime=(dateTime)=>{
+    if (!dateTime) return "";
+    return new Date(dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
   // ----------------------------------------
   // FETCH & SYNC MESSAGES
   // ----------------------------------------
@@ -105,6 +110,10 @@ const Messages = () => {
       setSendingMessage(false);
     }
   };
+  
+  const sortedConversations = [...conversations].sort((a, b) => {
+    new Date(b.lastMessageAt || 0) - new Date(a.lastMessageAt || 0);
+  });
 
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-zinc-950">
@@ -124,7 +133,7 @@ const Messages = () => {
             </div>
 
             <div className="flex-1 overflow-y-auto p-3 space-y-1">
-              {conversations.map((conversation) => {
+              {sortedConversations.map((conversation) => {
                 const isSelected = selectedUser?.id === conversation.userId;
                 return (
                   <button
@@ -156,6 +165,12 @@ const Messages = () => {
                       <p className="font-medium text-slate-900 dark:text-white">
                         {conversation.username}
                       </p>
+                      {conversation.lastMessageAt && (
+                      <span className="text-xs text-slate-400 dark:text-zinc-500 shrink-0">
+                          {formatMessageTime(conversation.lastMessageAt)}
+                      </span>
+                  )}
+           
                       <p className="text-sm text-slate-500 dark:text-zinc-400 truncate">
                         {conversation.lastMessage || "No messages yet"}
                       </p>

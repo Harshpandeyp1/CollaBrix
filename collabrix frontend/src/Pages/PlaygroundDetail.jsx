@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import PlaygroundActivity from "../Components/Playground/PlaygroundActivity";
+import Discussion from "../Components/Playground/Discussion";
+import Tasks from "../Components/Playground/Task";  
 import { useParams, useNavigate } from "react-router-dom";
 import {
   FolderGit2,
@@ -311,8 +314,13 @@ const PlaygroundDetail = () => {
                     </div>
                   </div>
                 </div>
+              ) : activeTab === "Discussion" ? (
+                <Discussion projectId={projectId} />
+              ) : activeTab === "Tasks" ? (
+                <Tasks projectId={projectId} />
+              ) : activeTab === "Activity" ? (
+                <PlaygroundActivity projectId={projectId} />
               ) : (
-                /* Empty Subsystem Canvas */
                 <div className="h-full flex flex-col items-center justify-center p-8 text-center select-none">
                   <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500 ring-1 ring-indigo-500/20 dark:bg-indigo-950/40 dark:text-indigo-400">
                     <ActiveIcon size={24} />

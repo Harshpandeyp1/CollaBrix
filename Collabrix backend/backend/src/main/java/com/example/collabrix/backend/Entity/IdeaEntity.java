@@ -39,4 +39,5 @@ public class IdeaEntity {
     public void prePersist() {
         createdAt = LocalDateTime.now();
     }
+
 }

@@ -270,34 +270,18 @@ public class MessageService {
         // =========================================
         // CHECK CONNECTION
         // =========================================
+        System.out.println("CURRENT USER = " + currentUser.getId());
+        System.out.println("OTHER USER = " + otherUser.getId());
 
         ConnectionEntity connection =
                 connectionRepo.findConnectionBetweenUsers(
                         currentUser,
                         otherUser
                 ).orElseThrow(() ->
-                        new RuntimeException(
-                                "You are not connected with this user"
-                        )
-                );
+                        new RuntimeException("You are not connected with this user"));
 
-
-        // =========================================
-        // ONLY ACCEPTED CONNECTIONS CAN VIEW
-        // MESSAGES
-        // =========================================
-
-        if (connection.getStatus() != ConnectionStatus.ACCEPTED) {
-
-            throw new RuntimeException(
-                    "You can view messages only with accepted connections"
-            );
-        }
-
-
-        // =========================================
-        // GET ALL MESSAGES BETWEEN BOTH USERS
-        // =========================================
+        System.out.println("CONNECTION ID = " + connection.getId());
+        System.out.println("CONNECTION STATUS = " + connection.getStatus());
 
         List<MessageEntity> messages =
                 messageRepo.findConversation(
@@ -305,12 +289,10 @@ public class MessageService {
                         otherUser
                 );
 
-
-        // =========================================
-        // ENTITY → DTO
-        // =========================================
+        System.out.println("MESSAGES FOUND = " + messages.size());
 
         return messageMapper.toDtoList(messages);
+
     }
 
 }

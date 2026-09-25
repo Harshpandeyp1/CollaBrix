@@ -15,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import org.springframework.security.access.AccessDeniedException;
 import java.util.List;
 
 @Service
@@ -34,11 +35,26 @@ public class ProjectService {
                         new ResourceNotFoundException("user not found"));
     }
 
-    private Project getProjectForCurrentUser(Long id){
+    private Project getProjectForCurrentUser(Long id) throws AccessDeniedException {
+
         Project project = projectRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("project not found"));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("project not found"));
 
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
 
+        String email = authentication.getName();
+
+        UserEntity currentUser = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("user not found"));
+
+        if (!(project.getUser().getId() ==(currentUser.getId()))) {
+            throw new AccessDeniedException(
+                    "You are not allowed to modify this project"
+            );
+        }
 
         return project;
     }
@@ -49,7 +65,7 @@ public class ProjectService {
         return projectMapper.toDtoList(projects);
     }
 
-    public ProjectDto getProjectById(Long id){
+    public ProjectDto getProjectById(Long id) throws AccessDeniedException {
         Project project = getProjectForCurrentUser(id);
         return projectMapper.toDto(project);
     }
@@ -72,7 +88,7 @@ public class ProjectService {
     }
 
     @Transactional
-    public ProjectDto updateProject(Long id, UpdateProject request){
+    public ProjectDto updateProject(Long id, UpdateProject request) throws AccessDeniedException {
         Project project = getProjectForCurrentUser(id);
         projectMapper.updateEntityFromDto(request, project);
         Project updated = projectRepository.save(project);
@@ -80,7 +96,7 @@ public class ProjectService {
     }
 
     @Transactional
-    public void deleteProject(Long id) {
+    public void deleteProject(Long id) throws AccessDeniedException {
         Project project = getProjectForCurrentUser(id);
         projectRepository.delete(project);
     }

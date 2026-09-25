@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +30,20 @@ public class ConnectionService {
         if (sender.getId() == receiver.getId()) {
             throw new RuntimeException("you cannot connect with yourself");
         }
-        if (connectionRepo.findBySenderAndReceiver(sender, receiver).isPresent()) {
-            throw new RuntimeException("Connection request already exist");
+        Optional<ConnectionEntity> existingConnection =
+                connectionRepo.findConnectionBetweenUsers(sender, receiver);
+
+        if (existingConnection.isPresent()) {
+
+            ConnectionEntity connection = existingConnection.get();
+
+            if (connection.getStatus() == ConnectionStatus.ACCEPTED) {
+                throw new RuntimeException("You are already connected with this user");
+            }
+
+            if (connection.getStatus() == ConnectionStatus.PENDING) {
+                throw new RuntimeException("Connection request already exists");
+            }
         }
 
         ConnectionEntity connection = ConnectionEntity.builder()

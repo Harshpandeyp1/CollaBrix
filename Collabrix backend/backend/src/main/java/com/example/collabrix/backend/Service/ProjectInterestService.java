@@ -3,10 +3,12 @@
 
 import com.example.collabrix.backend.Dto.Project.ProjectInterestDto;
 import com.example.collabrix.backend.Entity.Project;
+import com.example.collabrix.backend.Entity.ProjectActivityEntity;
 import com.example.collabrix.backend.Entity.ProjectInterest;
 import com.example.collabrix.backend.Entity.UserEntity;
 import com.example.collabrix.backend.Enum.InterestStatus;
 import com.example.collabrix.backend.Enum.NotificationType;
+import com.example.collabrix.backend.Repository.ProjectActivityRepository;
 import com.example.collabrix.backend.Repository.ProjectInterestRepo;
 import com.example.collabrix.backend.Repository.ProjectRepo;
 import com.example.collabrix.backend.Repository.UserRepo;
@@ -31,6 +33,7 @@ public class ProjectInterestService {
     private final UserRepo userRepo;
     private final ProjectInterestMapper interestMapper;
     private final NotificationService notificationService;
+    private final ProjectActivityRepository activityRepository;
 
     // =========================================
     // CURRENT USER
@@ -217,9 +220,29 @@ public class ProjectInterestService {
 
         interest.setStatus(status);
 
+        InterestStatus oldStatus = interest.getStatus();
+
+        interest.setStatus(status);
+
         ProjectInterest updated =
                 interestRepo.save(interest);
 
+        if (oldStatus != InterestStatus.ACCEPTED &&
+                status == InterestStatus.ACCEPTED) {
+
+            ProjectActivityEntity activity =
+                    ProjectActivityEntity.builder()
+                            .project(project)
+                            .user(interest.getUser())
+                            .action("MEMBER_JOINED")
+                            .description(
+                                    interest.getUser().getUsername()
+                                            + " joined the project"
+                            )
+                            .build();
+
+            activityRepository.save(activity);
+        }
 
         return interestMapper.toDto(updated);
     }
@@ -268,6 +291,15 @@ public class ProjectInterestService {
                 .stream()
                 .map(interestMapper::toDto)
                 .toList();
+    }
+
+    public void removeInterest(Long interestId) {
+        ProjectInterest interest=interestRepo
+                .findById(interestId)
+                .orElseThrow(()->
+                        new RuntimeException("Interest not found"));
+
+        interestRepo.delete(interest);
     }
 }
 

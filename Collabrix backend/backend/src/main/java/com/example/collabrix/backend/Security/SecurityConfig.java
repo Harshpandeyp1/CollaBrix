@@ -76,6 +76,10 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**", "/api/auth/**").permitAll()
                         .requestMatchers("/api/media/**").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
+
+                        // WebSocket handshake
+                        .requestMatchers("/ws/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
 

@@ -1,5 +1,6 @@
 package com.example.collabrix.backend.Dto.profile;
 
+import com.example.collabrix.backend.Enum.ProfileRelationshipStatus;
 import lombok.*;
 
 import java.util.List;
@@ -37,4 +38,7 @@ public class profileDto {
     private String coverImage;
 
     private List<String> skills;
+
+    private ProfileRelationshipStatus relationshipStatus;
 }
+

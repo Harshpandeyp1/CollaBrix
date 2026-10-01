@@ -13,24 +13,38 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:5173")
-@RequestMapping( "/api/connections")
+@RequestMapping("/api/connections")
 @RequiredArgsConstructor
 public class ConnectionController {
+
     private final ConnectionService connectionService;
 
+
+    // =========================================================
+    // SEND CONNECTION REQUEST
+    // =========================================================
 
     @PostMapping("/request")
     public String sendConnectionRequest(
             @RequestBody ConnectionRequestDto requestDto,
-             Authentication authentication
-    ){
+            Authentication authentication
+    ) {
+
         String senderEmail = authentication.getName();
+
         connectionService.sendConnectionRequest(
                 senderEmail,
                 requestDto.getReceiverId()
         );
-        return "connection request sent";
+
+        return "Connection request sent";
     }
+
+
+    // =========================================================
+    // GET AVAILABLE USERS
+    // =========================================================
+
     @GetMapping("/users")
     public List<UserEntity> getAvailableUsers(
             Authentication authentication
@@ -40,6 +54,12 @@ public class ConnectionController {
 
         return connectionService.getAvailableUsers(email);
     }
+
+
+    // =========================================================
+    // GET PENDING CONNECTION REQUESTS
+    // =========================================================
+
     @GetMapping("/requests")
     public List<ConnectionEntity> getPendingRequests(
             Authentication authentication
@@ -49,6 +69,12 @@ public class ConnectionController {
 
         return connectionService.getPendingRequests(email);
     }
+
+
+    // =========================================================
+    // ACCEPT / REJECT CONNECTION REQUEST
+    // =========================================================
+
     @PutMapping("/{connectionId}/status")
     public String updateRequest(
             @PathVariable Long connectionId,
@@ -64,8 +90,14 @@ public class ConnectionController {
                 email
         );
 
-        return "connection request updated";
+        return "Connection request updated";
     }
+
+
+    // =========================================================
+    // GET MY CONNECTIONS
+    // =========================================================
+
     @GetMapping
     public List<ConnectionEntity> getMyConnections(
             Authentication authentication

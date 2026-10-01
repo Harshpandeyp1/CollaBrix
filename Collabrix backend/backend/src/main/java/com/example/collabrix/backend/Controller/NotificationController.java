@@ -1,5 +1,6 @@
 package com.example.collabrix.backend.Controller;
 
+import com.example.collabrix.backend.Dto.Notification.NotificationResponseDto;
 import com.example.collabrix.backend.Entity.NotificationEntity;
 import com.example.collabrix.backend.Service.NotificationService;
 import lombok.RequiredArgsConstructor;
@@ -12,18 +13,31 @@ import java.util.List;
 @RequestMapping({"/notifications", "/api/notifications"})
 @RequiredArgsConstructor
 public class NotificationController {
+
     private final NotificationService notificationService;
 
+
+    // =========================================================
+    // GET ALL NOTIFICATIONS
+    // =========================================================
+
     @GetMapping
-    public List<NotificationEntity>getMyNotification(
+    public List<NotificationResponseDto> getMyNotifications(
             Authentication authentication
-    ){
-        String email=authentication.getName();
-        return notificationService.getMyNotification(email);
+    ) {
+
+        String email = authentication.getName();
+
+        return notificationService.getNotifications(email);
     }
-    // Get unread notifications
+
+
+    // =========================================================
+    // GET UNREAD NOTIFICATIONS
+    // =========================================================
+
     @GetMapping("/unread")
-    public List<NotificationEntity> getUnreadNotifications(
+    public List<NotificationResponseDto> getUnreadNotifications(
             Authentication authentication
     ) {
 
@@ -31,6 +45,12 @@ public class NotificationController {
 
         return notificationService.getUnreadNotifications(email);
     }
+
+
+    // =========================================================
+    // MARK ONE NOTIFICATION AS READ
+    // =========================================================
+
     @PutMapping("/{notificationId}/read")
     public String markAsRead(
             @PathVariable Long notificationId,
@@ -40,10 +60,10 @@ public class NotificationController {
         String email = authentication.getName();
 
         notificationService.markAsRead(
-                notificationId,
-                email
+                email,
+                notificationId
         );
 
-        return "notification marked as read";
+        return "Notification marked as read";
     }
 }

@@ -45,6 +45,22 @@ public class ProjectController {
 
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<List<ProjectDto>>> getProjectsByUserId(
+            @PathVariable Long userId
+    ) {
+        List<ProjectDto> projects = projectService.getProjectsByUserId(userId);
+
+        ApiResponse<List<ProjectDto>> response = new ApiResponse<>(
+                true,
+                "Projects fetched successfully",
+                projects
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/discovery")
     public ResponseEntity<ApiResponse<List<ProjectDto>>> getAllProjects() {
 

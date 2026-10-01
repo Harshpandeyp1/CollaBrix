@@ -47,6 +47,21 @@ public class FeaturedController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<List<FeaturedDto>>> getFeaturedByUserId(
+            @PathVariable Long userId
+    ) {
+        List<FeaturedDto> featuredList = featuredService.getFeaturedByUserId(userId);
+
+        ApiResponse<List<FeaturedDto>> response = new ApiResponse<>(
+                true,
+                "Featured items fetched successfully",
+                featuredList
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<FeaturedDto>> getFeaturedById(
             @PathVariable Long id

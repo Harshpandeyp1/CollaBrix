@@ -45,6 +45,21 @@ public class EducationalController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<ApiResponse<List<EducationDto>>> getEducationsByUserId(
+            @PathVariable Long userId
+    ) {
+        List<EducationDto> education = educationService.getEducationsByUserId(userId);
+
+        ApiResponse<List<EducationDto>> response = new ApiResponse<>(
+                true,
+                "Education fetched successfully",
+                education
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<EducationDto>> getEducationById(
             @PathVariable Long id

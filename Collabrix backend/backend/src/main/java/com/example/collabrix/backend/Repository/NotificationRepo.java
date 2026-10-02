@@ -9,11 +9,13 @@ import java.util.List;
 public interface NotificationRepo
         extends JpaRepository<NotificationEntity, Long> {
 
-    List<NotificationEntity> findByRecipientOrderByCreatedAtDesc(
+    List<NotificationEntity>
+    findByRecipientOrderByCreatedAtDesc(
             UserEntity recipient
     );
 
-    List<NotificationEntity> findByRecipientAndIsReadFalseOrderByCreatedAtDesc(
+    List<NotificationEntity>
+    findByRecipientAndIsReadFalseOrderByCreatedAtDesc(
             UserEntity recipient
     );
 }

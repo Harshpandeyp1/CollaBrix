@@ -86,4 +86,11 @@ public class EducationService {
         Education education = getEducationForCurrentUser(id);
         educationRepository.delete(education);
     }
+    public List<EducationDto> getEducationsByUserId(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        List<Education> educations = educationRepository.findByUserOrderByStartDateDesc(user);
+        return educationMapper.toDtoList(educations);
+    }
 }

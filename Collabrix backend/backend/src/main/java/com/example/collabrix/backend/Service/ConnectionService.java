@@ -3,104 +3,234 @@ package com.example.collabrix.backend.Service;
 import com.example.collabrix.backend.Entity.ConnectionEntity;
 import com.example.collabrix.backend.Entity.UserEntity;
 import com.example.collabrix.backend.Enum.ConnectionStatus;
-import com.example.collabrix.backend.Enum.NotificationType;
+import com.example.collabrix.backend.Events.ConnectionAcceptedEvent;
+import com.example.collabrix.backend.Events.ConnectionRequestEvent;
+import com.example.collabrix.backend.Events.ConnectionRequestSentEvent;
 import com.example.collabrix.backend.Repository.ConnectionRepo;
-import com.example.collabrix.backend.Repository.NotificationRepo;
 import com.example.collabrix.backend.Repository.UserRepo;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ConnectionService {
+
     private final ConnectionRepo connectionRepo;
     private final UserRepo userRepo;
-    private final NotificationRepo notificationRepo;
-    private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public void sendConnectionRequest(String senderEmail, Long receiverId) {
-        UserEntity sender = userRepo.findByEmail(senderEmail)
-                .orElseThrow();
-        UserEntity receiver = userRepo.findById(receiverId)
-                .orElseThrow();
 
-        if (sender.getId() == receiver.getId()) {
-            throw new RuntimeException("you cannot connect with yourself");
+    // =========================================================
+    // SEND CONNECTION REQUEST
+    // =========================================================
+
+    public void sendConnectionRequest(
+            String senderEmail,
+            Long receiverId
+    ) {
+
+        UserEntity sender =
+                userRepo.findByEmail(senderEmail)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Sender not found"
+                                )
+                        );
+
+        UserEntity receiver =
+                userRepo.findById(receiverId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Receiver not found"
+                                )
+                        );
+
+
+        // Cannot send request to yourself
+        if (sender.getId()==(receiver.getId())) {
+
+            throw new RuntimeException(
+                    "You cannot send a connection request to yourself"
+            );
         }
-        Optional<ConnectionEntity> existingConnection =
-                connectionRepo.findConnectionBetweenUsers(sender, receiver);
 
-        if (existingConnection.isPresent()) {
 
-            ConnectionEntity connection = existingConnection.get();
+        // Check whether connection already exists
+        if (connectionRepo
+                .findConnectionBetweenUsers(
+                        sender,
+                        receiver
+                )
+                .isPresent()) {
 
-            if (connection.getStatus() == ConnectionStatus.ACCEPTED) {
-                throw new RuntimeException("You are already connected with this user");
-            }
-
-            if (connection.getStatus() == ConnectionStatus.PENDING) {
-                throw new RuntimeException("Connection request already exists");
-            }
+            throw new RuntimeException(
+                    "Connection already exists"
+            );
         }
 
-        ConnectionEntity connection = ConnectionEntity.builder()
-                .sender(sender)
-                .receiver(receiver)
-                .status(ConnectionStatus.PENDING)
-                .build();
+
+        ConnectionEntity connection =
+                ConnectionEntity.builder()
+                        .sender(sender)
+                        .receiver(receiver)
+                        .status(ConnectionStatus.PENDING)
+                        .build();
+
 
         connectionRepo.save(connection);
 
-        notificationService.createNotification(
-                receiver,
-                sender,
-                NotificationType.CONNECTION_REQUEST,
-                sender.getUsername() + " sent you a connection request",
-                connection.getId()
+        eventPublisher.publishEvent(
+                new ConnectionRequestSentEvent(
+                        receiver.getId(),
+                        sender.getId()
+                )
+
         );
     }
-    public List<UserEntity> getAvailableUsers(String email) {
 
-        UserEntity currentUser = userRepo.findByEmail(email)
-                .orElseThrow();
 
-        return userRepo.findAllByIdNot(currentUser.getId());
+    // =========================================================
+    // GET AVAILABLE USERS
+    // =========================================================
+
+    public List<UserEntity> getAvailableUsers(
+            String email
+    ) {
+
+        UserEntity currentUser =
+                userRepo.findByEmail(email)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "User not found"
+                                )
+                        );
+
+
+        return userRepo.findAll()
+                .stream()
+                .filter(user ->
+                        !(user.getId() ==(
+                                currentUser.getId()
+                        ))
+                )
+                .toList();
     }
-    public List<ConnectionEntity> getPendingRequests(String email) {
 
-        UserEntity currentUser = userRepo.findByEmail(email)
-                .orElseThrow();
 
-        return connectionRepo.findByReceiverAndStatus(
-                currentUser,
-                ConnectionStatus.PENDING
-        );
+    // =========================================================
+    // GET PENDING REQUESTS
+    // =========================================================
+
+    public List<ConnectionEntity> getPendingRequests(
+            String email
+    ) {
+
+        UserEntity currentUser =
+                userRepo.findByEmail(email)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "User not found"
+                                )
+                        );
+
+
+        return connectionRepo
+                .findByReceiverAndStatus(
+                        currentUser,
+                        ConnectionStatus.PENDING
+                );
     }
+
+
+    // =========================================================
+    // ACCEPT / REJECT REQUEST
+    // =========================================================
+
     public void updateRequest(
             Long connectionId,
             ConnectionStatus status,
-            String email
-    ){
-        UserEntity currUser=userRepo.findByEmail(email)
-                .orElseThrow();
-        ConnectionEntity connection=connectionRepo.findById(connectionId)
-                .orElseThrow();
+            String currentUserEmail
+    ) {
 
-        if (connection.getReceiver().getId() != currUser.getId()) {
-            throw new RuntimeException("only receiver can update this request");
+        UserEntity currentUser =
+                userRepo.findByEmail(currentUserEmail)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "User not found"
+                                )
+                        );
+
+
+        ConnectionEntity connection =
+                connectionRepo.findById(connectionId)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Connection request not found"
+                                )
+                        );
+
+
+        // Only the receiver can accept/reject
+        if (!(connection.getReceiver()
+                .getId()
+                ==(currentUser.getId()))) {
+
+            throw new RuntimeException(
+                    "You are not allowed to modify this request"
+            );
         }
+
+
+        // Request must still be pending
+        if (connection.getStatus()
+                != ConnectionStatus.PENDING) {
+
+            throw new RuntimeException(
+                    "Connection request is not pending"
+            );
+        }
+
 
         connection.setStatus(status);
 
         connectionRepo.save(connection);
-    }
-    public List<ConnectionEntity> getMyConnections(String email) {
 
-        UserEntity currentUser = userRepo.findByEmail(email)
-                .orElseThrow();
+
+        // =====================================================
+        // EVENT-DRIVEN NOTIFICATION
+        // =====================================================
+
+        if (status == ConnectionStatus.ACCEPTED) {
+
+            eventPublisher.publishEvent(
+                    new ConnectionAcceptedEvent(
+                            connection.getSender(),
+                            connection.getReceiver()
+                    )
+            );
+        }
+    }
+
+
+    // =========================================================
+    // GET MY CONNECTIONS
+    // =========================================================
+
+    public List<ConnectionEntity> getMyConnections(
+            String email
+    ) {
+
+        UserEntity currentUser =
+                userRepo.findByEmail(email)
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "User not found"
+                                )
+                        );
+
 
         List<ConnectionEntity> sent =
                 connectionRepo.findBySenderAndStatus(
@@ -108,11 +238,13 @@ public class ConnectionService {
                         ConnectionStatus.ACCEPTED
                 );
 
+
         List<ConnectionEntity> received =
                 connectionRepo.findByReceiverAndStatus(
                         currentUser,
                         ConnectionStatus.ACCEPTED
                 );
+
 
         sent.addAll(received);
 

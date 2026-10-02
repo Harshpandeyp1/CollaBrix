@@ -8,6 +8,8 @@ import com.example.collabrix.backend.Entity.ProjectInterest;
 import com.example.collabrix.backend.Entity.UserEntity;
 import com.example.collabrix.backend.Enum.InterestStatus;
 import com.example.collabrix.backend.Enum.NotificationType;
+import com.example.collabrix.backend.Events.ProjectInterestAcceptedEvent;
+import com.example.collabrix.backend.Events.ProjectInterestCreatedEvent;
 import com.example.collabrix.backend.Repository.ProjectActivityRepository;
 import com.example.collabrix.backend.Repository.ProjectInterestRepo;
 import com.example.collabrix.backend.Repository.ProjectRepo;
@@ -16,6 +18,7 @@ import com.example.collabrix.backend.exception.ResourceNotFoundException;
 import com.example.collabrix.backend.mapper.ProjectInterestMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +37,7 @@ public class ProjectInterestService {
     private final ProjectInterestMapper interestMapper;
     private final NotificationService notificationService;
     private final ProjectActivityRepository activityRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     // =========================================
     // CURRENT USER
@@ -133,13 +137,17 @@ public class ProjectInterestService {
 
         ProjectInterest saved =
                 interestRepo.save(interest);
-        notificationService.createNotification(
-                project.getUser(),
-                currentUser,
-                NotificationType.PROJECT_INTEREST,
-                currentUser.getUsername() + " is interested in your project \""
-                        + project.getTitle() + "\"",
-                project.getId()
+
+        eventPublisher.publishEvent(
+                new ProjectInterestCreatedEvent(
+                        project.getUser().getId(),
+                        currentUser.getId(),
+                        project.getId(),
+                        currentUser.getUsername()
+                                + " is interested in your project \""
+                                + project.getTitle()
+                                + "\""
+                )
         );
 
         return interestMapper.toDto(saved);
@@ -230,6 +238,18 @@ public class ProjectInterestService {
         if (oldStatus != InterestStatus.ACCEPTED &&
                 status == InterestStatus.ACCEPTED) {
 
+            eventPublisher.publishEvent(
+                    new ProjectInterestAcceptedEvent(
+                            interest.getUser().getId(),
+                            currentUser.getId(),
+                            project.getId(),
+                            currentUser.getUsername()
+                                    + " accepted your interest in project \""
+                                    + project.getTitle()
+                                    + "\""
+                    )
+            );
+
             ProjectActivityEntity activity =
                     ProjectActivityEntity.builder()
                             .project(project)
@@ -243,7 +263,6 @@ public class ProjectInterestService {
 
             activityRepository.save(activity);
         }
-
         return interestMapper.toDto(updated);
     }
 

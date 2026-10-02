@@ -105,6 +105,8 @@ public class MessageService {
 
         MessageEntity savedMessage =
                 messageRepo.save(message);
+        System.out.println("MESSAGE SAVED TO DATABASE");
+        System.out.println("MESSAGE ID = " + savedMessage.getId());
 
 
         // Convert Entity → DTO

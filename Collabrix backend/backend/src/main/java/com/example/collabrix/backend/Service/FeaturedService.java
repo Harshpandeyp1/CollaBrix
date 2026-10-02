@@ -56,6 +56,14 @@ public class FeaturedService {
         return featuredMapper.toDtoList(featured);
     }
 
+    public List<FeaturedDto> getFeaturedByUserId(Long userId) {
+        UserEntity user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        List<Featured> featured = featuredRepo.findByUser(user);
+        return featuredMapper.toDtoList(featured);
+    }
+
     public FeaturedDto getFeaturedById(Long id){
         Featured featured=getFeaturedForCurrentUser(id);
         return featuredMapper.toDto(featured);

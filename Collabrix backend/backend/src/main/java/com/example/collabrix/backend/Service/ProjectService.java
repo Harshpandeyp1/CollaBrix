@@ -65,6 +65,14 @@ public class ProjectService {
         return projectMapper.toDtoList(projects);
     }
 
+    public List<ProjectDto> getProjectsByUserId(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        List<Project> projects = projectRepository.findByUserOrderByIdDesc(user);
+        return projectMapper.toDtoList(projects);
+    }
+
     public ProjectDto getProjectById(Long id) throws AccessDeniedException {
         Project project = getProjectForCurrentUser(id);
         return projectMapper.toDto(project);

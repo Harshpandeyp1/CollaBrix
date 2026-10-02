@@ -1,8 +1,10 @@
 package com.example.collabrix.backend.Security;
 
+import com.example.collabrix.backend.Security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
@@ -12,8 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class WebSocketAuthInterceptor
-        implements ChannelInterceptor {
+public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
     private final JwtService jwtService;
     private final CustomUserDetailService customUserDetailService;
@@ -24,14 +25,32 @@ public class WebSocketAuthInterceptor
             MessageChannel channel
     ) {
 
+        // Use the accessor already associated with this message. Wrapping the
+        // message creates a detached accessor, so changes such as setUser(...)
+        // would not be stored in the STOMP/WebSocket session.
         StompHeaderAccessor accessor =
-                StompHeaderAccessor.wrap(message);
+                MessageHeaderAccessor.getAccessor(
+                        message,
+                        StompHeaderAccessor.class
+                );
 
-        // Only authenticate when client connects
+        if (accessor == null) {
+            return message;
+        }
+
+        System.out.println(
+                "STOMP COMMAND = " + accessor.getCommand()
+        );
+
+        // Authenticate only when client connects
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
 
             String authHeader =
                     accessor.getFirstNativeHeader("Authorization");
+
+            System.out.println(
+                    "WEBSOCKET AUTH HEADER = " + authHeader
+            );
 
             if (authHeader == null ||
                     !authHeader.startsWith("Bearer ")) {
@@ -41,10 +60,15 @@ public class WebSocketAuthInterceptor
                 );
             }
 
-            String jwt = authHeader.substring(7);
+            String jwt =
+                    authHeader.substring(7);
 
             String email =
                     jwtService.extractEmail(jwt);
+
+            System.out.println(
+                    "WEBSOCKET USER = " + email
+            );
 
             UserDetails userDetails =
                     customUserDetailService
@@ -67,7 +91,15 @@ public class WebSocketAuthInterceptor
                             userDetails.getAuthorities()
                     );
 
+            /*
+             * Attach authenticated user to the WebSocket session
+             */
             accessor.setUser(authentication);
+
+            System.out.println(
+                    "WEBSOCKET AUTHENTICATION SET = "
+                            + authentication.getName()
+            );
         }
 
         return message;

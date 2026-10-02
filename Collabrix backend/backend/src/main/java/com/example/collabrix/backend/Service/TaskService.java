@@ -9,8 +9,10 @@ import com.example.collabrix.backend.Entity.TaskEntity;
 import com.example.collabrix.backend.Entity.UserEntity;
 import com.example.collabrix.backend.Enum.InterestStatus;
 import com.example.collabrix.backend.Enum.TaskStatus;
+import com.example.collabrix.backend.Events.TaskAssignedEvent;
 import com.example.collabrix.backend.Repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -28,7 +30,7 @@ public class TaskService {
     private final ProjectInterestRepo projectInterestRepo;
     private final UserRepo userRepo;
     private final ProjectActivityRepository activityRepository;
-
+    private final ApplicationEventPublisher eventPublisher;
 
     // Get logged-in user
     private UserEntity getCurrentUser() {
@@ -159,6 +161,19 @@ public class TaskService {
         TaskEntity savedTask =
                 taskRepository.save(task);
 
+        if (savedTask.getAssignedTo() != null) {
+
+            eventPublisher.publishEvent(
+                    new TaskAssignedEvent(
+                            savedTask.getAssignedTo().getId(),
+                            currentUser.getId(),
+                            savedTask.getId(),
+                            currentUser.getUsername()
+                                    + " assigned you a task: "
+                                    + savedTask.getTitle()
+                    )
+            );
+        }
 
         ProjectActivityEntity activity =
                 ProjectActivityEntity.builder()

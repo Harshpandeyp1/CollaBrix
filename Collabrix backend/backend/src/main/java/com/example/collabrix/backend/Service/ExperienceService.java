@@ -59,6 +59,14 @@ public class ExperienceService {
         return experienceMapper.toDtoList(experiences);
     }
 
+    public List<experienceDto> getExperiencesByUserId(Long userId) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        List<Experience> experiences = experienceRepository.findByUserOrderByStartDateDesc(user);
+        return experienceMapper.toDtoList(experiences);
+    }
+
     public experienceDto getExperienceById(Long id) {
         Experience experience = getExperienceForCurrentUser(id);
         return experienceMapper.toDto(experience);

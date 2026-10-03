@@ -36,57 +36,66 @@ const ExperienceCard = ({ experience, onEdit, onDelete }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm hover:shadow-md transition p-6  dark:bg-linear-to-br
-      dark:from-zinc-800
-      dark:via-teal-900
-      dark:to-zinc-800">
+    <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-zinc-700">
 
       {/* Company & Position */}
       <div className="flex justify-between items-start gap-3">
-        <div>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white">
+        <div className="min-w-0">
+          <h3 className="line-clamp-1 text-lg font-bold text-slate-900 dark:text-white">
             {experience.company}
           </h3>
 
-          <p className="text-indigo-600 font-semibold mt-1 dark:text-zinc-400">
+          <p className="mt-1 text-sm font-semibold text-indigo-600 dark:text-indigo-300">
             {experience.position}
           </p>
 
           {experience.employmentType && (
-            <span className="inline-block mt-2 text-xs font-medium text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full">
+            <span className="mt-2 inline-block rounded-lg border border-slate-100 bg-slate-50 px-2 py-1 text-[11px] font-medium text-slate-600 dark:border-zinc-800 dark:bg-zinc-800/80 dark:text-zinc-300">
               {experience.employmentType}
             </span>
           )}
         </div>
 
         {/* Buttons */}
-        <div className="flex gap-2 shrink-0">
-          <button
-            onClick={() => onEdit(experience)}
-            className="flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 transition dark:text-white dark:hover:bg-zinc-800 dark:bg-black"
-          >
-            <Pencil size={14} /> Edit
-          </button>
+        {(onEdit || onDelete) && (
+          <div className="flex shrink-0 gap-1">
+            {onEdit && (
+              <button
+                type="button"
+                onClick={() => onEdit(experience)}
+                title="Edit experience"
+                aria-label="Edit experience"
+                className="rounded-lg p-2 text-slate-500 transition hover:bg-slate-100 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+              >
+                <Pencil size={16} />
+              </button>
+            )}
 
-          <button
-            onClick={handleDelete}
-            className="flex items-center gap-1 rounded-lg border border-red-300 px-3 py-1.5 text-sm text-red-600 hover:bg-red-50 transition"
-          >
-            <Trash2 size={14} /> Delete
-          </button>
-        </div>
+            {onDelete && (
+              <button
+                type="button"
+                onClick={handleDelete}
+                title="Delete experience"
+                aria-label="Delete experience"
+                className="rounded-lg p-2 text-rose-500 transition hover:bg-rose-50 dark:hover:bg-rose-950/40"
+              >
+                <Trash2 size={16} />
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Location */}
       {experience.location && (
-        <div className="mt-3 flex items-center gap-2 text-sm text-gray-600 dark:text-zinc-400">
+        <div className="mt-3 flex items-center gap-2 text-xs text-slate-500 dark:text-zinc-400">
           <MapPin size={14} />
           <span>{experience.location}</span>
         </div>
       )}
 
       {/* Date Range + Duration */}
-      <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-gray-500 dark:text-zinc-400">
+      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-zinc-400">
         <Calendar size={14} />
         <span>
           {formatDate(experience.startDate)} -{" "}
@@ -96,7 +105,7 @@ const ExperienceCard = ({ experience, onEdit, onDelete }) => {
         <span>{getDuration(experience.startDate, experience.endDate, experience.currentlyWorking)}</span>
 
         {experience.currentlyWorking && (
-          <span className="ml-1 text-xs font-medium text-green-700 bg-green-50 px-2 py-0.5 rounded-full">
+          <span className="ml-1 rounded-lg border border-emerald-100 bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300">
             Current
           </span>
         )}
@@ -108,7 +117,7 @@ const ExperienceCard = ({ experience, onEdit, onDelete }) => {
           {experience.skills.map((skill, i) => (
             <span
               key={i}
-              className="text-xs bg-gray-100 text-gray-700 px-2.5 py-1 rounded-full"
+              className="rounded-lg border border-slate-100 bg-slate-50 px-2 py-1 text-[11px] font-medium text-slate-600 dark:border-zinc-800 dark:bg-zinc-800/80 dark:text-zinc-300"
             >
               {skill}
             </span>
@@ -118,8 +127,8 @@ const ExperienceCard = ({ experience, onEdit, onDelete }) => {
 
       {/* Description */}
       {experience.description && (
-        <div className="mt-4 border-t pt-4">
-          <p className="text-gray-700 leading-relaxed">
+        <div className="mt-4 border-t border-slate-100 pt-4 dark:border-zinc-800">
+          <p className="text-sm leading-relaxed text-slate-600 dark:text-zinc-400">
             {experience.description}
           </p>
         </div>

@@ -47,30 +47,25 @@ const normalizeUrl = (url) => {
 
 const ProjectCard = ({
   project = {},
+  currentUserId,
   onEdit,
   onDelete,
   onViewInterests,
   onViewProject,
 }) => {
   // Safe authentication parsing
-  let currentUserId = null;
-  try {
-    const currentUser = JSON.parse(localStorage.getItem("user") || "null");
-    currentUserId = currentUser?.id ?? currentUser?._id;
-  } catch (err) {
-    console.error("Failed to parse user from localStorage:", err);
-  }
-
+  
   const isOwner = Boolean(
     currentUserId && Number(project?.userId) === Number(currentUserId)
-  );
+  );  console.log("PROJECT:", project);
+console.log("CURRENT USER ID:", currentUserId);
+console.log("PROJECT USER ID:", project?.userId);
+console.log("IS OWNER:", isOwner);
 
-  const handleDelete = (e) => {
-    e.stopPropagation();
-    if (window.confirm(`Are you sure you want to delete "${project?.title}"?`)) {
-      onDelete?.(project);
-    }
-  };
+ const handleDelete = (e) => {
+  e.stopPropagation();
+  onDelete?.(project);
+};
 
   const techList = Array.isArray(project?.techStack)
     ? project.techStack

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 
 import {
   getFeatured,
+  getFeaturedByUserId,
   deleteFeatured,
 } from "../Services/Featured.js";
 
@@ -10,7 +11,7 @@ import FeaturedCard from "./FeaturedCard";
 import FeaturedModal from "./FeaturedModal";
 
 
-const FeaturedSection = () => {
+const FeaturedSection = ({ userId }) => {
 
   const [featured, setFeatured] = useState([]);
 
@@ -20,6 +21,8 @@ const FeaturedSection = () => {
 
   const [selectedFeatured, setSelectedFeatured] =
     useState(null);
+
+  const isOwnProfile = !userId;
 
 
   /* =====================================================
@@ -32,7 +35,9 @@ const FeaturedSection = () => {
 
       setLoading(true);
 
-      const data = await getFeatured();
+      const data = userId
+        ? await getFeaturedByUserId(userId)
+        : await getFeatured();
 
       setFeatured(
         Array.isArray(data) ? data : []
@@ -63,7 +68,7 @@ const FeaturedSection = () => {
 
     fetchFeatured();
 
-  }, []);
+  }, [userId]);
 
 
   /* =====================================================
@@ -71,6 +76,8 @@ const FeaturedSection = () => {
   ===================================================== */
 
   const handleEdit = (featuredItem) => {
+
+    if (!isOwnProfile) return;
 
     setSelectedFeatured(featuredItem);
 
@@ -84,6 +91,8 @@ const FeaturedSection = () => {
   ===================================================== */
 
   const handleDelete = async (featuredOrId) => {
+
+    if (!isOwnProfile) return;
 
     const id =
       typeof featuredOrId === "string"
@@ -192,7 +201,7 @@ const FeaturedSection = () => {
 
           {/* ADD FEATURED */}
 
-          <button
+          {isOwnProfile && <button
             onClick={() => {
 
               setSelectedFeatured(null);
@@ -216,7 +225,7 @@ const FeaturedSection = () => {
             "
           >
             Add Featured
-          </button>
+          </button>}
 
         </div>
 
@@ -298,8 +307,8 @@ const FeaturedSection = () => {
 
                 <FeaturedCard
                   featured={item}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
+                  onEdit={isOwnProfile ? handleEdit : undefined}
+                  onDelete={isOwnProfile ? handleDelete : undefined}
                 />
 
               </div>
@@ -328,7 +337,7 @@ const FeaturedSection = () => {
           MODAL
       ================================================= */}
 
-      <FeaturedModal
+      {isOwnProfile && <FeaturedModal
         open={open}
         onClose={() => {
 
@@ -339,7 +348,7 @@ const FeaturedSection = () => {
         }}
         onSave={handleSaved}
         featured={selectedFeatured}
-      />
+      />}
 
     </section>
 

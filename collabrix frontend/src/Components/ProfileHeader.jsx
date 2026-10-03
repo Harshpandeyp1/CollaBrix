@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { Camera, Pencil } from "lucide-react";
 import { uploadProfileImage, uploadCoverImage } from "../Services/Profile";
 
 // ------------------------------------------------------
@@ -171,10 +172,13 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
 
         {onEdit && (
           <button
+            type="button"
             onClick={onEdit}
-            className="absolute right-4 top-4 rounded-full bg-white/80 px-4 py-2 text-sm font-medium backdrop-blur hover:bg-white transition dark:bg-black dark:hover:bg-zinc-900"
+            title="Edit profile"
+            aria-label="Edit profile"
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-800 shadow-sm backdrop-blur transition hover:bg-white dark:bg-zinc-900/80 dark:text-white dark:hover:bg-zinc-900"
           >
-            Edit
+            <Pencil size={17} />
           </button>
         )}
 
@@ -192,15 +196,15 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
           type="button"
           onClick={handleCoverCameraClick}
           disabled={isCoverUploading}
+          title="Change cover photo"
           aria-label="Change cover photo"
-          className="absolute right-4 bottom-4 flex items-center gap-2 rounded-full bg-white/80 px-4 py-2 text-sm font-medium backdrop-blur hover:bg-white transition disabled:opacity-50 dark:bg-black dark:hover:bg-zinc-900"
+          className="absolute right-4 bottom-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-800 shadow-sm backdrop-blur transition hover:bg-white disabled:opacity-50 dark:bg-zinc-900/80 dark:text-white dark:hover:bg-zinc-900"
         >
           {isCoverUploading ? (
             <span className="h-3 w-3 animate-spin rounded-full border-2 border-gray-500 border-t-transparent " />
           ) : (
-            <span>📷</span>
+            <Camera size={17} />
           )}
-          Change Cover
         </button>
       </div>
 
@@ -241,13 +245,14 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
               type="button"
               onClick={handleCameraClick}
               disabled={isUploading}
+              title="Change profile photo"
               aria-label="Change profile photo"
-              className="absolute bottom-1 right-1 flex h-9 w-9 items-center justify-center rounded-full bg-white border border-gray-300 shadow-md hover:bg-gray-50 transition disabled:opacity-50"
+              className="absolute bottom-1 right-1 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-md transition hover:bg-slate-50 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
             >
               {isUploading ? (
                 <span className="h-3 w-3 animate-spin rounded-full border-2 border-gray-400 border-t-transparent" />
               ) : (
-                <span className="text-sm">📷</span>
+                <Camera size={15} />
               )}
             </button>
           </div>

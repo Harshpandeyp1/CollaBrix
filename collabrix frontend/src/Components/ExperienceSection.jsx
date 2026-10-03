@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 
 import {
   getExperience,
+  getExperienceByUserId,
   deleteExperience,
 } from "../Services/Experience.js";
 
@@ -10,7 +11,7 @@ import ExperienceCard from "../Components/ExperienceCard.jsx";
 import ExperienceModal from "../Components/ExperienceModal";
 
 
-const ExperienceSection = () => {
+const ExperienceSection = ({ userId }) => {
 
   const [experiences, setExperiences] = useState([]);
 
@@ -20,6 +21,8 @@ const ExperienceSection = () => {
 
   const [selectedExperience, setSelectedExperience] =
     useState(null);
+
+  const isOwnProfile = !userId;
 
 
   /* =====================================================
@@ -32,7 +35,9 @@ const ExperienceSection = () => {
 
       setLoading(true);
 
-      const data = await getExperience();
+      const data = userId
+        ? await getExperienceByUserId(userId)
+        : await getExperience();
 
       console.log(
         "Experience fetch response:",
@@ -76,7 +81,7 @@ const ExperienceSection = () => {
 
     fetchExperiences();
 
-  }, []);
+  }, [userId]);
 
 
   /* =====================================================
@@ -84,6 +89,8 @@ const ExperienceSection = () => {
   ===================================================== */
 
   const handleEdit = (experience) => {
+
+    if (!isOwnProfile) return;
 
     setSelectedExperience(experience);
 
@@ -97,6 +104,8 @@ const ExperienceSection = () => {
   ===================================================== */
 
   const handleDelete = async (experienceOrId) => {
+
+    if (!isOwnProfile) return;
 
     const id =
       typeof experienceOrId === "string"
@@ -198,7 +207,7 @@ const ExperienceSection = () => {
 
         {/* ADD EXPERIENCE */}
 
-        <button
+        {isOwnProfile && <button
           onClick={() => {
 
             setSelectedExperience(null);
@@ -222,7 +231,7 @@ const ExperienceSection = () => {
           "
         >
           Add Experience
-        </button>
+        </button>}
 
       </div>
 
@@ -301,8 +310,8 @@ const ExperienceSection = () => {
 
               <ExperienceCard
                 experience={experience}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
+                onEdit={isOwnProfile ? handleEdit : undefined}
+                onDelete={isOwnProfile ? handleDelete : undefined}
               />
 
             </div>
@@ -327,7 +336,7 @@ const ExperienceSection = () => {
           EXPERIENCE MODAL
       ================================================= */}
 
-      <ExperienceModal
+      {isOwnProfile && <ExperienceModal
         open={open}
         onClose={() => {
 
@@ -338,7 +347,7 @@ const ExperienceSection = () => {
         }}
         onSave={handleSaved}
         experience={selectedExperience}
-      />
+      />}
 
     </section>
 

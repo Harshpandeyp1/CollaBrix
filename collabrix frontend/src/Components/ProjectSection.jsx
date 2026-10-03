@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import ProjectInterestModal from "./ProjectInterestModal.jsx";
 import {
   getProjects,
+  getProjectsByUserId,
   deleteProject,
 
 } from "../Services/Project.js";
@@ -10,13 +11,14 @@ import {
 import ProjectCard from "./ProjectCard.jsx";
 import ProjectModal from "./ProjectModal.jsx";
 
-const ProjectSection = () => {
+const ProjectSection = ({ userId }) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [interestOpen, setInterestOpen] = useState(false);
   const [interestProject, setInterestProject] = useState(null);
+  const isOwnProfile = !userId;
  
   // =========================================
   // FETCH PROJECTS
@@ -30,7 +32,9 @@ const handleViewInterests = (project) => {
     try {
       setLoading(true);
 
-      const data = await getProjects();
+      const data = userId
+        ? await getProjectsByUserId(userId)
+        : await getProjects();
 
       console.log("Project fetch response:", data);
 
@@ -45,13 +49,14 @@ const handleViewInterests = (project) => {
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [userId]);
 
   // =========================================
   // EDIT PROJECT
   // =========================================
 
   const handleEdit = (project) => {
+    if (!isOwnProfile) return;
     setSelectedProject(project);
     setOpen(true);
   };
@@ -61,6 +66,7 @@ const handleViewInterests = (project) => {
   // =========================================
 
   const handleDelete = async (projectOrId) => {
+    if (!isOwnProfile) return;
     const id =
       typeof projectOrId === "string"
         ? projectOrId
@@ -118,7 +124,7 @@ const handleViewInterests = (project) => {
           </p>
         </div>
 
-        <button
+        {isOwnProfile && <button
           onClick={() => {
             setSelectedProject(null);
             setOpen(true);
@@ -139,7 +145,7 @@ const handleViewInterests = (project) => {
           "
         >
           Add Project
-        </button>
+        </button>}
 
       </div>
 
@@ -191,9 +197,9 @@ const handleViewInterests = (project) => {
 
               <ProjectCard
               project={project}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-              onViewInterests={handleViewInterests}
+              onEdit={isOwnProfile ? handleEdit : undefined}
+              onDelete={isOwnProfile ? handleDelete : undefined}
+              onViewInterests={isOwnProfile ? handleViewInterests : undefined}
             />
             </div>
 
@@ -213,16 +219,16 @@ const handleViewInterests = (project) => {
           MODALS
       ====================================== */}
 
-      <ProjectInterestModal
+      {isOwnProfile && <ProjectInterestModal
         open={interestOpen}
         project={interestProject}
         onClose={() => {
           setInterestOpen(false);
           setInterestProject(null);
         }}
-      />
+      />}
 
-      <ProjectModal
+      {isOwnProfile && <ProjectModal
         open={open}
         onClose={() => {
           setOpen(false);
@@ -230,7 +236,7 @@ const handleViewInterests = (project) => {
         }}
         onSave={handleSaved}
         project={selectedProject}
-      />
+      />}
 
     </section>
   );

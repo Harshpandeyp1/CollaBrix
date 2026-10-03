@@ -5,6 +5,11 @@ export const getExperience=async () => {
     return response.data.data;
 }
 
+export const getExperienceByUserId = async (userId) => {
+    const response = await api.get(`/experiences/user/${userId}`);
+    return response.data?.data ?? response.data ?? [];
+}
+
 export const createExperience=async (experiences) => {
     const response = await api.post('/experiences', experiences);
     return response.data.data;

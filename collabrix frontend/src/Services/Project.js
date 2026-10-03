@@ -27,6 +27,12 @@ export const getProjects = async () => {
   return normalizeResponseData(response);
 };
 
+export const getProjectsByUserId = async (userId) => {
+  const response = await api.get(`/projects/user/${userId}`);
+
+  return normalizeResponseData(response);
+};
+
 
 // ==========================================
 // GET SINGLE PROJECT

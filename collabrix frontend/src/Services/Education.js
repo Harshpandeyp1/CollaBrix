@@ -24,3 +24,7 @@ export const deleteEducation = async (id) => {
     const response = await api.delete(`/education/${id}`);
     return response.data?.data ?? response.data;
 }
+export const getEducationByUserId = async (userId) => {
+    const response = await api.get(`/education/user/${userId}`);
+    return response.data?.data ?? response.data ?? [];
+};

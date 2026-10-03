@@ -33,6 +33,11 @@ export const getProfile = async () => {
   return normalizeProfile(response.data);
 };
 
+export const getProfileByUserId = async (userId) => {
+  const response = await api.get(`/profile/${userId}`);
+  return normalizeProfile(response.data);
+};
+
 export const updateProfile = async (profileData) => {
   const response = await api.put("/profile", profileData);
   return response.data;

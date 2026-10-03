@@ -2,6 +2,11 @@ import React, { useEffect, useState } from "react";
 import PlaygroundActivity from "../Components/Playground/PlaygroundActivity";
 import Discussion from "../Components/Playground/Discussion";
 import Tasks from "../Components/Playground/Task";  
+import Ideas from "../Components/Playground/Ideas";
+import Files from "../Components/Playground/Files";
+import GitHub from "../Components/Playground/GitHub";
+import PlaygroundSettings from "../Components/Playground/Settings";
+import Members from "../Components/Playground/Members";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   FolderGit2,
@@ -17,6 +22,7 @@ import {
   ArrowLeft,
   ShieldCheck,
   Cpu,
+  Settings as SettingsIcon,
   Globe,
   Loader2,
   AlertCircle,
@@ -34,6 +40,7 @@ const TAB_CONFIG = [
   { name: "GitHub", icon: GitBranch, desc: "Repository sync & PRs" },
   { name: "Members", icon: Users, desc: "Collaborators & roles" },
   { name: "Activity", icon: Activity, desc: "Audit logs & commits" },
+  { name: "Settings", icon: SettingsIcon, desc: "Project configuration" },
 ];
 
 const PlaygroundDetail = () => {
@@ -320,6 +327,19 @@ const PlaygroundDetail = () => {
                 <Tasks projectId={projectId} />
               ) : activeTab === "Activity" ? (
                 <PlaygroundActivity projectId={projectId} />
+              ) : 
+              activeTab === "Ideas" ? (
+                <Ideas projectId={projectId} />
+              ) : 
+              activeTab === "Files" ? (
+                <Files projectId={projectId} />
+              ) : 
+              activeTab === "GitHub" ? (
+                <GitHub githubUrl={project.githubUrl} />
+              ) : activeTab === "Members" ? (
+                 <Members />
+                ) : activeTab === "Settings" ? (
+                  <PlaygroundSettings />
               ) : (
                 <div className="h-full flex flex-col items-center justify-center p-8 text-center select-none">
                   <div className="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-indigo-50 text-indigo-500 ring-1 ring-indigo-500/20 dark:bg-indigo-950/40 dark:text-indigo-400">

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import Navbar from "../Components/Navbar";
+import { getProfile } from "../Services/Profile.js";
 import { getProjects, deleteProject } from "../Services/Project.js";
 import ProjectCard from "../Components/ProjectCard.jsx";
 import ProjectInterestModal from "../Components/ProjectInterestModal.jsx";
@@ -12,6 +13,7 @@ const Project = () => {
   const [interestModalOpen, setInterestModalOpen] = useState(false);
   const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const fetchProjects = useCallback(async () => {
     try {
       setLoading(true);
@@ -27,12 +29,22 @@ const Project = () => {
 
   useEffect(() => {
     fetchProjects();
+    fetchCurrentUser();
   }, [fetchProjects]);
 
   const handleCreateNew = () => {
     setSelectedProject(null);
     setProjectModalOpen(true);
   };
+
+  const fetchCurrentUser = async () => {
+  try {
+    const response = await getProfile();
+    setCurrentUserId(response.id);
+  } catch (error) {
+    console.error("Error fetching current user:", error);
+  }
+};
 
   const handleEdit = (project) => {
     setSelectedProject(project);
@@ -119,14 +131,15 @@ const Project = () => {
           {!loading && projects.length > 0 && (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
               {projects.map((project) => (
-                <ProjectCard
-                  key={project.id}
-                  project={project}
-                  onEdit={() => handleEdit(project)}
-                  onDelete={() => handleDelete(project.id)}
-                  onViewInterests={() => handleViewInterests(project)}
-                  onViewProject={handleViewProject}
-                />
+               <ProjectCard
+                key={project.id}
+                project={project}
+                currentUserId={currentUserId}
+                onEdit={() => handleEdit(project)}
+                onDelete={() => handleDelete(project.id)}
+                onViewInterests={() => handleViewInterests(project)}
+                onViewProject={handleViewProject}
+              />
               ))}
             </div>
           )}

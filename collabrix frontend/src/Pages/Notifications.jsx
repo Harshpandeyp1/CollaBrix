@@ -42,12 +42,12 @@ const navigate = useNavigate();
 
 const handleNotificationClick = (notification) => {
   if (notification.type === "CONNECTION_REQUEST") {
-    navigate("/connections");
+    navigate("/connection");
     return;
   }
 
   if (notification.type === "PROJECT_INTEREST") {
-    navigate(`/projects/${notification.referenceId}/interests`);
+    navigate(`/project`);
     return;
   }
 };
@@ -159,7 +159,7 @@ const handleNotificationClick = (notification) => {
       
       
       
-      <main onClick={() => handleNotificationClick(notification)} className="min-h-[calc(100vh-4rem)] cursor-pointer w-full bg-linear-to-b from-sky-100 via-teal-100 to-blue-100
+      <main className="min-h-[calc(100vh-4rem)] w-full bg-linear-to-b from-sky-100 via-teal-100 to-blue-100
         dark:from-black
         dark:via-black
         dark:to-black px-4 py-8 ">
@@ -283,7 +283,8 @@ const handleNotificationClick = (notification) => {
                   return (
                     <div
                       key={notification.id}
-                      className={`group relative flex items-start gap-4 p-4 transition-colors ${
+                      onClick={() => handleNotificationClick(notification)}
+                      className={`group relative flex cursor-pointer items-start gap-4 p-4 transition-colors ${
                         isUnread
                           ? "bg-indigo-50/30 hover:bg-indigo-50/60 dark:bg-indigo-950/10 dark:hover:bg-indigo-950/20"
                           : "hover:bg-slate-50/80 dark:hover:bg-zinc-800/40"
@@ -329,7 +330,10 @@ const handleNotificationClick = (notification) => {
                       {/* ACTIONS */}
                       {isUnread && (
                         <button
-                          onClick={() => handleMarkAsRead(notification.id)}
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            handleMarkAsRead(notification.id);
+                          }}
                           disabled={isReading}
                           title="Mark as read"
                           className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-slate-200 text-slate-400 opacity-80 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-600 group-hover:opacity-100 disabled:cursor-wait dark:border-zinc-700 dark:text-zinc-400 dark:hover:border-indigo-800 dark:hover:bg-indigo-950/40 dark:hover:text-indigo-400"

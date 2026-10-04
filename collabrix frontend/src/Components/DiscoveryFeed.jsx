@@ -1,4 +1,4 @@
-
+import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import {
   sendProjectInterest,
@@ -9,7 +9,7 @@ import {
   likePost,
   unlikePost,
   getLikeCount,
- 
+   deletePost,
   hasLiked,
 } from "../Services/Post";
 
@@ -17,8 +17,8 @@ const DiscoveryFeed = ({
   posts = [],
   projects = [],
   loading = false,
+  onPostDeleted,
 }) => {
-
    const currentUser = JSON.parse(localStorage.getItem("user"));
 const currentUserId = currentUser?.id;
 
@@ -46,6 +46,7 @@ const currentUserId = currentUser?.id;
 
   // Comment drafts
   const [commentDrafts, setCommentDrafts] = useState({});
+  const [deletingPosts, setDeletingPosts] = useState({});
 
  
 
@@ -54,6 +55,22 @@ const currentUserId = currentUser?.id;
       ...prev,
       [postId]: value,
     }));
+  };
+
+  const handleDeletePost = async (postId) => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+    setDeletingPosts((prev) => ({ ...prev, [postId]: true }));
+
+    try {
+      await deletePost(postId);
+      await onPostDeleted?.();
+    } catch (error) {
+      console.error("Failed to delete post:", error);
+      alert(error.response?.data?.message || "Failed to delete post");
+    } finally {
+      setDeletingPosts((prev) => ({ ...prev, [postId]: false }));
+    }
   };
 
 
@@ -396,6 +413,20 @@ return (
         filteredPosts.map((post) => {
           const postId = post.id;
           const isProjectPost = !!post.project;
+          const postAuthorId =
+            post.userId ??
+            post.authorId ??
+            post.ownerId ??
+            post.user?.id ??
+            post.user?.userId ??
+            post.author?.id ??
+            post.author?.userId ??
+            post.username?.id ??
+            post.username?.userId;
+          const isPostOwner =
+            postAuthorId != null &&
+            currentUserId != null &&
+            Number(postAuthorId) === Number(currentUserId);
           const projectId =
             post.project?.id ?? post.projectId ?? post.project?._id;
           const isOwner =Number(post.project?.userId) === Number(currentUserId);
@@ -454,7 +485,11 @@ console.log(
 
                 {/* Avatar */}
 
-                <div className="
+                <Link
+                  to={postAuthorId == null ? "#" : `/profile/${postAuthorId}`}
+                  aria-disabled={postAuthorId == null}
+                  aria-label={`View ${post.fullName || post.username || "user"}'s profile`}
+                  className="
                   w-10
                   h-10
                   rounded-full
@@ -471,10 +506,12 @@ console.log(
                   ring-2
                   ring-white
                   dark:ring-zinc-900
+                  aria-disabled:cursor-default
+                  aria-disabled:pointer-events-none
                 ">
 
-                  {post.username?.fullName
-                    ? post.username.fullName
+                  {post.fullName
+                    ? post.fullName
                         .split(" ")
                         .map((name) => name[0])
                         .join("")
@@ -482,22 +519,30 @@ console.log(
                         .toUpperCase()
                     : "U"}
 
-                </div>
+                </Link>
 
                 {/* Author information */}
 
                 <div>
 
-                  <p className="
+                  <Link
+                    to={postAuthorId == null ? "#" : `/profile/${postAuthorId}`}
+                    aria-disabled={postAuthorId == null}
+                    className="
                     text-xs
                     font-bold
                     text-black
                     dark:text-white
+                    text-left
+                    hover:text-sky-600
+                    dark:hover:text-sky-400
+                    aria-disabled:cursor-default
+                    aria-disabled:pointer-events-none
                   ">
-                    {post.username?.fullName ||
-                      post.username?.username ||
+                    {post.fullName ||
+                      post.username ||
                       "Unknown User"}
-                  </p>
+                  </Link>
 
                   <p className="
                     text-[11px]
@@ -794,6 +839,17 @@ console.log(
                 </span>
 
               </button>
+
+              {isPostOwner && (
+                <button
+                  type="button"
+                  onClick={() => handleDeletePost(postId)}
+                  disabled={deletingPosts[postId]}
+                  className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-950/40"
+                >
+                  {deletingPosts[postId] ? "Deleting..." : "Delete"}
+                </button>
+              )}
 
 
               {/* ================= INTERESTED ================= */}

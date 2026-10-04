@@ -1,7 +1,20 @@
 
-import React from "react";
+import React, { useState } from "react";
 
-const Activity = ({ posts = [] }) => {
+const Activity = ({ posts = [], onDeletePost }) => {
+  const [deletingPostId, setDeletingPostId] = useState(null);
+
+  const handleDeletePost = async (post) => {
+    const postId = post.id ?? post._id;
+    setDeletingPostId(postId);
+
+    try {
+      await onDeletePost(post);
+    } finally {
+      setDeletingPostId(null);
+    }
+  };
+
   return (
     <section className="mt-2 w-full max-w-4xl rounded-2xl border border-slate-200/80 bg-slate-100 px-6 py-5 shadow-xs transition-all duration-300 hover:border-slate-300 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-800 dark:hover:border-zinc-700">
 
@@ -102,7 +115,8 @@ const Activity = ({ posts = [] }) => {
 
               <div className="flex items-center justify-between gap-3 ">
 
-                <span className="
+                <div className="flex items-center gap-2">
+                  <span className="
                   text-xs
                   font-medium
                   border
@@ -117,7 +131,20 @@ const Activity = ({ posts = [] }) => {
                   dark:text-sky-300
                 ">
                   Idea
-                </span>
+                  </span>
+                  {onDeletePost && (
+                    <button
+                      type="button"
+                      onClick={() => handleDeletePost(post)}
+                      disabled={deletingPostId === (post.id ?? post._id)}
+                      className="rounded-lg px-2.5 py-1.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50 dark:text-red-400 dark:hover:bg-red-950/40"
+                    >
+                      {deletingPostId === (post.id ?? post._id)
+                        ? "Deleting..."
+                        : "Delete"}
+                    </button>
+                  )}
+                </div>
 
                 {post.createdAt && (
                   <span className="text-xs text-slate-400 dark:text-zinc-500">
@@ -208,4 +235,3 @@ const Activity = ({ posts = [] }) => {
 };
 
 export default Activity;
-

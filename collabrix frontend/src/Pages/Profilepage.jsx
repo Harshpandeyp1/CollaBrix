@@ -15,7 +15,7 @@ import Activity from "../Components/Activity";
 import Peoplemayknow from "../Components/Peoplemayknow.jsx";
 
 import { getProfile } from "../Services/Profile.js";
-import { getMyPosts } from "../Services/Post";
+import { deletePost, getMyPosts } from "../Services/Post";
 
 
 const ProfilePage = () => {
@@ -114,6 +114,24 @@ const ProfilePage = () => {
 
     await fetchProfile();
 
+  };
+
+  const handleDeletePost = async (post) => {
+    if (!window.confirm("Are you sure you want to delete this post?")) return;
+
+    const postId = post.id ?? post._id;
+
+    try {
+      await deletePost(postId);
+      setMyPosts((currentPosts) =>
+        currentPosts.filter(
+          (currentPost) => String(currentPost.id ?? currentPost._id) !== String(postId)
+        )
+      );
+    } catch (error) {
+      console.error("Failed to delete post:", error);
+      alert(error.response?.data?.message || "Failed to delete post");
+    }
   };
 
 
@@ -248,6 +266,7 @@ const ProfilePage = () => {
 
               <Activity
                 posts={myPosts}
+                onDeletePost={handleDeletePost}
               />
 
 
@@ -545,4 +564,3 @@ const ProfilePage = () => {
 
 
 export default ProfilePage;
-

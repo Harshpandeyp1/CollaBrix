@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from "react";
+import { Plus } from "lucide-react";
 
 import {
   getFeatured,
@@ -202,6 +203,7 @@ const FeaturedSection = ({ userId }) => {
           {/* ADD FEATURED */}
 
           {isOwnProfile && <button
+            type="button"
             onClick={() => {
 
               setSelectedFeatured(null);
@@ -209,14 +211,17 @@ const FeaturedSection = ({ userId }) => {
               setOpen(true);
 
             }}
+            title="Add featured item"
+            aria-label="Add featured item"
             className="
               shrink-0
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
               rounded-xl
               bg-sky-600
-              px-4
-              py-2
-              text-sm
-              font-semibold
               text-white
               shadow-sm
               shadow-sky-500/20
@@ -224,7 +229,7 @@ const FeaturedSection = ({ userId }) => {
               hover:bg-sky-700
             "
           >
-            Add Featured
+            <Plus size={20} />
           </button>}
 
         </div>
@@ -358,4 +363,3 @@ const FeaturedSection = ({ userId }) => {
 
 
 export default FeaturedSection;
-

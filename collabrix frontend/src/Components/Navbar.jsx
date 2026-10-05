@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThemeTransition from './ThemeTransition';
@@ -122,30 +121,25 @@ const DashboardNavbar = () => {
   // DARK MODE
   // =========================
 
-  const toggleDarkMode = () => {
+  // Keep the <html> class and the page background in sync with the toggle.
+  // This makes the whole page black as soon as dark mode is switched on.
+  useEffect(() => {
+    const root = document.documentElement;
 
-    const newMode = !darkMode;
+    root.classList.toggle('dark', darkMode);
+    root.style.colorScheme = darkMode ? 'dark' : 'light';
+    root.style.backgroundColor = darkMode ? '#000000' : '';
+    document.body.style.backgroundColor = darkMode ? '#000000' : '';
+  }, [darkMode]);
+
+  const toggleDarkMode = () => {
+    const newMode = !document.documentElement.classList.contains('dark');
 
     setAnimationType(newMode ? "moon" : "sun");
-
     setIsAnimating(true);
-
-
-    setTimeout(() => {
-
-      setDarkMode(newMode);
-
-      localStorage.setItem(
-        'theme',
-        newMode ? 'dark' : 'light'
-      );
-
-      document.documentElement.classList.toggle(
-        'dark',
-        newMode
-      );
-
-    }, 700);
+    setDarkMode(newMode);
+    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+    document.documentElement.classList.toggle('dark', newMode);
 
 
     setTimeout(() => {
@@ -316,15 +310,16 @@ const DashboardNavbar = () => {
 
 
       <nav className="
-        bg-sky-300
+        bg-[#E3F0A3]
         border-b
         border-slate-200
         sticky
         top-0
         z-50
+        transition-colors
         dark:bg-black
-        dark:border-slate-700
-      ">
+        dark:border-zinc-700
+      " style={{ backgroundColor: darkMode ? "#000000" : "#E3F0A3" }}>
 
         <div className="
           max-w-7xl
@@ -352,7 +347,8 @@ const DashboardNavbar = () => {
                 gap-2
                 dark:text-white
                 text-slate-800
-                hover:text-sky-600
+                hover:text-sky-700
+                dark:hover:text-sky-300
                 transition-colors
               "
             >
@@ -394,11 +390,13 @@ const DashboardNavbar = () => {
 
             <div className="relative">
 
+              {/* Search bar: stays white in dark mode */}
               <div className="
                 flex
                 items-center
+                navbar-search
                 bg-slate-100
-                dark:bg-zinc-800
+                dark:bg-white
                 rounded-lg
                 px-3
                 py-1.5
@@ -407,7 +405,7 @@ const DashboardNavbar = () => {
               ">
 
                 <svg
-                  className="w-4 h-4 text-slate-500 mr-2 shrink-0"
+                  className="w-4 h-4 text-slate-500 dark:text-slate-700 mr-2 shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -435,9 +433,10 @@ const DashboardNavbar = () => {
                     bg-transparent
                     outline-none
                     text-xs
-                    dark:text-white
+                    dark:text-slate-900
                     text-slate-800
                     placeholder-slate-400
+                    dark:placeholder-slate-500
                   "
                 />
 
@@ -752,11 +751,10 @@ const DashboardNavbar = () => {
                     px-3
                     h-14
                     transition-colors
-                    dark:text-white
                     ${
                       isActive
-                        ? 'text-sky-600 border-b-2 border-sky-600'
-                        : 'text-slate-800 hover:text-sky-600'
+                        ? 'text-sky-700 border-b-2 border-sky-700 dark:text-white dark:border-white'
+                        : 'text-slate-700 hover:text-sky-700 dark:text-white dark:hover:text-white'
                     }
                   `}
                 >
@@ -808,9 +806,10 @@ const DashboardNavbar = () => {
                 items-center
                 justify-center
                 px-2
-                text-slate-800
-                hover:text-sky-600
+                text-slate-700
+                hover:text-sky-700
                 dark:text-white
+                dark:hover:text-white
               "
             >
 
@@ -819,7 +818,9 @@ const DashboardNavbar = () => {
                 h-6
                 rounded-full
                 bg-slate-800
+                dark:bg-white
                 text-white
+                dark:text-black
                 text-[11px]
                 font-bold
                 flex
@@ -848,14 +849,15 @@ const DashboardNavbar = () => {
 
             <button
               onClick={toggleDarkMode}
-              title="Toggle Theme"
+              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+              aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
               className="
                 relative
                 w-9
                 h-9
                 overflow-hidden
                 rounded-lg
-                text-black
+                text-slate-700
                 dark:text-white
                 hover:bg-slate-100
                 dark:hover:bg-zinc-800
@@ -942,11 +944,12 @@ const DashboardNavbar = () => {
               title="Logout"
               className="
                 p-1.5
-                text-slate-800
+                text-slate-700
                 dark:text-white
                 hover:text-red-600
                 hover:bg-red-50
                 dark:hover:bg-zinc-800
+                dark:hover:text-white
                 rounded-lg
                 transition-colors
               "
@@ -982,4 +985,3 @@ const DashboardNavbar = () => {
 };
 
 export default DashboardNavbar;
-

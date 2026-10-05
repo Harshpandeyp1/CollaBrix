@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from "react";
+import { Plus } from "lucide-react";
 
 import {
   getExperience,
@@ -208,6 +209,7 @@ const ExperienceSection = ({ userId }) => {
         {/* ADD EXPERIENCE */}
 
         {isOwnProfile && <button
+          type="button"
           onClick={() => {
 
             setSelectedExperience(null);
@@ -215,14 +217,17 @@ const ExperienceSection = ({ userId }) => {
             setOpen(true);
 
           }}
+          title="Add experience"
+          aria-label="Add experience"
           className="
             shrink-0
+            flex
+            h-10
+            w-10
+            items-center
+            justify-center
             rounded-xl
             bg-sky-600
-            px-4
-            py-2
-            text-sm
-            font-semibold
             text-white
             shadow-sm
             shadow-sky-500/20
@@ -230,7 +235,7 @@ const ExperienceSection = ({ userId }) => {
             hover:bg-sky-700
           "
         >
-          Add Experience
+          <Plus size={20} />
         </button>}
 
       </div>
@@ -357,4 +362,3 @@ const ExperienceSection = ({ userId }) => {
 
 
 export default ExperienceSection;
-

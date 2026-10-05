@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Plus } from "lucide-react";
 
 import {
   getEducation,
@@ -201,6 +202,7 @@ const EducationSection = ({ userId }) => {
         {isOwnProfile && (
 
           <button
+            type="button"
             onClick={() => {
 
               setSelectedEducation(null);
@@ -208,14 +210,17 @@ const EducationSection = ({ userId }) => {
               setOpen(true);
 
             }}
+            title="Add education"
+            aria-label="Add education"
             className="
               shrink-0
+              flex
+              h-10
+              w-10
+              items-center
+              justify-center
               rounded-xl
               bg-sky-600
-              px-4
-              py-2
-              text-sm
-              font-semibold
               text-white
               shadow-sm
               shadow-sky-500/20
@@ -223,7 +228,7 @@ const EducationSection = ({ userId }) => {
               hover:bg-sky-700
             "
           >
-            Add Education
+            <Plus size={20} />
           </button>
 
         )}

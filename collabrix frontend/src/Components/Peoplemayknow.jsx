@@ -419,4 +419,3 @@ const PeopleMayKnow = () => {
 };
 
 export default PeopleMayKnow;
-

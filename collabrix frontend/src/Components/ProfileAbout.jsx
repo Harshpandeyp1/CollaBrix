@@ -78,4 +78,3 @@ export default function ProfileAbout({ profile = {} }) {
     </section>
   );
 }
-

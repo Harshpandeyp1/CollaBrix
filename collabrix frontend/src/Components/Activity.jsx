@@ -16,7 +16,7 @@ const Activity = ({ posts = [], onDeletePost }) => {
   };
 
   return (
-    <section className="mt-2 w-full max-w-4xl rounded-2xl border border-slate-200/80 bg-slate-100 px-6 py-5 shadow-xs transition-all duration-300 hover:border-slate-300 hover:shadow-xl dark:border-zinc-800 dark:bg-zinc-800 dark:hover:border-zinc-700">
+    <section className="mt-2 w-full max-w-4xl rounded-2xl border border-gray-200 bg-white px-6 py-5 shadow-lg transition-all duration-300 hover:border-slate-300 hover:shadow-xl dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-600">
 
       {/* ================================
           HEADER
@@ -47,7 +47,7 @@ const Activity = ({ posts = [], onDeletePost }) => {
 
       {posts.length === 0 ? (
 
-        <div className="border-t border-slate-100 py-10 text-center dark:border-zinc-800">
+        <div className="border-t border-slate-200 py-10 text-center dark:border-zinc-700">
 
           <p className="text-sm text-slate-500 dark:text-zinc-400">
             You haven't posted anything yet.
@@ -71,11 +71,11 @@ const Activity = ({ posts = [], onDeletePost }) => {
             pb-2
             pt-5
             border-t
-            border-slate-100
+            border-slate-200
             scroll-smooth
             snap-x
             snap-mandatory
-            dark:border-zinc-800
+            dark:border-zinc-700
           "
           style={{
             scrollbarWidth: "none",

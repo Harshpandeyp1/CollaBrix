@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from "react";
+import { Plus } from "lucide-react";
 import ProjectInterestModal from "./ProjectInterestModal.jsx";
 import {
   getProjects,
@@ -125,18 +126,22 @@ const handleViewInterests = (project) => {
         </div>
 
         {isOwnProfile && <button
+          type="button"
           onClick={() => {
             setSelectedProject(null);
             setOpen(true);
           }}
+          title="Add project"
+          aria-label="Add project"
           className="
             shrink-0
+            flex
+            h-10
+            w-10
+            items-center
+            justify-center
             rounded-xl
             bg-sky-600
-            px-4
-            py-2
-            text-sm
-            font-semibold
             text-white
             shadow-sm
             shadow-sky-500/20
@@ -144,7 +149,7 @@ const handleViewInterests = (project) => {
             hover:bg-sky-700
           "
         >
-          Add Project
+          <Plus size={20} />
         </button>}
 
       </div>
@@ -243,4 +248,3 @@ const handleViewInterests = (project) => {
 };
 
 export default ProjectSection;
-

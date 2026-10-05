@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import DashboardHeader from "../Components/DashBoardHeader";
 import Peoplemayknow from "../Components/Peoplemayknow";
@@ -9,6 +10,7 @@ import { getAllPosts } from "../Services/Post";
 import { getDiscoveryProjects } from "../Services/Project.js";
 import ProjectModal from "../Components/ProjectModal.jsx";
 const Mainpage = () => {
+  const navigate = useNavigate();
   const [openPostModal, setOpenPostModal] = useState(false);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
 
@@ -60,17 +62,22 @@ const Mainpage = () => {
     setOpenPostModal(false);
   };
 
+  const spaceItems = [
+    { icon: "🔖", label: "Saved Ideas", path: "/saved-ideas" },
+    { icon: "📁", label: "Saved Projects", path: "/saved-projects" },
+    { icon: "💡", label: "My Ideas", path: "/my-ideas" },
+    { icon: "🚀", label: "My Projects", path: "/my-projects" },
+    { icon: "👥", label: "My Connections", path: "/connection" },
+  ];
+
   return (
-    <div className="min-h-screen bg-linear-to-b from-teal-200 via-teal-400 to-teal-00 dark:bg-black ">
+    <div className="min-h-screen bg-[#FDFBD4] dark:bg-black">
 
       {/* Navbar */}
       <Navbar />
 
       {/* Main Dashboard */}
-      <main className="pt-6 px-6 min-h-screen bg-slate-50  transition-colors  bg-linear-to-b from-sky-100 via-teal-100 to-blue-100
-  dark:from-black
-  dark:via-black
-  dark:to-black">
+      <main className="pt-6 px-6 min-h-screen bg-[#FDFBD4] transition-colors dark:bg-black">
 
         <div className="max-w-7xl mx-auto">
 
@@ -111,105 +118,32 @@ const Mainpage = () => {
 
               <div className="space-y-1">
 
-                <button className="
-                  w-full
-                  flex
-                  items-center
-                  gap-3
-                  px-3
-                  py-3
-                  rounded-lg
-                  text-sm
-                  text-slate-600
-                  dark:text-white
-                  hover:bg-sky-50
-                  dark:hover:bg-zinc-800
-                  hover:text-sky-600
-                  transition
-                ">
-                  <span>🔖</span>
-                  <span>Saved Ideas</span>
-                </button>
-
-                <button className="
-                  w-full
-                  flex
-                  items-center
-                  gap-3
-                  px-3
-                  py-3
-                  rounded-lg
-                  text-sm
-                  text-slate-600
-                  dark:text-white
-                  hover:bg-sky-50
-                  dark:hover:bg-zinc-800
-                  hover:text-sky-600
-                  transition
-                ">
-                  <span>📁</span>
-                  <span>Saved Projects</span>
-                </button>
-
-                <button className="
-                  w-full
-                  flex
-                  items-center
-                  gap-3
-                  px-3
-                  py-3
-                  rounded-lg
-                  text-sm
-                  text-slate-600
-                  dark:text-white
-                  hover:bg-sky-50
-                  dark:hover:bg-zinc-800
-                  hover:text-sky-600
-                  transition
-                ">
-                  <span>💡</span>
-                  <span>My Ideas</span>
-                </button>
-
-                <button className="
-                  w-full
-                  flex
-                  items-center
-                  gap-3
-                  px-3
-                  py-3
-                  rounded-lg
-                  text-sm
-                  text-slate-600
-                  dark:text-white
-                  hover:bg-sky-50
-                  dark:hover:bg-zinc-800
-                  hover:text-sky-600
-                  transition
-                ">
-                  <span>🚀</span>
-                  <span>My Projects</span>
-                </button>
-
-                <button className="
-                  w-full
-                  flex
-                  items-center
-                  gap-3
-                  px-3
-                  py-3
-                  rounded-lg
-                  text-sm
-                  text-slate-600
-                  dark:text-white
-                  hover:bg-sky-50
-                  dark:hover:bg-zinc-800
-                  hover:text-sky-600
-                  transition
-                ">
-                  <span>👥</span>
-                  <span>My Connections</span>
-                </button>
+                {spaceItems.map(({ icon, label, path }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => navigate(path)}
+                    className="
+                      w-full
+                      flex
+                      items-center
+                      gap-3
+                      px-3
+                      py-3
+                      rounded-lg
+                      text-sm
+                      text-slate-600
+                      dark:text-white
+                      hover:bg-sky-50
+                      dark:hover:bg-zinc-800
+                      hover:text-sky-600
+                      transition
+                    "
+                  >
+                    <span>{icon}</span>
+                    <span>{label}</span>
+                  </button>
+                ))}
 
               </div>
             </div>

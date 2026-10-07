@@ -76,7 +76,7 @@ const PlaygroundDetail = () => {
   // -----------------------------
   if (loading) {
     return (
-      <div className="h-screen flex flex-col bg-linear-to-b from-sky-100 via-teal-100 to-blue-100 dark:from-zinc-950 dark:via-black dark:to-zinc-950 overflow-hidden">
+      <div className="h-screen flex flex-col bg-[#FDFBD4] dark:bg-black overflow-hidden">
         <Navbar />
         <div className="flex-1 flex flex-col items-center justify-center gap-3">
           <Loader2 size={32} className="animate-spin text-indigo-600 dark:text-indigo-400" />
@@ -93,7 +93,7 @@ const PlaygroundDetail = () => {
   // -----------------------------
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col bg-linear-to-b from-sky-100 via-teal-100 to-blue-100 dark:from-zinc-950 dark:via-black dark:to-zinc-950">
+      <div className="min-h-screen flex flex-col bg-[#FDFBD4] dark:bg-black">
         <Navbar />
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="max-w-md w-full text-center bg-white/95 dark:bg-zinc-900/95 rounded-2xl border border-slate-200/80 dark:border-zinc-800 p-8 shadow-xl backdrop-blur-md">
@@ -123,7 +123,7 @@ const PlaygroundDetail = () => {
     TAB_CONFIG.find((t) => t.name === activeTab)?.icon || Layers;
 
   return (
-    <div className="h-screen flex flex-col bg-linear-to-b from-sky-100 via-teal-100 to-blue-100 dark:from-zinc-950 dark:via-black dark:to-zinc-950 overflow-hidden">
+    <div className="h-screen flex flex-col bg-[#FDFBD4] dark:bg-black overflow-hidden">
       <Navbar />
 
       <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 flex flex-col min-h-0">

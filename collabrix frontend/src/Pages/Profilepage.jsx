@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import ProfileHeader from "../Components/ProfileHeader";
 import ProfileAbout from "../Components/ProfileAbout";
@@ -19,6 +20,7 @@ import { deletePost, getMyPosts } from "../Services/Post";
 
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
 
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
@@ -143,17 +145,16 @@ const ProfilePage = () => {
 
     return (
       <div className="
+        page-background
         min-h-screen
         flex
         items-center
         justify-center
-        bg-linear-to-b
-        from-sky-100
-        via-teal-200
-        to-blue-100
+        bg-[#FDFBD4]
+        dark:bg-black
       ">
 
-        <p className="text-gray-600">
+        <p className="text-gray-600 dark:text-zinc-300">
           Loading profile...
         </p>
 
@@ -163,18 +164,21 @@ const ProfilePage = () => {
   }
 
 
+  const spaceItems = [
+    { icon: "🔖", label: "Saved Ideas", path: "/saved-ideas" },
+    { icon: "📁", label: "Saved Projects", path: "/saved-projects" },
+    { icon: "💡", label: "My Ideas", path: "/my-ideas" },
+    { icon: "🚀", label: "My Projects", path: "/my-projects" },
+    { icon: "👥", label: "My Connections", path: "/connection" },
+  ];
+
   /* =====================================================
      PAGE
   ===================================================== */
 
   return (
 
-    <div className="  bg-linear-to-b from-sky-100 via-teal-100 to-blue-100
-        dark:from-black
-        dark:via-black
-        dark:to-black
- 
-">
+    <div className="page-background min-h-screen bg-[#FDFBD4] dark:bg-black">
 
 
       {/* =================================================
@@ -325,105 +329,32 @@ const ProfilePage = () => {
 
               <div className="space-y-1">
 
-                <button className="
-                  w-full
-                  flex
-                  items-center
-                  gap-3
-                  px-3
-                  py-3
-                  rounded-lg
-                  text-sm
-                  text-slate-600
-                  dark:text-white
-                  hover:bg-sky-50
-                  dark:hover:bg-zinc-800
-                  hover:text-sky-600
-                  transition
-                ">
-                  <span>🔖</span>
-                  <span>Saved Ideas</span>
-                </button>
-
-                <button className="
-                  w-full
-                  flex
-                  items-center
-                  gap-3
-                  px-3
-                  py-3
-                  rounded-lg
-                  text-sm
-                  text-slate-600
-                  dark:text-white
-                  hover:bg-sky-50
-                  dark:hover:bg-zinc-800
-                  hover:text-sky-600
-                  transition
-                ">
-                  <span>📁</span>
-                  <span>Saved Projects</span>
-                </button>
-
-                <button className="
-                  w-full
-                  flex
-                  items-center
-                  gap-3
-                  px-3
-                  py-3
-                  rounded-lg
-                  text-sm
-                  text-slate-600
-                  dark:text-white
-                  hover:bg-sky-50
-                  dark:hover:bg-zinc-800
-                  hover:text-sky-600
-                  transition
-                ">
-                  <span>💡</span>
-                  <span>My Ideas</span>
-                </button>
-
-                <button className="
-                  w-full
-                  flex
-                  items-center
-                  gap-3
-                  px-3
-                  py-3
-                  rounded-lg
-                  text-sm
-                  text-slate-600
-                  dark:text-white
-                  hover:bg-sky-50
-                  dark:hover:bg-zinc-800
-                  hover:text-sky-600
-                  transition
-                ">
-                  <span>🚀</span>
-                  <span>My Projects</span>
-                </button>
-
-                <button className="
-                  w-full
-                  flex
-                  items-center
-                  gap-3
-                  px-3
-                  py-3
-                  rounded-lg
-                  text-sm
-                  text-slate-600
-                  dark:text-white
-                  hover:bg-sky-50
-                  dark:hover:bg-zinc-800
-                  hover:text-sky-600
-                  transition
-                ">
-                  <span>👥</span>
-                  <span>My Connections</span>
-                </button>
+                {spaceItems.map(({ icon, label, path }) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => navigate(path)}
+                    className="
+                      w-full
+                      flex
+                      items-center
+                      gap-3
+                      px-3
+                      py-3
+                      rounded-lg
+                      text-sm
+                      text-slate-600
+                      dark:text-white
+                      hover:bg-sky-50
+                      dark:hover:bg-zinc-800
+                      hover:text-sky-600
+                      transition
+                    "
+                  >
+                    <span>{icon}</span>
+                    <span>{label}</span>
+                  </button>
+                ))}
 
               </div>
             

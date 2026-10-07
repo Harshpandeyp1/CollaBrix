@@ -75,7 +75,7 @@ const Project = () => {
     <>
       <Navbar />
 
-      <main className="min-h-screen w-full bg-gradient-to-b from-sky-100 via-teal-100 to-blue-100 px-4 py-8 dark:from-zinc-950 dark:via-black dark:to-zinc-950">
+      <main className="min-h-screen w-full bg-[#FDFBD4] px-4 py-8 dark:bg-black">
         <div className="mx-auto max-w-6xl">
           
           {/* Header */}

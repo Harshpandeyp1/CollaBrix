@@ -743,11 +743,12 @@ const Messages = () => {
   return (
 
     <div className="
+      page-background
       h-screen
       flex
       flex-col
-      bg-slate-100
-      dark:bg-zinc-950
+      bg-[#FDFBD4]
+      dark:bg-black
       overflow-hidden
     ">
 

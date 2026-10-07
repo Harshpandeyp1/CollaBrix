@@ -45,7 +45,7 @@ const OtherProfile = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center bg-[#FDFBD4] dark:bg-black">
                 Loading profile...
             </div>
         );
@@ -54,7 +54,7 @@ const OtherProfile = () => {
 
     if (!profile) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
+            <div className="min-h-screen flex items-center justify-center bg-[#FDFBD4] dark:bg-black">
                 Profile not found
             </div>
         );
@@ -69,13 +69,8 @@ const OtherProfile = () => {
             <div className="
                 min-h-screen
                 w-full
-                bg-linear-to-b
-                from-sky-200
-                via-teal-100
-                to-blue-100
-                dark:from-zinc-900
-                dark:via-zinc-800
-                dark:to-zinc-900
+                bg-[#FDFBD4]
+                dark:bg-black
                 px-4
                 py-6
             ">

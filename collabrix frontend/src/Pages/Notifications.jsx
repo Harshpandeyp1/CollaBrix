@@ -159,10 +159,7 @@ const handleNotificationClick = (notification) => {
       
       
       
-      <main className="min-h-[calc(100vh-4rem)] w-full bg-linear-to-b from-sky-100 via-teal-100 to-blue-100
-        dark:from-black
-        dark:via-black
-        dark:to-black px-4 py-8 ">
+      <main className="min-h-[calc(100vh-4rem)] w-full bg-[#FDFBD4] px-4 py-8 dark:bg-black">
         <div className="mx-auto max-w-3xl">
         
           {/* HEADER */}

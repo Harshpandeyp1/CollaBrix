@@ -383,7 +383,7 @@ const Connection = () => {
     <>
       <Navbar />
 
-      <main className="min-h-[calc(100vh-4rem)] w-full bg-linear-to-b from-sky-100 via-teal-100 to-blue-100 px-4 py-8 dark:from-zinc-950 dark:via-black dark:to-zinc-950">
+      <main className="min-h-[calc(100vh-4rem)] w-full bg-[#FDFBD4] px-4 py-8 dark:bg-black">
 
         <div className="mx-auto max-w-6xl space-y-6">
 

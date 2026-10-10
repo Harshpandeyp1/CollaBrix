@@ -20,7 +20,8 @@ Showcase of the Collabrix landing page.
 
 Discover projects, explore opportunities to collaborate, and connect with other developers.
 
-![Collabrix Dashboard](docs/images/dashboard.png)
+<img width="1898" height="916" alt="Screenshot 2026-07-23 172839" src="https://github.com/user-attachments/assets/a5691427-9252-48da-b480-14a554026443" />
+
 
 ### 🔔 Notifications
 

@@ -1,4 +1,4 @@
-# Collabrix 🚀
+# Collabrix ...
 
 ### Connect. Collaborate. Build Together.
 

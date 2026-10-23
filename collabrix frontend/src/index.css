@@ -2,4 +2,109 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background-color: #FDFBD4;
+}
+
+html.dark {
+  color-scheme: dark;
+  background-color: #000;
+}
+
+html.dark body,
+html.dark #root {
+  background-color: #000;
+}
+
+html.dark main {
+  background-color: #000;
+}
+
+body {
+  margin: 0;
+  background-color: #FDFBD4;
+}
+
+.page-background {
+  background-color: #FDFBD4;
+}
+
+html.dark .page-background {
+  background-color: #000;
+}
+
+html:not(.dark) :is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="color"]),
+  textarea,
+  select
+) {
+  color-scheme: light;
+  background-color: #fff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+  caret-color: #0f172a;
+}
+
+html.dark :is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="color"]),
+  textarea,
+  select
+) {
+  color-scheme: dark;
+  background-color: #18181b;
+  border-color: #52525b;
+  color: #fff;
+  caret-color: #fff;
+}
+
+html:not(.dark) :is(input, textarea, select)::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+html.dark :is(input, textarea, select)::placeholder {
+  color: #a1a1aa;
+  opacity: 1;
+}
+
+html.dark .light-mode-page {
+  color-scheme: light;
+}
+
+html.dark .light-mode-page :is(input, textarea, select) {
+  color-scheme: light;
+  background-color: #fff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+  caret-color: #0f172a;
+}
+
+html.dark .light-mode-page :is(input, textarea, select)::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+html:not(.dark) .navbar-search input {
+  background-color: transparent;
+  color: #1e293b;
+  caret-color: #1e293b;
+}
+
+html.dark .navbar-search input {
+  background-color: transparent;
+  color: #fff;
+  caret-color: #fff;
+}
+
+html.dark .navbar-search input::placeholder {
+  color: #a1a1aa;
+}
+
 @keyframes moonRise { 0% { transform: translateY(0) scale(0.8); opacity: 0; } 15% { opacity: 1; } 70% { transform: translateY(-80vh) scale(1); opacity: 1; } 100% { transform: translateY(-115vh) scale(1.1); opacity: 0; } } @keyframes sunRise { 0% { transform: translateY(0) scale(0.8); opacity: 0; } 15% { opacity: 1; } 70% { transform: translateY(-80vh) scale(1); opacity: 1; } 100% { transform: translateY(-115vh) scale(1.1); opacity: 0; } } .animate-moon-rise { animation: moonRise 1.4s ease-in-out forwards; } .animate-sun-rise { animation: sunRise 1.4s ease-in-out forwards; }

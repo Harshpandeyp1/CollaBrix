@@ -40,4 +40,6 @@ public class IdeaEntity {
         createdAt = LocalDateTime.now();
     }
 
+    private boolean saved=false;
+
 }

@@ -29,7 +29,16 @@ public class MediaController {
             @PathVariable String folder,
             @PathVariable String fileName
     ) throws IOException {
-        Path filePath = Paths.get(uploadDir, folder, fileName).normalize();
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+
+        Path filePath = uploadPath
+                .resolve(folder)
+                .resolve(fileName)
+                .normalize();
+
+        if (!filePath.startsWith(uploadPath)) {
+            throw new SecurityException("Invalid file path");
+        }
         if (!Files.exists(filePath) || !Files.isRegularFile(filePath)) {
             throw new ResourceNotFoundException("media file not found");
         }

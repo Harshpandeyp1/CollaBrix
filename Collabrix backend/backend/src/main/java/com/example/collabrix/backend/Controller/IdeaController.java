@@ -56,4 +56,14 @@ public class IdeaController {
 
         return ResponseEntity.noContent().build();
     }
+    @PatchMapping("/ideas/{ideaId}/save")
+    public ResponseEntity<IdeaDto> saveIdea(@PathVariable Long ideaId,
+                                            @RequestParam boolean saved) {
+        return ResponseEntity.ok(ideaService.toggleSaved(ideaId, saved));
+    }
+
+    @GetMapping("/ideas/saved")
+    public ResponseEntity<List<IdeaDto>> getSavedIdeas() {
+        return ResponseEntity.ok(ideaService.getSavedIdeas());
+    }
 }

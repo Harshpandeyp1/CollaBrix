@@ -1,10 +1,71 @@
 import api from "../Services/api.js";
 
+const PROFILE_IMAGE_FIELDS = [
+  "profileImage",
+  "profile_image",
+  "profilePicture",
+  "profile_picture",
+  "createdByProfileImage",
+  "senderProfileImage",
+  "userProfileImage",
+  "avatar",
+  "avatarUrl",
+  "avatar_url",
+  "photo",
+  "photoUrl",
+  "photo_url",
+  "picture",
+  "image",
+];
+
+export const getProfileImage = (profile) => {
+  if (typeof profile === "string") {
+    return profile.trim();
+  }
+
+  if (!profile || typeof profile !== "object") {
+    return "";
+  }
+
+  for (const field of PROFILE_IMAGE_FIELDS) {
+    const image = profile[field];
+    if (typeof image === "string" && image.trim()) {
+      return image.trim();
+    }
+  }
+
+  return "";
+};
+
+export const getProfileImageUrl = (profileOrImage) => {
+  const image = getProfileImage(profileOrImage);
+  if (!image || /^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(image)) {
+    return image;
+  }
+
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+  const apiOrigin =
+    apiBaseUrl && /^https?:\/\//i.test(apiBaseUrl)
+      ? new URL(apiBaseUrl).origin
+      : import.meta.env.DEV
+        ? "http://localhost:8080"
+        : typeof window !== "undefined"
+          ? window.location.origin
+          : "";
+
+  if (!apiOrigin) {
+    return image;
+  }
+
+  return new URL(image.startsWith("/") ? image : `/${image}`, `${apiOrigin}/`).toString();
+};
+
 const normalizeProfile = (data) => {
   const payload = data?.data ?? data;
   const profile = payload?.profile ?? payload?.user ?? payload ?? {};
 
   return {
+    ...profile,
     fullName:
       profile.fullName || profile.full_name || profile.name || profile.displayName || profile.display_name || "",
     username: profile.username || profile.userName || profile.user_name || profile.handle || "",
@@ -20,11 +81,9 @@ const normalizeProfile = (data) => {
       profile.github || profile.githubUrl || profile.github_url || profile.github_link || "",
     linkedin:
       profile.linkedin || profile.linkedinUrl || profile.linkedin_url || profile.linkedin_link || "",
-    profileImage:
-      profile.profileImage || profile.avatar || profile.avatarUrl || profile.photo || profile.picture || "",
+    profileImage: getProfileImage(profile),
     coverImage:
       profile.coverImage || profile.cover || profile.coverUrl || profile.background || "",
-    ...profile,
   };
 };
 

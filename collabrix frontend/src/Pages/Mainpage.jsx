@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import DashboardHeader from "../Components/DashBoardHeader";
 import Peoplemayknow from "../Components/Peoplemayknow";
 import ProfileCard from "../Components/ProfileCard";
+import YourSpace from "../Components/YourSpace";
 import DiscoveryFeed from "../Components/DiscoveryFeed";
 import PostModal from "../Components/PostModal";
 import { getAllPosts } from "../Services/Post";
 import { getDiscoveryProjects } from "../Services/Project.js";
 import ProjectModal from "../Components/ProjectModal.jsx";
 const Mainpage = () => {
-  const navigate = useNavigate();
   const [openPostModal, setOpenPostModal] = useState(false);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
 
@@ -62,24 +61,16 @@ const Mainpage = () => {
     setOpenPostModal(false);
   };
 
-  const spaceItems = [
-    { icon: "🔖", label: "Saved Ideas", path: "/saved-ideas" },
-    { icon: "📁", label: "Saved Projects", path: "/saved-projects" },
-    { icon: "💡", label: "My Ideas", path: "/my-ideas" },
-    { icon: "🚀", label: "My Projects", path: "/my-projects" },
-    { icon: "👥", label: "My Connections", path: "/connection" },
-  ];
-
   return (
-    <div className="min-h-screen bg-[#FDFBD4] dark:bg-black">
+    <div className="min-h-screen">
 
       {/* Navbar */}
       <Navbar />
 
       {/* Main Dashboard */}
-      <main className="pt-6 px-6 min-h-screen bg-[#FDFBD4] transition-colors dark:bg-black">
+      <main className="pt-6 px-6 min-h-screen transition-colors">
 
-        <div className="max-w-7xl mx-auto">
+        <div className="mx-auto max-w-7xl">
 
           {/* Three Column Layout */}
           <div className="grid grid-cols-12 gap-6">
@@ -94,59 +85,7 @@ const Mainpage = () => {
                 <ProfileCard />
 
                           
-            {/* Your Space */}
-            <div className="
-              bg-white
-              dark:bg-zinc-900
-              rounded-2xl
-              border
-              border-sky-100
-              dark:border-zinc-800
-              shadow-sm
-              p-5
-            ">
-
-              <h2 className="
-                text-base
-                font-semibold
-                text-slate-800
-                dark:text-white
-                mb-4
-              ">
-                Your Space
-              </h2>
-
-              <div className="space-y-1">
-
-                {spaceItems.map(({ icon, label, path }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => navigate(path)}
-                    className="
-                      w-full
-                      flex
-                      items-center
-                      gap-3
-                      px-3
-                      py-3
-                      rounded-lg
-                      text-sm
-                      text-slate-600
-                      dark:text-white
-                      hover:bg-sky-50
-                      dark:hover:bg-zinc-800
-                      hover:text-sky-600
-                      transition
-                    "
-                  >
-                    <span>{icon}</span>
-                    <span>{label}</span>
-                  </button>
-                ))}
-
-              </div>
-            </div>
+            <YourSpace />
             </div>
 
             </aside>

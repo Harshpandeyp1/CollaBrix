@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
+import { Bookmark, BookmarkCheck, Share2 } from "lucide-react";
+import ShareModal from "./ShareModal";
 import {
   sendProjectInterest,
   getMyProjectInterest,
@@ -11,7 +13,24 @@ import {
   getLikeCount,
    deletePost,
   hasLiked,
+  getSavedPosts,
+  savePost,
+  unsavePost,
 } from "../Services/Post";
+import {
+  getSavedProjects,
+  saveProject,
+  unsaveProject,
+} from "../Services/Project";
+import { getProfile, getProfileImageUrl } from "../Services/Profile";
+
+const readStoredUser = () => {
+  try {
+    return JSON.parse(localStorage.getItem("user") || "null");
+  } catch {
+    return null;
+  }
+};
 
 const DiscoveryFeed = ({
   posts = [],
@@ -19,9 +38,10 @@ const DiscoveryFeed = ({
   loading = false,
   onPostDeleted,
 }) => {
-   const currentUser = JSON.parse(localStorage.getItem("user"));
-const currentUserId = currentUser?.id;
-
+  const [currentUser, setCurrentUser] = useState(readStoredUser);
+  const currentUserId = currentUser?.id ?? currentUser?.userId;
+  const currentUsername =
+    currentUser?.username ?? currentUser?.userName ?? currentUser?.email;
 
 
   // Currently selected filter
@@ -47,6 +67,128 @@ const currentUserId = currentUser?.id;
   // Comment drafts
   const [commentDrafts, setCommentDrafts] = useState({});
   const [deletingPosts, setDeletingPosts] = useState({});
+  const [savedIdeaIds, setSavedIdeaIds] = useState(() =>
+    posts
+      .filter((post) => post.saved === true || post.isSaved === true)
+      .map((post) => String(post.id ?? post._id))
+  );
+  const [savingIdeaIds, setSavingIdeaIds] = useState({});
+  const [savedProjectIds, setSavedProjectIds] = useState([]);
+  const [savingProjectIds, setSavingProjectIds] = useState({});
+  const [shareItemDetails, setShareItemDetails] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+
+    getSavedPosts()
+      .then((response) => {
+        const savedIdeas = Array.isArray(response)
+          ? response
+          : response?.posts ?? response?.ideas ?? response?.data ?? [];
+
+        if (active) {
+          setSavedIdeaIds(
+            savedIdeas.map((idea) => String(idea.id ?? idea._id))
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to load saved ideas:", error);
+      });
+
+    getSavedProjects()
+      .then((response) => {
+        const savedProjects = Array.isArray(response)
+          ? response
+          : response?.projects ?? response?.data ?? [];
+
+        if (active) {
+          setSavedProjectIds(
+            savedProjects
+              .map((project) => project.id ?? project._id)
+              .filter((id) => id != null)
+              .map(String)
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Failed to load saved projects:", error);
+      });
+
+    getProfile()
+      .then((profile) => {
+        if (active) setCurrentUser(profile);
+      })
+      .catch((error) => {
+        console.error("Failed to load current user profile:", error);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const handleToggleSavedIdea = async (postId) => {
+    if (postId == null) {
+      window.alert("This idea cannot be saved because it has no ID.");
+      return;
+    }
+
+    const key = String(postId);
+    const wasSaved = savedIdeaIds.includes(key);
+
+    setSavingIdeaIds((current) => ({ ...current, [key]: true }));
+
+    try {
+      if (wasSaved) {
+        await unsavePost(postId);
+        setSavedIdeaIds((current) => current.filter((id) => id !== key));
+      } else {
+        await savePost(postId);
+        setSavedIdeaIds((current) =>
+          current.includes(key) ? current : [...current, key]
+        );
+      }
+    } catch (error) {
+      console.error("Failed to update saved idea:", error);
+      window.alert(
+        error.response?.data?.message || "Unable to update saved idea."
+      );
+    } finally {
+      setSavingIdeaIds((current) => ({ ...current, [key]: false }));
+    }
+  };
+
+  const handleToggleSavedProject = async (projectId) => {
+    if (projectId == null) {
+      window.alert("This project cannot be saved because it has no ID.");
+      return;
+    }
+
+    const key = String(projectId);
+    const wasSaved = savedProjectIds.includes(key);
+
+    setSavingProjectIds((current) => ({ ...current, [key]: true }));
+
+    try {
+      if (wasSaved) {
+        await unsaveProject(projectId);
+        setSavedProjectIds((current) => current.filter((id) => id !== key));
+      } else {
+        await saveProject(projectId);
+        setSavedProjectIds((current) =>
+          current.includes(key) ? current : [...current, key]
+        );
+      }
+    } catch (error) {
+      console.error("Failed to update saved project:", error);
+      window.alert(
+        error.response?.data?.message || "Unable to update saved project."
+      );
+    } finally {
+      setSavingProjectIds((current) => ({ ...current, [key]: false }));
+    }
+  };
 
  
 
@@ -411,34 +553,77 @@ return (
         </div>
       ) : (
         filteredPosts.map((post) => {
-          const postId = post.id;
+          const postId = post.id ?? post._id;
           const isProjectPost = !!post.project;
+          const ideaIsSaved = savedIdeaIds.includes(String(postId));
           const postAuthorId =
             post.userId ??
             post.authorId ??
             post.ownerId ??
+            post.createdById ??
             post.user?.id ??
             post.user?.userId ??
             post.author?.id ??
+            post.createdBy?.id ??
             post.author?.userId ??
+            post.createdBy?.userId ??
             post.username?.id ??
             post.username?.userId;
           const isPostOwner =
             postAuthorId != null &&
             currentUserId != null &&
-            Number(postAuthorId) === Number(currentUserId);
+            String(postAuthorId) === String(currentUserId);
+          const postAuthorName =
+            post.username ??
+            post.fullName ??
+            post.user?.username ??
+            post.author?.username ??
+            post.createdBy?.username;
+          const postAuthor =
+            post.author ??
+            post.user ??
+            post.createdBy ??
+            post;
+          const postAuthorImage =
+            getProfileImageUrl(postAuthor) ||
+            getProfileImageUrl(post);
+          const isPostOwnerByName =
+            !isPostOwner &&
+            postAuthorName != null &&
+            currentUsername != null &&
+            String(postAuthorName).toLowerCase() ===
+              String(currentUsername).toLowerCase();
+          const canSavePost = !isPostOwner && !isPostOwnerByName;
           const projectId =
-            post.project?.id ?? post.projectId ?? post.project?._id;
-          const isOwner =Number(post.project?.userId) === Number(currentUserId);
+            post.project?.id ??
+            post.project?._id ??
+            post.projectId;
+          const projectIsSaved =
+            projectId != null && savedProjectIds.includes(String(projectId));
+          const projectOwnerId =
+            post.project?.userId ??
+            post.project?.ownerId ??
+            post.project?.createdById ??
+            post.project?.user?.id ??
+            post.project?.user?.userId ??
+            post.project?.owner?.id ??
+            post.project?.createdBy?.id;
+          const projectOwnerName =
+            post.project?.ownerUsername ??
+            post.project?.createdByUsername ??
+            post.project?.user?.username ??
+            post.project?.owner?.username ??
+            post.project?.createdBy?.username;
+          const isOwner =
+            (projectOwnerId != null &&
+              currentUserId != null &&
+              String(projectOwnerId) === String(currentUserId)) ||
+            (projectOwnerName != null &&
+              currentUsername != null &&
+              String(projectOwnerName).toLowerCase() ===
+                String(currentUsername).toLowerCase());
           const isLiked = likedItems[postId] || false;
           const likeCount = likeCounts[postId] ?? post.likeCount ?? 0;
-          console.log("PROJECT FROM FEED:", post.project);
-console.log("PROJECT OWNER ID:", post.project?.userId);
-console.log("CURRENT USER ID:", currentUserId);
-console.log(
-  "IS OWNER:",
-  Number(post.project?.userId) === Number(currentUserId)
-);
           const isCommentsOpen = openCommentsFor === postId;
           const postComments = comments[postId] || [];
 
@@ -510,14 +695,20 @@ console.log(
                   aria-disabled:pointer-events-none
                 ">
 
-                  {post.fullName
-                    ? post.fullName
-                        .split(" ")
-                        .map((name) => name[0])
-                        .join("")
-                        .slice(0, 2)
-                        .toUpperCase()
-                    : "U"}
+                  {postAuthorImage ? (
+                    <img
+                      src={postAuthorImage}
+                      alt={postAuthorName || "User"}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  ) : (
+                    (post.fullName || postAuthorName || "U")
+                      .split(" ")
+                      .map((name) => name[0])
+                      .join("")
+                      .slice(0, 2)
+                      .toUpperCase()
+                  )}
 
                 </Link>
 
@@ -795,6 +986,75 @@ console.log(
               {/* ================= COMMENTS ================= */}
 
               <button
+                type="button"
+                onClick={() =>
+                  setShareItemDetails({
+                    itemType: isProjectPost ? "PROJECT" : "POST",
+                    itemId: isProjectPost ? projectId : postId,
+                    itemTitle:
+                      (isProjectPost ? post.project?.title : post.title) ||
+                      post.title ||
+                      "Untitled",
+                  })
+                }
+                disabled={isProjectPost ? projectId == null : postId == null}
+                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-black transition-all hover:bg-slate-100 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 dark:text-white dark:hover:bg-zinc-800"
+              >
+                <Share2 size={16} />
+                <span>Share</span>
+              </button>
+
+              {isProjectPost && projectId != null && !isOwner && (
+                <button
+                  type="button"
+                  onClick={() => handleToggleSavedProject(projectId)}
+                  disabled={savingProjectIds[String(projectId)]}
+                  aria-pressed={projectIsSaved}
+                  aria-label={
+                    projectIsSaved
+                      ? "Remove saved project"
+                      : "Save project"
+                  }
+                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95 disabled:cursor-wait disabled:opacity-60 ${
+                    projectIsSaved
+                      ? "text-amber-600 dark:text-amber-400"
+                      : "text-black hover:bg-slate-100 dark:text-white dark:hover:bg-zinc-800"
+                  }`}
+                >
+                  {projectIsSaved ? (
+                    <BookmarkCheck size={16} />
+                  ) : (
+                    <Bookmark size={16} />
+                  )}
+                  <span>{projectIsSaved ? "Saved" : "Save"}</span>
+                </button>
+              )}
+
+              {!isProjectPost && canSavePost && (
+                <button
+                  type="button"
+                  onClick={() => handleToggleSavedIdea(postId)}
+                  disabled={savingIdeaIds[String(postId)]}
+                  aria-pressed={ideaIsSaved}
+                  aria-label={
+                    ideaIsSaved ? "Remove saved idea" : "Save idea"
+                  }
+                  className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all active:scale-95 disabled:cursor-wait disabled:opacity-60 ${
+                    ideaIsSaved
+                      ? "text-amber-600 dark:text-amber-400"
+                      : "text-black hover:bg-slate-100 dark:text-white dark:hover:bg-zinc-800"
+                  }`}
+                >
+                  {ideaIsSaved ? (
+                    <BookmarkCheck size={16} />
+                  ) : (
+                    <Bookmark size={16} />
+                  )}
+                  <span>{ideaIsSaved ? "Saved" : "Save"}</span>
+                </button>
+              )}
+
+              <button
                 onClick={() =>
                   toggleComments(postId)
                 }
@@ -1040,6 +1300,14 @@ console.log(
       }))}
 
     </div>
+
+    <ShareModal
+      open={shareItemDetails !== null}
+      onClose={() => setShareItemDetails(null)}
+      itemType={shareItemDetails?.itemType}
+      itemId={shareItemDetails?.itemId}
+      itemTitle={shareItemDetails?.itemTitle}
+    />
 
   </section>
 );

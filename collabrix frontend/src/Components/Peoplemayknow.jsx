@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { getProfileImageUrl } from "../Services/Profile.js";
 
 const PeopleMayKnow = () => {
   const [people, setPeople] = useState([]);
@@ -325,7 +326,15 @@ const PeopleMayKnow = () => {
                     text-xs
                     font-semibold
                   ">
-                    {getInitials(person.username)}
+                    {getProfileImageUrl(person) ? (
+                      <img
+                        src={getProfileImageUrl(person)}
+                        alt={person.username || "User"}
+                        className="h-full w-full rounded-full object-cover"
+                      />
+                    ) : (
+                      getInitials(person.username)
+                    )}
                   </div>
 
 

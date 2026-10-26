@@ -20,6 +20,7 @@ import {
   updateConnectionStatus,
   getMyConnections,
 } from "../Services/Connection.js";
+import { getProfileImageUrl } from "../Services/Profile.js";
 
 const PREVIEW_COUNT = 4;
 
@@ -222,10 +223,12 @@ const Connection = () => {
     user,
     ringColor =
       "ring-slate-100 dark:ring-zinc-800",
-  }) =>
-    user?.profileImage ? (
+  }) => {
+    const profileImage = getProfileImageUrl(user);
+
+    return profileImage ? (
       <img
-        src={user.profileImage}
+        src={profileImage}
         alt={user.username}
         className={`h-12 w-12 shrink-0 rounded-full object-cover ring-2 ${ringColor} ring-offset-2 ring-offset-white dark:ring-offset-zinc-900`}
       />
@@ -242,6 +245,7 @@ const Connection = () => {
           "U"}
       </div>
     );
+  };
 
   const SkeletonCard = ({
     wide = false,

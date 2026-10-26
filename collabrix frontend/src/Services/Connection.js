@@ -1,5 +1,14 @@
 import api from "./api.js";
 
+const normalizeConnections = (payload) => {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.connections)) return payload.connections;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.content)) return payload.content;
+  if (Array.isArray(payload?.items)) return payload.items;
+  return [];
+};
+
 export const sendConnectionRequest = async (receiverId) => {
   const response = await api.post(
     "/connections/request",
@@ -40,5 +49,5 @@ export const getMyConnections = async () => {
     "/connections"
   );
 
-  return response.data;
+  return normalizeConnections(response.data);
 };

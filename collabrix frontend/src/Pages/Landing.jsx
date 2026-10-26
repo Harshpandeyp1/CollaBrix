@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 const Navbar = () => {
   const navigate = useNavigate();
   return (
-    <nav className="bg-[#E3F0A3] backdrop-blur-md px-4 md:px-8 py-3.5 w-full sticky top-0 z-50 border-b border-amber-900/20 shadow-sm shadow-amber-900/10 dark:bg-black dark:border-zinc-800">
+    <nav className="bg-[#E3F0A3] backdrop-blur-md px-4 md:px-8 py-3.5 w-full sticky top-0 z-50 border-b border-amber-900/20 shadow-sm shadow-amber-900/10">
       <div className="max-w-7xl mx-auto flex items-center justify-between ">
         
         {/* Logo */}
@@ -14,7 +14,7 @@ const Navbar = () => {
             alt="Collabrix Logo" 
             className="h-7 w-7 object-contain" 
           />
-          <h1 className="text-slate-800 text-base md:text-lg font-black tracking-wider select-none dark:text-white">
+          <h1 className="text-slate-800 text-base md:text-lg font-black tracking-wider select-none">
             colla
             <span className="text-sky-600">BRIX</span>
           </h1>
@@ -22,17 +22,17 @@ const Navbar = () => {
         
         {/* Navigation Links */}
         <ul className="hidden md:flex items-center space-x-8 text-sm font-medium">
-          <li><a href="#about" className="text-slate-600 hover:text-sky-600 transition-colors dark:text-zinc-300">About</a></li>
-          <li><a href="#features" className="text-slate-600 hover:text-sky-600 transition-colors dark:text-zinc-300">How It Works</a></li>
-          <li><a href="#contact" className="text-slate-600 hover:text-sky-600 transition-colors dark:text-zinc-300">Contact Us</a></li>
+          <li><a href="#about" className="text-slate-600 hover:text-sky-600 transition-colors">About</a></li>
+          <li><a href="#features" className="text-slate-600 hover:text-sky-600 transition-colors">How It Works</a></li>
+          <li><a href="#contact" className="text-slate-600 hover:text-sky-600 transition-colors">Contact Us</a></li>
         </ul>
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-3">
-          <button onClick={() => navigate('/login')} className="text-slate-600 hover:text-sky-600 text-sm font-medium px-3 py-1.5 transition-colors dark:text-zinc-300">
+          <button onClick={() => navigate('/login')} className="text-slate-600 hover:text-sky-600 text-sm font-medium px-3 py-1.5 transition-colors">
             Log In
           </button>
-          <button onClick={() => navigate('/signup')} className="bg-emerald-500 hover:bg-emerald-600 text-white text-xs md:text-sm font-bold px-4 py-2 rounded-xl shadow-md shadow-emerald-500/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
+          <button onClick={() => navigate('/login')} className="bg-emerald-500 hover:bg-emerald-600 text-white text-xs md:text-sm font-bold px-4 py-2 rounded-xl shadow-md shadow-emerald-500/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
             Get Started
           </button>
         </div>
@@ -46,7 +46,7 @@ const Landing = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="isolate min-h-screen bg-[#FDFBD4] flex flex-col font-sans relative overflow-x-hidden text-slate-800 antialiased dark:bg-black dark:text-white">
+    <div className="light-mode-page isolate min-h-screen bg-[#FDFBD4] flex flex-col font-sans relative overflow-x-hidden text-slate-800 antialiased">
 
       {/* ===== Background design (decorative only) ===== */}
       <style>{`
@@ -65,7 +65,7 @@ const Landing = () => {
 
         {/* Brick wall pattern, fades out toward the edges */}
         <svg
-          className="absolute inset-0 w-full h-full text-indigo-900/10 dark:text-indigo-300/10"
+          className="absolute inset-0 w-full h-full text-indigo-900/10"
           style={{
             maskImage: 'radial-gradient(ellipse at center, black 30%, transparent 85%)',
             WebkitMaskImage: 'radial-gradient(ellipse at center, black 30%, transparent 85%)',
@@ -85,9 +85,9 @@ const Landing = () => {
         </svg>
 
         {/* Soft color glows */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-indigo-400/30 blur-3xl dark:bg-indigo-500/20" />
-        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-teal-400/30 blur-3xl dark:bg-teal-500/20" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] h-[28rem] rounded-full bg-white/40 blur-3xl dark:bg-indigo-500/10" />
+        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-indigo-400/30 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-teal-400/30 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] h-[28rem] rounded-full bg-white/40 blur-3xl" />
 
         {/* Floating bricks */}
         <div
@@ -126,11 +126,11 @@ const Landing = () => {
             <span className="inline-block bg-sky-100 border border-sky-200 text-sky-700 text-xs font-semibold tracking-widest uppercase px-3.5 py-1.5 rounded-full mb-6 backdrop-blur-sm">
               For Student Visionaries & Creators
             </span>
-            <h1 className="text-slate-900 font-black text-4xl md:text-6xl tracking-tight leading-[1.15] dark:text-white">
+            <h1 className="text-slate-900 font-black text-4xl md:text-6xl tracking-tight leading-[1.15]">
               Unleash Your Ideas. <br />
               <span className="bg-linear-to-r from-sky-600 via-teal-500 to-emerald-500 bg-clip-text text-transparent">Build Together.</span>
             </h1>
-            <p className="text-slate-600 text-base md:text-xl mt-6 max-w-2xl mx-auto font-normal leading-relaxed dark:text-zinc-300">
+            <p className="text-slate-600 text-base md:text-xl mt-6 max-w-2xl mx-auto font-normal leading-relaxed">
               The ultimate launchpad where students pitch raw concepts, assemble cross-functional teams, and collaborate to turn bright innovations into reality.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -153,14 +153,14 @@ const Landing = () => {
       </div>
 
       {/* --- ABOUT / MISSION SECTION --- */}
-      <section id="about" className="py-24 px-4 md:px-8 relative z-30 border-b border-sky-100 dark:border-zinc-800">
+      <section id="about" className="py-24 px-4 md:px-8 relative z-30 border-b border-sky-100">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-black mb-6 tracking-tight text-slate-900 dark:text-white">
+          <h2 className="text-3xl md:text-4xl font-black mb-6 tracking-tight text-slate-900">
             Bridging the Gap Between <span className="text-sky-600">Concept</span> and <span className="text-emerald-600">Creation</span>
           </h2>
-          <p className="text-slate-600 text-base md:text-lg max-w-3xl mx-auto leading-relaxed font-normal dark:text-zinc-300">
+          <p className="text-slate-600 text-base md:text-lg max-w-3xl mx-auto leading-relaxed font-normal">
             Every great tech giant, social movement, or design framework started as a simple student concept. 
-            <strong className="text-slate-900 font-semibold dark:text-white"> collaBRIX</strong> provides the dedicated ecosystem students need to publish ideas safely, 
+            <strong className="text-slate-900 font-semibold"> collaBRIX</strong> provides the dedicated ecosystem students need to publish ideas safely, 
             receive constructive feedback, and invite multi-disciplinary peers—from writers and designers to developers—to co-build the future.
           </p>
         </div>
@@ -171,7 +171,7 @@ const Landing = () => {
         <div className="max-w-5xl mx-auto">
           <div className="mb-20">
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-600">The Blueprint</span>
-            <h3 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 mt-2 dark:text-white">Built for the Next Generation of Makers</h3>
+            <h3 className="text-3xl md:text-4xl font-black tracking-tight text-slate-900 mt-2">Built for the Next Generation of Makers</h3>
           </div>
 
           <div className="space-y-16 border-l-2 border-sky-200 ml-4 md:ml-8 pl-8 md:pl-12 relative">
@@ -180,10 +180,10 @@ const Landing = () => {
             <div className="relative group">
               <div className="absolute -left-[45px] md:-left-[61px] top-0 w-8 h-8 rounded-full bg-white border-2 border-sky-500 flex items-center justify-center text-xs font-bold text-sky-600 group-hover:bg-sky-500 group-hover:text-white transition-all shadow-md shadow-sky-500/20">1</div>
               <div className="max-w-2xl">
-                <h4 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2 dark:text-white">
+                <h4 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
                   Pitch Your Vision <span className="text-sm font-normal text-slate-400">💡</span>
                 </h4>
-                <p className="text-slate-600 text-sm leading-relaxed dark:text-zinc-300">
+                <p className="text-slate-600 text-sm leading-relaxed">
                   Don't let your classroom thoughts sit idle in your notebooks. Document your vision transparently inside an active sandbox environment so others understand your ultimate objectives.
                 </p>
               </div>
@@ -193,10 +193,10 @@ const Landing = () => {
             <div className="relative group">
               <div className="absolute -left-[45px] md:-left-[61px] top-0 w-8 h-8 rounded-full bg-white border-2 border-teal-500 flex items-center justify-center text-xs font-bold text-teal-600 group-hover:bg-teal-500 group-hover:text-white transition-all shadow-md shadow-teal-500/20">2</div>
               <div className="max-w-2xl">
-                <h4 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2 dark:text-white">
+                <h4 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
                   Find Co-Founders <span className="text-sm font-normal text-slate-400">🤝</span>
                 </h4>
-                <p className="text-slate-600 text-sm leading-relaxed dark:text-zinc-300">
+                <p className="text-slate-600 text-sm leading-relaxed">
                   Need a product designer to map visual interfaces or a software engineering partner to orchestrate systems architecture? Build cross-functional teams instantly across campus lines.
                 </p>
               </div>
@@ -206,10 +206,10 @@ const Landing = () => {
             <div className="relative group">
               <div className="absolute -left-[45px] md:-left-[61px] top-0 w-8 h-8 rounded-full bg-white border-2 border-emerald-500 flex items-center justify-center text-xs font-bold text-emerald-600 group-hover:bg-emerald-500 group-hover:text-white transition-all shadow-md shadow-emerald-500/20">3</div>
               <div className="max-w-2xl">
-                <h4 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2 dark:text-white">
+                <h4 className="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
                   Gain Real Experience <span className="text-sm font-normal text-slate-400">🚀</span>
                 </h4>
-                <p className="text-slate-600 text-sm leading-relaxed dark:text-zinc-300">
+                <p className="text-slate-600 text-sm leading-relaxed">
                   Graduate with a live portfolio showcasing actual collaborative cross-functional product deployments rather than relying purely on textbook case studies and solo homework assignments.
                 </p>
               </div>

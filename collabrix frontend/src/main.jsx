@@ -4,7 +4,7 @@ import './index.css'
 import App from './App.jsx'
 
 const savedTheme = localStorage.getItem('theme')
-const isDarkMode = savedTheme === 'dark'
+const isDarkMode = savedTheme !== 'light'
 document.documentElement.classList.toggle('dark', isDarkMode)
 
 createRoot(document.getElementById('root')).render(

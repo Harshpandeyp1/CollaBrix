@@ -8,7 +8,11 @@ import {
   UserCheck,
   Eye,
   Layers,
+  BookmarkX,
+  Share2,
 } from "lucide-react";
+import { useState } from "react";
+import ShareModal from "./ShareModal";
 
 const STATUS_CONFIG = {
   PLANNING: {
@@ -52,7 +56,11 @@ const ProjectCard = ({
   onDelete,
   onViewInterests,
   onViewProject,
+  onUnsave,
+  unsaving = false,
 }) => {
+  const [shareOpen, setShareOpen] = useState(false);
+
   // Safe authentication parsing
   
   const isOwner = Boolean(
@@ -226,6 +234,33 @@ console.log("IS OWNER:", isOwner);
 
           {/* Action Row */}
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={(event) => {
+                event.stopPropagation();
+                setShareOpen(true);
+              }}
+              disabled={project?.id == null && project?._id == null}
+              aria-label={`Share ${project?.title || "project"}`}
+              className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800"
+            >
+              <Share2 size={14} />
+              Share
+            </button>
+            {onUnsave && (
+              <button
+                type="button"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  onUnsave(project);
+                }}
+                disabled={unsaving}
+                aria-label={`Remove ${project?.title || "project"} from saved projects`}
+                className="inline-flex items-center justify-center rounded-xl border border-amber-200 px-3 py-2 text-amber-700 transition hover:bg-amber-50 disabled:cursor-wait disabled:opacity-60 dark:border-amber-900 dark:text-amber-300 dark:hover:bg-zinc-800"
+              >
+                <BookmarkX size={15} />
+              </button>
+            )}
             {onViewProject && (
               <button
                 type="button"
@@ -255,6 +290,13 @@ console.log("IS OWNER:", isOwner);
           </div>
         </div>
       </div>
+      <ShareModal
+        open={shareOpen}
+        onClose={() => setShareOpen(false)}
+        itemType="PROJECT"
+        itemId={project?.id ?? project?._id}
+        itemTitle={project?.title}
+      />
     </article>
   );
 };

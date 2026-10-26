@@ -76,9 +76,9 @@ const PlaygroundDetail = () => {
   // -----------------------------
   if (loading) {
     return (
-      <div className="h-screen flex flex-col bg-[#FDFBD4] dark:bg-black overflow-hidden">
+      <div className="page-background min-h-screen flex flex-col bg-[#FDFBD4] dark:bg-black overflow-hidden">
         <Navbar />
-        <div className="flex-1 flex flex-col items-center justify-center gap-3">
+        <div className="flex-1 flex flex-col items-center justify-center gap-3 px-4">
           <Loader2 size={32} className="animate-spin text-indigo-600 dark:text-indigo-400" />
           <p className="text-xs font-medium text-slate-600 dark:text-zinc-400 tracking-wide">
             Loading Playground Workspace...
@@ -93,7 +93,7 @@ const PlaygroundDetail = () => {
   // -----------------------------
   if (error) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#FDFBD4] dark:bg-black">
+      <div className="page-background min-h-screen flex flex-col bg-[#FDFBD4] dark:bg-black">
         <Navbar />
         <div className="flex-1 flex items-center justify-center p-4">
           <div className="max-w-md w-full text-center bg-white/95 dark:bg-zinc-900/95 rounded-2xl border border-slate-200/80 dark:border-zinc-800 p-8 shadow-xl backdrop-blur-md">
@@ -123,19 +123,19 @@ const PlaygroundDetail = () => {
     TAB_CONFIG.find((t) => t.name === activeTab)?.icon || Layers;
 
   return (
-    <div className="h-screen flex flex-col bg-[#FDFBD4] dark:bg-black overflow-hidden">
+    <div className="page-background min-h-screen flex flex-col bg-[#FDFBD4] dark:bg-black overflow-hidden">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 flex flex-col min-h-0">
+      <main className="page-background flex-1 max-w-7xl w-full mx-auto p-3 sm:p-5 flex flex-col min-h-0 bg-[#FDFBD4] dark:bg-black">
         {/* ========================================================
-            UNIFIED WORKSPACE FRAME (Sidebar on Left + Content on Right)
+            WORKSPACE FRAME (Sidebar on Left + Content on Right)
         ======================================================== */}
-        <div className="flex-1 flex rounded-2xl border border-slate-200/80 bg-white/90 shadow-sm backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-900/90 overflow-hidden min-h-0">
+        <div className="flex-1 flex rounded-2xl border border-slate-200/80 bg-white/90 shadow-sm backdrop-blur-sm dark:border-zinc-800/80 dark:bg-black overflow-hidden min-h-0">
           
           {/* ========================================================
               LEFT SIDEBAR: MODULES & DIRECTORY
           ======================================================== */}
-          <aside className="w-64 sm:w-72 shrink-0 border-r border-slate-200/80 dark:border-zinc-800/80 flex flex-col h-full bg-slate-50/50 dark:bg-zinc-900/40 min-h-0">
+          <aside className="w-64 lg:w-72 shrink-0 border-r border-slate-200/80 dark:border-zinc-800/80 flex flex-col h-full bg-slate-50/50 dark:bg-black min-h-0">
             {/* Sidebar Top: Project & Back CTA */}
             <div className="p-4 border-b border-slate-200/80 dark:border-zinc-800/80 space-y-3 shrink-0">
               <div className="flex items-center justify-between">
@@ -165,7 +165,7 @@ const PlaygroundDetail = () => {
             </div>
 
             {/* Sidebar Modules Feed */}
-            <div className="flex-1 overflow-y-auto p-2.5 space-y-1.5 min-h-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex flex-1 flex-col gap-1.5 overflow-y-auto p-2.5 min-h-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               <div className="px-2.5 py-1">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
                   Workspace Modules
@@ -179,7 +179,7 @@ const PlaygroundDetail = () => {
                   <button
                     key={name}
                     onClick={() => setActiveTab(name)}
-                    className={`w-full text-left p-2.5 rounded-xl transition-all duration-150 flex items-center gap-3 relative ${
+                    className={`w-auto shrink-0 text-left p-2 rounded-xl transition-all duration-150 flex items-center gap-2 relative md:w-full md:gap-3 md:p-2.5 ${
                       isSelected
                         ? "bg-indigo-50/80 text-indigo-700 font-semibold ring-1 ring-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-400 dark:ring-indigo-900 shadow-xs"
                         : "text-slate-600 hover:bg-slate-100/70 hover:text-slate-900 dark:text-zinc-400 dark:hover:bg-zinc-800/60 dark:hover:text-zinc-200"
@@ -201,7 +201,7 @@ const PlaygroundDetail = () => {
 
                     <div className="min-w-0 flex-1">
                       <p className="text-xs leading-none font-semibold">{name}</p>
-                      <p className="text-[10px] text-slate-400 dark:text-zinc-500 truncate mt-1">
+                      <p className="mt-1 hidden truncate text-[10px] text-slate-400 dark:text-zinc-500 md:block">
                         {desc}
                       </p>
                     </div>
@@ -232,9 +232,9 @@ const PlaygroundDetail = () => {
           {/* ========================================================
               RIGHT AREA: ACTIVE CANVAS & DETAIL
           ======================================================== */}
-          <section className="flex-1 flex flex-col min-w-0 bg-white/60 dark:bg-zinc-900/60 min-h-0">
+          <section className="flex-1 flex flex-col min-w-0 bg-white/60 dark:bg-black min-h-0">
             {/* Header / Canvas Breadcrumb */}
-            <div className="px-6 py-4 border-b border-slate-200/80 dark:border-zinc-800/80 flex items-center justify-between bg-white/70 dark:bg-zinc-900/70 backdrop-blur-sm shrink-0">
+            <div className="px-3 py-3 sm:px-6 sm:py-4 border-b border-slate-200/80 dark:border-zinc-800/80 flex items-center justify-between bg-white/70 dark:bg-black backdrop-blur-sm shrink-0">
               <div className="flex items-center gap-3">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 ring-1 ring-black/5 dark:bg-indigo-950/60 dark:text-indigo-400 dark:ring-white/5">
                   <ActiveIcon size={18} />
@@ -251,7 +251,7 @@ const PlaygroundDetail = () => {
             </div>
 
             {/* Scrollable Canvas Body */}
-            <div className="flex-1 overflow-y-auto p-6 min-h-0 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex-1 overflow-y-auto p-3 sm:p-6 min-h-0 bg-transparent dark:bg-black [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               {activeTab === "Overview" ? (
                 <div className="space-y-6 max-w-4xl">
                   {/* Summary Box */}

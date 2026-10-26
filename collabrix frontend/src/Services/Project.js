@@ -70,6 +70,24 @@ export const getDiscoveryProjects = async () => {
 };
 
 // ==========================================
+// SAVED PROJECTS (per-user bookmarks)
+// ==========================================
+
+export const saveProject = async (projectId) => {
+  await api.post(`/saved-projects/${projectId}`);
+};
+
+export const unsaveProject = async (projectId) => {
+  await api.delete(`/saved-projects/${projectId}`);
+};
+
+export const getSavedProjects = async () => {
+  const response = await api.get("/saved-projects");
+
+  return normalizeResponseData(response);
+};
+
+// ==========================================
 // PROJECT INTERESTS
 // ==========================================
 

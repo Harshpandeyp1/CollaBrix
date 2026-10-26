@@ -1,15 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import api from "../Services/api";
 import Navbar from "../Components/Navbar";
+import {
+  getProfile,
+  getProfileImage,
+  getProfileImageUrl,
+} from "../Services/Profile.js";
 
 import {
   connectWebSocket,
   sendMessage as sendWebSocketMessage,
   disconnectWebSocket,
 } from "../Services/webSocketService";
+import { getPostById } from "../Services/Post";
+import { getProjectById } from "../Services/Project";
 
 
 const Messages = () => {
+  const location = useLocation();
 
   // ----------------------------------------
   // STATE
@@ -22,7 +31,6 @@ const Messages = () => {
   const [selectedUser, setSelectedUser] = useState(null);
 
   const [messages, setMessages] = useState([]);
-
   const [messageInput, setMessageInput] = useState("");
 
   const [loadingMessages, setLoadingMessages] = useState(false);
@@ -41,6 +49,7 @@ const Messages = () => {
   // Keeps the latest selected user available
   // inside the WebSocket callback.
   const selectedUserRef = useRef(null);
+  const sharedItemCacheRef = useRef(new Map());
 
 
   // ----------------------------------------
@@ -106,12 +115,7 @@ const Messages = () => {
 
     try {
 
-      const response =
-        await api.get("/profile/me");
-
-      setCurrentUser(
-        response.data.data
-      );
+      setCurrentUser(await getProfile());
 
     } catch (error) {
 
@@ -136,8 +140,18 @@ const Messages = () => {
       const response =
         await api.get("/messages/conversations");
 
+      const conversations = Array.isArray(response.data)
+        ? response.data
+        : [];
+
       setConversations(
-        response.data || []
+        conversations.map((conversation) => ({
+          ...conversation,
+          profileImage:
+            getProfileImage(conversation) ||
+            getProfileImage(conversation.user) ||
+            getProfileImage(conversation.otherUser),
+        }))
       );
 
     } catch (error) {
@@ -229,6 +243,35 @@ const Messages = () => {
 
   };
 
+  const fetchSharedItemDetails = async (message) => {
+    const itemType = String(message?.sharedItemType || "").toUpperCase();
+    const itemId = message?.sharedItemId;
+    if (itemId == null || !["POST", "PROJECT"].includes(itemType)) return null;
+
+    const cacheKey = `${itemType}:${itemId}`;
+    if (!sharedItemCacheRef.current.has(cacheKey)) {
+      const request =
+        itemType === "POST"
+          ? getPostById(itemId)
+          : getProjectById(itemId);
+      sharedItemCacheRef.current.set(
+        cacheKey,
+        Promise.resolve(request)
+          .then((data) => data?.data ?? data?.post ?? data?.project ?? data)
+          .catch((error) => {
+            sharedItemCacheRef.current.delete(cacheKey);
+            console.error(
+              `Failed to fetch shared ${itemType.toLowerCase()}:`,
+              error
+            );
+            return null;
+          })
+      );
+    }
+
+    return sharedItemCacheRef.current.get(cacheKey);
+  };
+
 
   // ----------------------------------------
   // HANDLE INCOMING WEBSOCKET MESSAGE
@@ -311,6 +354,19 @@ const Messages = () => {
         }
       );
 
+      if (normalizedMessage.sharedItemType && normalizedMessage.sharedItemId != null) {
+        fetchSharedItemDetails(normalizedMessage).then((details) => {
+          if (!details) return;
+          setMessages((previousMessages) =>
+            previousMessages.map((message) =>
+              String(message.id) === String(normalizedMessage.id)
+                ? { ...message, sharedItemDetails: details }
+                : message
+            )
+          );
+        });
+      }
+
     }
 
 
@@ -346,7 +402,9 @@ const Messages = () => {
             "New message",
 
           profileImage:
-            existingConversation?.profileImage ??
+            getProfileImage(existingConversation) ||
+            getProfileImage(normalizedMessage) ||
+            getProfileImage(normalizedMessage.sender) ||
             "",
 
           lastMessage:
@@ -410,6 +468,8 @@ const Messages = () => {
   ) => {
 
     setLoadingMessages(true);
+    setMessages([]);
+    setMessageError("");
 
 
     try {
@@ -431,29 +491,43 @@ const Messages = () => {
           normalizeMessagePayload
         );
 
-
       setMessages(
         normalizedMessages
       );
 
-
+      const sharedMessages = normalizedMessages.filter(
+        (message) => message.sharedItemType && message.sharedItemId
+      );
+      const sharedDetails = await Promise.all(
+        sharedMessages.map(async (message) => ({
+          messageId: message.id,
+          details: await fetchSharedItemDetails(message),
+        }))
+      );
+      if (Number(selectedUserRef.current?.id) === Number(userId)) {
+        const detailsByMessageId = new Map(
+          sharedDetails.map(({ messageId, details }) => [
+            String(messageId),
+            details,
+          ])
+        );
+        setMessages((currentMessages) =>
+          currentMessages.map((message) => {
+            const details = detailsByMessageId.get(String(message.id));
+            return details ? { ...message, sharedItemDetails: details } : message;
+          })
+        );
+      }
     } catch (error) {
-
       console.error(
         "Error fetching messages:",
         error
       );
-
-
       setMessageError(
         "Failed to load messages."
       );
-
-
     } finally {
-
       setLoadingMessages(false);
-
     }
 
   };
@@ -474,6 +548,39 @@ const Messages = () => {
     }
 
   }, [selectedUser]);
+
+  useEffect(() => {
+    const sharedUser = location.state?.selectedUser;
+    if (!sharedUser?.id) return;
+
+    const nextUser = {
+      id: sharedUser.id,
+      username:
+        sharedUser.username ?? sharedUser.fullName ?? "Connection",
+      profileImage: getProfileImage(sharedUser),
+    };
+
+    setSelectedUser(nextUser);
+    setMessageInput("");
+    setMessageError("");
+    setConversations((current) =>
+      current.some(
+        (conversation) =>
+          Number(conversation.userId) === Number(nextUser.id)
+      )
+        ? current
+        : [
+            {
+              userId: nextUser.id,
+              username: nextUser.username,
+              profileImage: nextUser.profileImage,
+              lastMessage: "",
+              lastMessageAt: new Date().toISOString(),
+            },
+            ...current,
+          ]
+    );
+  }, [location.key, location.state?.selectedUser]);
 
 
   // ----------------------------------------
@@ -884,24 +991,17 @@ const Messages = () => {
                     >
 
 
-                      <img
-                        src={
-                          conversation.profileImage ||
-                          "/default-avatar.png"
-                        }
-
-                        alt={
-                          conversation.username
-                        }
-
-                        className="
-                          w-11
-                          h-11
-                          rounded-full
-                          object-cover
-                          shrink-0
-                        "
-                      />
+                      {getProfileImageUrl(conversation) ? (
+                        <img
+                          src={getProfileImageUrl(conversation)}
+                          alt={conversation.username}
+                          className="w-11 h-11 rounded-full object-cover shrink-0"
+                        />
+                      ) : (
+                        <div className="w-11 h-11 rounded-full bg-indigo-100 dark:bg-zinc-700 flex items-center justify-center text-sm font-semibold text-indigo-700 dark:text-white shrink-0">
+                          {conversation.username?.charAt(0)?.toUpperCase() || "U"}
+                        </div>
+                      )}
 
 
                       <div className="
@@ -1023,24 +1123,17 @@ const Messages = () => {
                   shrink-0
                 ">
 
-                  <img
-                    src={
-                      selectedUser.profileImage ||
-                      "/default-avatar.png"
-                    }
-
-                    alt={
-                      selectedUser.username
-                    }
-
-                    className="
-                      w-10
-                      h-10
-                      rounded-full
-                      object-cover
-                      shrink-0
-                    "
-                  />
+                  {getProfileImageUrl(selectedUser) ? (
+                    <img
+                      src={getProfileImageUrl(selectedUser)}
+                      alt={selectedUser.username}
+                      className="w-10 h-10 rounded-full object-cover shrink-0"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-zinc-700 flex items-center justify-center text-sm font-semibold text-indigo-700 dark:text-white shrink-0">
+                      {selectedUser.username?.charAt(0)?.toUpperCase() || "U"}
+                    </div>
+                  )}
 
 
                   <div>
@@ -1126,6 +1219,17 @@ const Messages = () => {
                               currentUser?.id
                             );
 
+                          const sharedItemType =
+                            String(message.sharedItemType || "").toUpperCase();
+                          const sharedItemPath =
+                            message.sharedItemId == null
+                              ? null
+                              : sharedItemType === "POST"
+                                ? `/posts/${message.sharedItemId}`
+                                : sharedItemType === "PROJECT"
+                                  ? `/projects/${message.sharedItemId}`
+                                  : null;
+
 
                           return (
 
@@ -1146,12 +1250,13 @@ const Messages = () => {
 
                               <div
                                 className={`
-                                  max-w-[70%]
+                                  max-w-[80%]
                                   px-4
                                   py-2
                                   rounded-2xl
 
                                   ${
+
                                     isMe
 
                                       ? "bg-blue-600 text-white rounded-br-md"
@@ -1160,14 +1265,61 @@ const Messages = () => {
                                   }
                                 `}
                               >
-
-                                <p className="
-                                  break-words
-                                ">
-                                  {
-                                    message.content
-                                  }
-                                </p>
+                                {sharedItemPath ? (
+                                  <Link
+                                    to={sharedItemPath}
+                                    className="block min-w-56 rounded-xl border border-white/20 p-2 transition hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-white/70"
+                                  >
+                                    <p className="text-[11px] font-semibold uppercase tracking-wide opacity-75">
+                                      Shared {sharedItemType === "POST" ? "post" : "project"}
+                                    </p>
+                                    <p className="mt-1 break-words font-semibold">
+                                      {message.sharedItemDetails?.title ||
+                                        message.sharedItemTitle ||
+                                        "Shared item"}
+                                    </p>
+                                    {message.sharedItemDetails?.image && (
+                                      <img
+                                        src={message.sharedItemDetails.image}
+                                        alt=""
+                                        className="mt-2 max-h-36 w-full rounded-lg object-cover"
+                                      />
+                                    )}
+                                    {(message.sharedItemDetails?.description ||
+                                      message.sharedItemDetails?.content) && (
+                                      <p className="mt-2 line-clamp-3 break-words text-sm opacity-90">
+                                        {message.sharedItemDetails.description ||
+                                          message.sharedItemDetails.content}
+                                      </p>
+                                    )}
+                                    {message.sharedMessage && (
+                                      <p className="mt-2 break-words text-sm">
+                                        {message.sharedMessage}
+                                      </p>
+                                    )}
+                                    <span className="mt-3 inline-block text-xs font-semibold underline underline-offset-2">
+                                      Open {String(message.sharedItemType).toUpperCase() === "POST" ? "post" : "project"}
+                                    </span>
+                                  </Link>
+                                ) : message.sharedItemType ? (
+                                  <div className="min-w-56 p-2">
+                                    <p className="text-[11px] font-semibold uppercase tracking-wide opacity-75">
+                                      Shared {sharedItemType === "POST" ? "post" : "project"}
+                                    </p>
+                                    <p className="mt-1 break-words font-semibold">
+                                      {message.sharedItemTitle || "Shared item"}
+                                    </p>
+                                    {message.sharedMessage && (
+                                      <p className="mt-2 break-words text-sm">
+                                        {message.sharedMessage}
+                                      </p>
+                                    )}
+                                  </div>
+                                ) : (
+                                  <p className="break-words">
+                                    {message.content}
+                                  </p>
+                                )}
 
                               </div>
 

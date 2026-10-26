@@ -15,6 +15,7 @@ import {
 import { useParams } from "react-router-dom";
 
 import api from "../../Services/api";
+import { getProfileImageUrl } from "../../Services/Profile.js";
 
 const Members = () => {
   const { projectId } = useParams();
@@ -369,10 +370,10 @@ const Members = () => {
 
                     <div className="relative h-12 w-12 shrink-0">
 
-                      {member.profileImage ? (
+                      {getProfileImageUrl(member) ? (
 
                         <img
-                          src={member.profileImage}
+                          src={getProfileImageUrl(member)}
                           alt={
                             member.fullName ||
                             member.username
@@ -517,4 +518,3 @@ const Members = () => {
 };
 
 export default Members;
-

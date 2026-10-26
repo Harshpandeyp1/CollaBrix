@@ -1,6 +1,10 @@
 import React, { useRef, useState } from "react";
 import { Camera, Pencil } from "lucide-react";
-import { uploadProfileImage, uploadCoverImage } from "../Services/Profile";
+import {
+  getProfileImageUrl,
+  uploadProfileImage,
+  uploadCoverImage,
+} from "../Services/Profile";
 
 // ------------------------------------------------------
 // Helper Function
@@ -56,6 +60,9 @@ const SOCIAL_ICONS = {
 
 const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpdated }) => {
   const safeProfile = profile || {}
+  const canEditProfile = Boolean(
+    onEdit || onProfileImageUpdated || onCoverImageUpdated
+  );
 
   // ------------------------------------------------------
   // Object Destructuring
@@ -72,10 +79,10 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
     website = "",
     github = "",
     linkedin = "",
-    profileImage = "",
     coverImage = "",
   } = safeProfile;
 
+  const profileImage = getProfileImageUrl(safeProfile);
   const displayName = fullName || name || username || "Profile";
 
   // ------------------------------------------------------
@@ -110,6 +117,7 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
     try {
       setIsUploading(true);
       await uploadProfileImage(file);
+      window.dispatchEvent(new Event("profile-updated"));
       onProfileImageUpdated?.();
     } catch (err) {
       console.error(err);
@@ -183,29 +191,32 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
         )}
 
         {/* Hidden file input, triggered by the cover camera button */}
-        <input
-          type="file"
-          accept="image/*"
-          ref={coverInputRef}
-          onChange={handleCoverFileChange}
-          className="hidden"
-        />
+        {canEditProfile && (
+          <>
+            <input
+              type="file"
+              accept="image/*"
+              ref={coverInputRef}
+              onChange={handleCoverFileChange}
+              className="hidden"
+            />
 
-        {/* Cover photo camera button overlay */}
-        <button
-          type="button"
-          onClick={handleCoverCameraClick}
-          disabled={isCoverUploading}
-          title="Change cover photo"
-          aria-label="Change cover photo"
-          className="absolute right-4 bottom-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-800 shadow-sm backdrop-blur transition hover:bg-white disabled:opacity-50 dark:bg-zinc-900/80 dark:text-white dark:hover:bg-zinc-900"
-        >
-          {isCoverUploading ? (
-            <span className="h-3 w-3 animate-spin rounded-full border-2 border-gray-500 border-t-transparent " />
-          ) : (
-            <Camera size={17} />
-          )}
-        </button>
+            <button
+              type="button"
+              onClick={handleCoverCameraClick}
+              disabled={isCoverUploading}
+              title="Change cover photo"
+              aria-label="Change cover photo"
+              className="absolute right-4 bottom-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-slate-800 shadow-sm backdrop-blur transition hover:bg-white disabled:opacity-50 dark:bg-zinc-900/80 dark:text-white dark:hover:bg-zinc-900"
+            >
+              {isCoverUploading ? (
+                <span className="h-3 w-3 animate-spin rounded-full border-2 border-gray-500 border-t-transparent " />
+              ) : (
+                <Camera size={17} />
+              )}
+            </button>
+          </>
+        )}
       </div>
 
       <div className="px-6 pb-6">
@@ -232,29 +243,32 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
             )}
 
             {/* Hidden file input, triggered by the camera button */}
-            <input
-              type="file"
-              accept="image/*"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden"
-            />
+            {canEditProfile && (
+              <>
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
 
-            {/* Camera button overlay */}
-            <button
-              type="button"
-              onClick={handleCameraClick}
-              disabled={isUploading}
-              title="Change profile photo"
-              aria-label="Change profile photo"
-              className="absolute bottom-1 right-1 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-md transition hover:bg-slate-50 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
-            >
-              {isUploading ? (
-                <span className="h-3 w-3 animate-spin rounded-full border-2 border-gray-400 border-t-transparent" />
-              ) : (
-                <Camera size={15} />
-              )}
-            </button>
+                <button
+                  type="button"
+                  onClick={handleCameraClick}
+                  disabled={isUploading}
+                  title="Change profile photo"
+                  aria-label="Change profile photo"
+                  className="absolute bottom-1 right-1 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-700 shadow-md transition hover:bg-slate-50 disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800"
+                >
+                  {isUploading ? (
+                    <span className="h-3 w-3 animate-spin rounded-full border-2 border-gray-400 border-t-transparent" />
+                  ) : (
+                    <Camera size={15} />
+                  )}
+                </button>
+              </>
+            )}
           </div>
         </div>
 

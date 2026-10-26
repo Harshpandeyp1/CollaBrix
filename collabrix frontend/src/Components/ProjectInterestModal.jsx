@@ -6,6 +6,7 @@ import {
   updateProjectInterestStatus,
   removeProjectInterest
 } from "../Services/Project.js";
+import { getProfileImageUrl } from "../Services/Profile.js";
 
 const ProjectInterestModal = ({
   open,
@@ -368,10 +369,10 @@ useEffect(() => {
 
                       {/* PROFILE IMAGE */}
 
-                      {interest.profileImage ? (
+                      {getProfileImageUrl(interest) ? (
 
                         <img
-                          src={interest.profileImage}
+                          src={getProfileImageUrl(interest)}
                           alt={
                             interest.fullName ||
                             interest.username
@@ -611,4 +612,3 @@ useEffect(() => {
 };
 
 export default ProjectInterestModal;
-

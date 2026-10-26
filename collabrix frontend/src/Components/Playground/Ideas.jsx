@@ -1,13 +1,33 @@
-
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Plus,
   Pencil,
   Trash2,
   X,
   Lightbulb,
+  Bookmark,
+  BookmarkCheck,
 } from "lucide-react";
-import api from "../../Services/api";
+import {
+  getIdeas,
+  createIdea,
+  updateIdea,
+  deleteIdea,
+  toggleSaveIdea,
+} from "../../Services/Ideas";
+import { getProfileImageUrl } from "../../Services/Profile.js";
+
+const getIdeaId = (idea) => idea.id ?? idea._id;
+
+const isIdeaSaved = (idea) => {
+  if (typeof idea.saved === "boolean") return idea.saved;
+
+  return (
+    idea.isSaved === true ||
+    idea.bookmarked === true ||
+    idea.isBookmarked === true
+  );
+};
 
 const Ideas = ({ projectId }) => {
 
@@ -21,6 +41,7 @@ const Ideas = ({ projectId }) => {
   const [error, setError] = useState("");
 
   const [showModal, setShowModal] = useState(false);
+  const [showSavedModal, setShowSavedModal] = useState(false);
   const [editingIdea, setEditingIdea] = useState(null);
 
   const [form, setForm] = useState({
@@ -35,33 +56,23 @@ const Ideas = ({ projectId }) => {
   // FETCH IDEAS
   // ==========================================
 
-  const fetchIdeas = async () => {
-
+  const fetchIdeas = useCallback(async () => {
     try {
-
       setLoading(true);
       setError("");
-
-      const response = await api.get(
-        `/playground/${projectId}/ideas`
+      const data = await getIdeas(projectId);
+      setIdeas(
+        Array.isArray(data)
+          ? data.map((idea) => ({ ...idea, saved: isIdeaSaved(idea) }))
+          : []
       );
-
-      console.log("IDEA DATA:", response.data);
-
-      setIdeas(response.data);
-
     } catch (err) {
-
       console.error("IDEA ERROR:", err);
-
       setError("Failed to load ideas.");
-
     } finally {
-
       setLoading(false);
-
     }
-  };
+  }, [projectId]);
 
 
   // ==========================================
@@ -74,7 +85,7 @@ const Ideas = ({ projectId }) => {
       fetchIdeas();
     }
 
-  }, [projectId]);
+  }, [fetchIdeas, projectId]);
 
 
   // ==========================================
@@ -165,39 +176,16 @@ const Ideas = ({ projectId }) => {
       setSaving(true);
       setError("");
 
-
-      // ======================================
-      // UPDATE
-      // ======================================
+      const payload = {
+        title: form.title.trim(),
+        description: form.description.trim(),
+      };
 
       if (editingIdea) {
-
-        await api.put(
-          `/playground/ideas/${editingIdea.id}`,
-          {
-            title: form.title.trim(),
-            description: form.description.trim(),
-          }
-        );
-
+        await updateIdea(getIdeaId(editingIdea), payload);
+      } else {
+        await createIdea(projectId, payload);
       }
-
-      // ======================================
-      // CREATE
-      // ======================================
-
-      else {
-
-        await api.post(
-          `/playground/${projectId}/ideas`,
-          {
-            title: form.title.trim(),
-            description: form.description.trim(),
-          }
-        );
-
-      }
-
 
       setShowModal(false);
       setEditingIdea(null);
@@ -231,6 +219,10 @@ const Ideas = ({ projectId }) => {
   // ==========================================
 
   const handleDelete = async (ideaId) => {
+    if (ideaId == null) {
+      setError("This idea cannot be deleted because it has no ID.");
+      return;
+    }
 
     const confirmed = window.confirm(
       "Are you sure you want to delete this idea?"
@@ -243,9 +235,7 @@ const Ideas = ({ projectId }) => {
 
       setError("");
 
-      await api.delete(
-        `/playground/ideas/${ideaId}`
-      );
+      await deleteIdea(ideaId);
 
       await fetchIdeas();
 
@@ -256,6 +246,51 @@ const Ideas = ({ projectId }) => {
       setError(
         err.response?.data?.message ||
         "Failed to delete idea."
+      );
+    }
+  };
+
+
+  // ==========================================
+  // SAVE / UNSAVE (BOOKMARK)
+  // ==========================================
+
+  const savedIdeas = ideas.filter(isIdeaSaved);
+
+  const handleToggleSave = async (idea) => {
+    const ideaId = getIdeaId(idea);
+    if (ideaId == null) {
+      setError("This idea cannot be saved because it has no ID.");
+      return;
+    }
+    const next = !isIdeaSaved(idea);
+
+    // update the UI immediately
+    setIdeas((prev) =>
+      prev.map((i) =>
+        String(getIdeaId(i)) === String(ideaId) ? { ...i, saved: next } : i
+      )
+    );
+
+    try {
+      await toggleSaveIdea(ideaId, next);
+
+    } catch (err) {
+
+      console.error("TOGGLE SAVE ERROR:", err);
+
+      // roll back if the request fails
+      setIdeas((prev) =>
+        prev.map((i) =>
+          String(getIdeaId(i)) === String(ideaId)
+            ? { ...i, saved: !next }
+            : i
+        )
+      );
+
+      setError(
+        err.response?.data?.message ||
+        "Failed to update saved idea."
       );
     }
   };
@@ -311,13 +346,27 @@ const Ideas = ({ projectId }) => {
         </div>
 
 
-        <button
-          onClick={openCreateModal}
-          className="flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-        >
-          <Plus size={17} />
-          New Idea
-        </button>
+        <div className="flex items-center gap-2">
+
+          <button
+            type="button"
+            onClick={() => setShowSavedModal(true)}
+            className="flex items-center gap-2 rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          >
+            <BookmarkCheck size={17} />
+            Saved ({savedIdeas.length})
+          </button>
+
+          <button
+            type="button"
+            onClick={openCreateModal}
+            className="flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+          >
+            <Plus size={17} />
+            New Idea
+          </button>
+
+        </div>
 
       </div>
 
@@ -333,6 +382,7 @@ const Ideas = ({ projectId }) => {
           <span>{error}</span>
 
           <button
+            type="button"
             onClick={() => setError("")}
           >
             <X size={16} />
@@ -371,6 +421,7 @@ const Ideas = ({ projectId }) => {
             </p>
 
             <button
+              type="button"
               onClick={openCreateModal}
               className="mt-4 text-sm font-medium text-zinc-900 underline dark:text-white"
             >
@@ -392,7 +443,7 @@ const Ideas = ({ projectId }) => {
           {ideas.map((idea) => (
 
             <div
-              key={idea.id}
+              key={getIdeaId(idea)}
               className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm transition hover:shadow-md dark:border-zinc-700 dark:bg-zinc-900"
             >
 
@@ -404,10 +455,9 @@ const Ideas = ({ projectId }) => {
 
                   {/* PROFILE IMAGE */}
 
-                  {idea.createdByProfileImage ? (
-
+                  {getProfileImageUrl(idea) ? (
                     <img
-                      src={`http://localhost:8080${idea.createdByProfileImage}`}
+                      src={getProfileImageUrl(idea)}
                       alt={idea.createdByUsername}
                       className="h-10 w-10 shrink-0 rounded-full object-cover"
                     />
@@ -447,6 +497,36 @@ const Ideas = ({ projectId }) => {
                 <div className="flex shrink-0 items-center gap-1">
 
                   <button
+                    type="button"
+                    onClick={() => handleToggleSave(idea)}
+                    aria-label={
+                      isIdeaSaved(idea)
+                        ? `Remove ${idea.title || "idea"} from saved ideas`
+                        : `Save ${idea.title || "idea"}`
+                    }
+                    className={`rounded-lg p-2 transition hover:bg-zinc-100 dark:hover:bg-zinc-800 ${
+                      isIdeaSaved(idea)
+                        ? "text-yellow-500"
+                        : "text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+                    }`}
+                    title={
+                      isIdeaSaved(idea)
+                        ? "Remove from saved"
+                        : "Save idea"
+                    }
+                  >
+                    {isIdeaSaved(idea) ? (
+                      <BookmarkCheck
+                        size={16}
+                        className="fill-yellow-100"
+                      />
+                    ) : (
+                      <Bookmark size={16} />
+                    )}
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => openEditModal(idea)}
                     className="rounded-lg p-2 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-white"
                     title="Edit idea"
@@ -455,7 +535,8 @@ const Ideas = ({ projectId }) => {
                   </button>
 
                   <button
-                    onClick={() => handleDelete(idea.id)}
+                    type="button"
+                    onClick={() => handleDelete(getIdeaId(idea))}
                     className="rounded-lg p-2 text-zinc-500 transition hover:bg-red-100 hover:text-red-600 dark:hover:bg-red-950/30 dark:hover:text-red-400"
                     title="Delete idea"
                   >
@@ -526,6 +607,7 @@ const Ideas = ({ projectId }) => {
 
 
               <button
+                type="button"
                 onClick={closeModal}
                 className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
               >
@@ -617,9 +699,109 @@ const Ideas = ({ projectId }) => {
 
       )}
 
+
+      {/* ====================================== */}
+      {/* SAVED IDEAS MODAL */}
+      {/* ====================================== */}
+
+      {showSavedModal && (
+
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+
+          <div className="flex max-h-[80vh] w-full max-w-lg flex-col rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900">
+
+            {/* MODAL HEADER */}
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
+                  Saved Ideas
+                </h3>
+
+                <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+                  Ideas you bookmarked from this project, including ideas shared by other people.
+                </p>
+
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowSavedModal(false)}
+                className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+              >
+                <X size={18} />
+              </button>
+
+            </div>
+
+
+            {/* SAVED LIST */}
+
+            <div className="mt-5 space-y-3 overflow-y-auto">
+
+              {savedIdeas.length === 0 ? (
+
+                <p className="py-10 text-center text-sm text-zinc-500 dark:text-zinc-400">
+                  No saved ideas yet. Click the bookmark icon on an idea to save it.
+                </p>
+
+              ) : (
+
+                savedIdeas.map((idea) => (
+
+                  <div
+                    key={getIdeaId(idea)}
+                    className="flex items-start justify-between gap-3 rounded-xl border border-zinc-200 p-4 dark:border-zinc-700"
+                  >
+
+                    <div className="min-w-0">
+
+                      <h4 className="text-sm font-semibold text-zinc-900 dark:text-white">
+                        {idea.title}
+                      </h4>
+
+                      {idea.description && (
+
+                        <p className="mt-1 line-clamp-3 whitespace-pre-wrap text-sm text-zinc-600 dark:text-zinc-300">
+                          {idea.description}
+                        </p>
+
+                      )}
+
+                      <p className="mt-2 text-xs text-zinc-400">
+                        by {idea.createdByUsername}
+                      </p>
+
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => handleToggleSave(idea)}
+                      className="shrink-0 rounded-lg p-2 text-yellow-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      title="Remove from saved"
+                      aria-label={`Remove ${idea.title || "idea"} from saved ideas`}
+                    >
+                      <BookmarkCheck size={16} />
+                    </button>
+
+                  </div>
+
+                ))
+
+              )}
+
+            </div>
+
+          </div>
+
+        </div>
+
+      )}
+
     </div>
   );
 };
 
 export default Ideas;
-

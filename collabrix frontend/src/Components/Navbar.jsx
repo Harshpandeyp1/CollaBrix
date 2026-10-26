@@ -1,11 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThemeTransition from './ThemeTransition';
+import { getProfile, getProfileImageUrl } from '../Services/Profile.js';
 
 const DashboardNavbar = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const [currentUser, setCurrentUser] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadProfile = async () => {
+      if (!localStorage.getItem('token')) {
+        setCurrentUser(null);
+        return;
+      }
+
+      try {
+        const profile = await getProfile();
+        if (active) setCurrentUser(profile);
+      } catch (error) {
+        console.error('Failed to load navbar profile:', error);
+      }
+    };
+
+    loadProfile();
+    window.addEventListener('profile-updated', loadProfile);
+
+    return () => {
+      active = false;
+      window.removeEventListener('profile-updated', loadProfile);
+    };
+  }, [location.pathname]);
 
   // =========================
   // SEARCH STATE
@@ -181,6 +209,27 @@ const DashboardNavbar = () => {
     },
 
     {
+      id: 'ideas',
+      label: 'Ideas',
+      path: '/ideas',
+
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M9 18h6m-5 4h4m-3.5-8.5a6 6 0 119 0c-1.1 1.1-1.5 2.1-1.5 3.5h-6c0-1.4-.4-2.4-1.5-3.5z"
+          />
+        </svg>
+      )
+    },
+    {
       id: 'projects',
       label: 'Workspace',
       path: '/project',
@@ -310,16 +359,13 @@ const DashboardNavbar = () => {
 
 
       <nav className="
-        bg-[#E3F0A3]
-        border-b
-        border-slate-200
+        app-navbar
         sticky
         top-0
         z-50
+        border-b
         transition-colors
-        dark:bg-black
-        dark:border-zinc-700
-      " style={{ backgroundColor: darkMode ? "#000000" : "#E3F0A3" }}>
+      ">
 
         <div className="
           max-w-7xl
@@ -390,13 +436,13 @@ const DashboardNavbar = () => {
 
             <div className="relative">
 
-              {/* Search bar: stays white in dark mode */}
+              {/* Search bar adapts to the active theme */}
               <div className="
                 flex
                 items-center
                 navbar-search
                 bg-slate-100
-                dark:bg-white
+                dark:bg-zinc-800
                 rounded-lg
                 px-3
                 py-1.5
@@ -405,7 +451,7 @@ const DashboardNavbar = () => {
               ">
 
                 <svg
-                  className="w-4 h-4 text-slate-500 dark:text-slate-700 mr-2 shrink-0"
+                  className="w-4 h-4 text-slate-500 dark:text-zinc-300 mr-2 shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -433,10 +479,10 @@ const DashboardNavbar = () => {
                     bg-transparent
                     outline-none
                     text-xs
-                    dark:text-slate-900
                     text-slate-800
                     placeholder-slate-400
-                    dark:placeholder-slate-500
+                    dark:text-white
+                    dark:placeholder-zinc-400
                   "
                 />
 
@@ -560,10 +606,10 @@ const DashboardNavbar = () => {
                               shrink-0
                             ">
 
-                              {user.profileImage ? (
+                              {getProfileImageUrl(user) ? (
 
                                 <img
-                                  src={user.profileImage}
+                                  src={getProfileImageUrl(user)}
                                   alt={user.username}
                                   className="w-full h-full object-cover"
                                 />
@@ -817,6 +863,7 @@ const DashboardNavbar = () => {
                 w-6
                 h-6
                 rounded-full
+                overflow-hidden
                 bg-slate-800
                 dark:bg-white
                 text-white
@@ -827,7 +874,18 @@ const DashboardNavbar = () => {
                 items-center
                 justify-center
               ">
-                H
+                {getProfileImageUrl(currentUser) ? (
+                  <img
+                    src={getProfileImageUrl(currentUser)}
+                    alt={currentUser?.fullName || currentUser?.username || "My profile"}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  (currentUser?.fullName ||
+                    currentUser?.name ||
+                    currentUser?.username ||
+                    "Me").charAt(0).toUpperCase()
+                )}
               </div>
 
               <span className="

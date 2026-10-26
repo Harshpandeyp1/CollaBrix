@@ -11,6 +11,19 @@ export const getAllPosts = async () => {
   return response.data;
 };
 
+export const savePost = async (postId) => {
+  await api.post(`/saved-posts/${postId}`);
+};
+
+export const unsavePost = async (postId) => {
+  await api.delete(`/saved-posts/${postId}`);
+};
+
+export const getSavedPosts = async () => {
+  const response = await api.get("/saved-posts");
+  return response.data;
+};
+
 export const getComments=async(postId)=>{
   const response = await api.get(`${API}/${postId}/comments`);
   return response.data;

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import api from "../../Services/api";
+import { getProfileImageUrl } from "../../Services/Profile.js";
 
 const PlaygroundActivity = ({ projectId }) => {
   const [activities, setActivities] = useState([]);
@@ -174,9 +175,9 @@ const PlaygroundActivity = ({ projectId }) => {
 
                 <div className="flex items-center gap-3">
 
-                  {activity.profileImage ? (
+                  {getProfileImageUrl(activity) ? (
                     <img
-                      src={`http://localhost:8080${activity.profileImage}`}
+                      src={getProfileImageUrl(activity)}
                       alt={activity.username}
                       className="h-8 w-8 rounded-full object-cover"
                     />

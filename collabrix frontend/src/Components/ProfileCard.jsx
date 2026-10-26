@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getProfile } from '../Services/Profile';
+import { getProfile, getProfileImageUrl } from '../Services/Profile';
 
 // ------------------------------------------------------
 // Same initials helper as ProfileHeader, kept local so
@@ -37,8 +37,8 @@ const ProfileCard = () => {
 
   if (loading) {
     return (
-      <section className="bg-white rounded-2xl border border-sky-100 shadow-sm p-5 dark:">
-        <div className="p-6 animate-pulse">
+      <section className="rounded-2xl border border-slate-200/80 bg-white/85 p-5 text-slate-600 shadow-sm backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-900/85 dark:text-zinc-300">
+        <div className="animate-pulse p-6">
           Loading Profile...
         </div>
       </section>
@@ -53,18 +53,15 @@ const ProfileCard = () => {
     username = "",
     headline = "",
     bio = "",
-    profileImage = "",
     coverImage = "",
   } = safeProfile;
 
+  const profileImage = getProfileImageUrl(safeProfile);
   const displayName = fullName || name || username || "Profile";
   const initials = getInitials(displayName);
 
   return (
-    <section className="bg-white rounded-2xl border border-sky-100  dark:text-white shadow-sm overflow-hidden  dark:bg-linear-to-br
-      dark:from-zinc-800
-      dark:via-teal-900
-      dark:to-zinc-800">
+    <section className="overflow-hidden rounded-2xl border border-slate-200/80 bg-white/85 text-slate-700 shadow-sm backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-900/85 dark:text-zinc-200">
 
       {/* Cover Image */}
       <div
@@ -123,17 +120,17 @@ const ProfileCard = () => {
         </h2>
 
         {/* Headline */}
-        <p className="text-sm text-sky-600 mt-1 dark:text-white/25">
+        <p className="mt-1 text-sm text-sky-700 dark:text-sky-300">
           {headline || "Add a headline"}
         </p>
 
         {/* About / Bio */}
-        <p className="text-sm text-slate-500 mt-3 leading-5 dark:text-black">
+        <p className="mt-3 text-sm leading-5 text-slate-500 dark:text-zinc-400">
           {bio || "Tell people about yourself."}
         </p>
 
         {/* Divider */}
-        <div className="border-t border-zinc-900 my-4"></div>
+        <div className="my-4 border-t border-slate-200 dark:border-zinc-700"></div>
 
         {/* Profile Stats */}
         <div className="flex justify-between text-center dark:text-white">

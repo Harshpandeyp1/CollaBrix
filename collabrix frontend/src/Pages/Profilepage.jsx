@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 import ProfileHeader from "../Components/ProfileHeader";
 import ProfileAbout from "../Components/ProfileAbout";
@@ -14,14 +13,13 @@ import ProjectSection from "../Components/ProjectSection.jsx";
 import FeaturedSection from "../Components/FeaturedSection.jsx";
 import Activity from "../Components/Activity";
 import Peoplemayknow from "../Components/Peoplemayknow.jsx";
+import YourSpace from "../Components/YourSpace";
 
 import { getProfile } from "../Services/Profile.js";
 import { deletePost, getMyPosts } from "../Services/Post";
 
 
 const ProfilePage = () => {
-  const navigate = useNavigate();
-
   const [profile, setProfile] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -164,14 +162,6 @@ const ProfilePage = () => {
   }
 
 
-  const spaceItems = [
-    { icon: "🔖", label: "Saved Ideas", path: "/saved-ideas" },
-    { icon: "📁", label: "Saved Projects", path: "/saved-projects" },
-    { icon: "💡", label: "My Ideas", path: "/my-ideas" },
-    { icon: "🚀", label: "My Projects", path: "/my-projects" },
-    { icon: "👥", label: "My Connections", path: "/connection" },
-  ];
-
   /* =====================================================
      PAGE
   ===================================================== */
@@ -305,60 +295,7 @@ const ProfilePage = () => {
 
 
               {/* ================= FOOTER ================= */}
-                <div className="
-              bg-white
-              dark:bg-zinc-900
-              rounded-2xl
-              mt-4
-              border
-              border-sky-100
-              dark:border-zinc-800
-              shadow-sm
-              p-5
-            ">
-
-              <h2 className="
-                text-base
-                font-semibold
-                text-slate-800
-                dark:text-white
-                mb-4
-              ">
-                Your Space
-              </h2>
-
-              <div className="space-y-1">
-
-                {spaceItems.map(({ icon, label, path }) => (
-                  <button
-                    key={label}
-                    type="button"
-                    onClick={() => navigate(path)}
-                    className="
-                      w-full
-                      flex
-                      items-center
-                      gap-3
-                      px-3
-                      py-3
-                      rounded-lg
-                      text-sm
-                      text-slate-600
-                      dark:text-white
-                      hover:bg-sky-50
-                      dark:hover:bg-zinc-800
-                      hover:text-sky-600
-                      transition
-                    "
-                  >
-                    <span>{icon}</span>
-                    <span>{label}</span>
-                  </button>
-                ))}
-
-              </div>
-            
-            </div>
+                <YourSpace className="mt-4" />
              <div className="
                   flex
                   flex-wrap

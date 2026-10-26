@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import api from "../../Services/api";
+import { getProfileImageUrl } from "../../Services/Profile.js";
 
 const Discussion = ({ projectId }) => {
   const [messages, setMessages] = useState([]);
@@ -9,8 +10,6 @@ const Discussion = ({ projectId }) => {
   const [error, setError] = useState("");
 
   const chatEndRef = useRef(null);
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
-
   // Auto-scroll to the bottom of the chat container
   const scrollToBottom = (behavior = "smooth") => {
     chatEndRef.current?.scrollIntoView({ behavior });
@@ -129,9 +128,9 @@ const Discussion = ({ projectId }) => {
             >
               {/* PROFILE IMAGE */}
               <div className="flex-shrink-0">
-                {message.profileImage ? (
+                {getProfileImageUrl(message) ? (
                   <img
-                    src={`${API_BASE_URL}${message.profileImage}`}
+                    src={getProfileImageUrl(message)}
                     alt={message.username || "User"}
                     className="h-10 w-10 rounded-full object-cover"
                   />

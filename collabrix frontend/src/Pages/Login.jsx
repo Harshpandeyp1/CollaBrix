@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import api from '../Services/api'
 import { useNavigate } from 'react-router-dom'
+import { Eye, EyeOff } from 'lucide-react'
 
 const Login = () => {
   const [email, setEmail] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [isLogin, setIsLogin] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
   const navigate = useNavigate()
@@ -58,7 +60,7 @@ const Login = () => {
   };
 
   return (
-    <div className="relative min-h-screen items-center justify-center flex overflow-hidden bg-[#FDFBD4] p-4 dark:bg-black">
+    <div className="light-mode-page relative min-h-screen items-center justify-center flex overflow-hidden bg-[#FDFBD4] p-4">
 
       {/* ===== Background design (decorative only) ===== */}
       <style>{`
@@ -76,7 +78,7 @@ const Login = () => {
 
         {/* Brick wall pattern, fades out toward the edges */}
         <svg
-          className="absolute inset-0 w-full h-full text-indigo-900/10 dark:text-indigo-300/10"
+          className="absolute inset-0 w-full h-full text-indigo-900/10"
           style={{
             maskImage: 'radial-gradient(ellipse at center, black 25%, transparent 75%)',
             WebkitMaskImage: 'radial-gradient(ellipse at center, black 25%, transparent 75%)',
@@ -96,9 +98,9 @@ const Login = () => {
         </svg>
 
         {/* Soft color glows */}
-        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-indigo-400/30 blur-3xl dark:bg-indigo-500/20" />
-        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-teal-400/30 blur-3xl dark:bg-teal-500/20" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] h-[28rem] rounded-full bg-white/40 blur-3xl dark:bg-indigo-500/10" />
+        <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-indigo-400/30 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-teal-400/30 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[28rem] h-[28rem] rounded-full bg-white/40 blur-3xl" />
 
         {/* Floating bricks */}
         <div
@@ -131,7 +133,7 @@ const Login = () => {
       {/* Form Container */}
       <form 
         onSubmit={isLogin ? handleSubmit : handleSignup}
-        className="relative z-10 w-full max-w-md bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-slate-200 flex flex-col gap-6 animate-[fadeIn_0.4s_ease-out] dark:bg-zinc-900 dark:border-zinc-800"
+        className="relative z-10 w-full max-w-md bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-slate-200 flex flex-col gap-6 animate-[fadeIn_0.4s_ease-out]"
       >
         {/* Logo / Brand mark */}
         <div className="flex justify-center mb-1">
@@ -141,19 +143,19 @@ const Login = () => {
         </div>
 
         <div className="text-center mb-1">
-          <h2 className="text-3xl font-black tracking-tight text-slate-900 dark:text-white">
+          <h2 className="text-3xl font-black tracking-tight text-slate-900">
             {isLogin ? 'Welcome Back' : (
               <span>Create <span className="bg-linear-to-r from-indigo-400 to-teal-400 bg-clip-text text-transparent">Account</span></span>
             )}
           </h2>
-          <p className="text-sm text-slate-500 mt-2 dark:text-zinc-400">
+          <p className="text-sm text-slate-500 mt-2">
             {isLogin ? 'Please enter your details to sign in' : 'Fill in the details to get started'}
           </p>
         </div>
 
         {/* Email Field */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 ml-1 dark:text-zinc-400">Email Address</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 ml-1">Email Address</label>
           <div className="relative group">
             <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -163,7 +165,7 @@ const Login = () => {
               placeholder="you@example.com" 
               value={email} 
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-300 rounded-xl outline-none text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm dark:bg-zinc-950 dark:border-zinc-700 dark:text-white dark:placeholder-zinc-500"
+              className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-300 rounded-xl outline-none text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm"
               required
             />
           </div>
@@ -172,7 +174,7 @@ const Login = () => {
         {/* Username Field - Only shows up if registering */}
         {!isLogin && (
           <div className="flex flex-col gap-1.5 animate-[fadeIn_0.3s_ease-out]">
-            <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 ml-1 dark:text-zinc-400">Username</label>
+            <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 ml-1">Username</label>
             <div className="relative group">
               <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
@@ -182,7 +184,7 @@ const Login = () => {
                 placeholder="Enter your username" 
                 value={username} 
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-300 rounded-xl outline-none text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm dark:bg-zinc-950 dark:border-zinc-700 dark:text-white dark:placeholder-zinc-500"
+                className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-300 rounded-xl outline-none text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm"
                 required={!isLogin}
               />
             </div>
@@ -191,19 +193,28 @@ const Login = () => {
 
         {/* Password Field */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 ml-1 dark:text-zinc-400">Password</label>
+          <label className="text-xs font-semibold uppercase tracking-wider text-slate-600 ml-1">Password</label>
           <div className="relative group">
             <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
             <input 
-              type="password"
+              type={showPassword ? 'text' : 'password'}
               placeholder="••••••••" 
               value={password} 
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-11 pr-4 py-3.5 bg-white border border-slate-300 rounded-xl outline-none text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm dark:bg-zinc-950 dark:border-zinc-700 dark:text-white dark:placeholder-zinc-500"
+              className="w-full pl-11 pr-12 py-3.5 bg-white border border-slate-300 rounded-xl outline-none text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm"
               required
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword((visible) => !visible)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+              aria-pressed={showPassword}
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-500 transition-colors hover:text-indigo-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            >
+              {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+            </button>
           </div>
         </div>
 
@@ -216,23 +227,23 @@ const Login = () => {
         </button>
 
         {errorMessage && (
-          <div className="rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm dark:border-red-900/50 dark:bg-red-950/40 dark:text-red-300">
+          <div className="rounded-xl border border-red-200 bg-red-50 text-red-700 px-4 py-3 text-sm">
             {errorMessage}
           </div>
         )}
 
         {/* Divider */}
         <div className="flex items-center gap-3 my-1">
-          <div className="h-px flex-1 bg-slate-200 dark:bg-zinc-700" />
-          <span className="text-[11px] text-slate-500 uppercase tracking-wider dark:text-zinc-500">or</span>
-          <div className="h-px flex-1 bg-slate-200 dark:bg-zinc-700" />
+          <div className="h-px flex-1 bg-slate-200" />
+          <span className="text-[11px] text-slate-500 uppercase tracking-wider">or</span>
+          <div className="h-px flex-1 bg-slate-200" />
         </div>
 
         {/* Dynamic Toggle Link */}
-        <p className="text-xs text-center text-slate-600 tracking-wide dark:text-zinc-400">
+        <p className="text-xs text-center text-slate-600 tracking-wide">
           {isLogin ? "Don't have an account? " : "Already have an account? "}
           <span 
-            className="text-indigo-600 font-bold cursor-pointer hover:text-indigo-700 transition-colors underline decoration-indigo-500/30 underline-offset-4 dark:text-indigo-400 dark:hover:text-indigo-300" 
+            className="text-indigo-600 font-bold cursor-pointer hover:text-indigo-700 transition-colors underline decoration-indigo-500/30 underline-offset-4" 
             onClick={() => setIsLogin(!isLogin)}
           >
             {isLogin ? 'Sign up' : 'Log in'}

@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import Navbar from "../Components/Navbar.jsx";
-import PeopleMayKnow from "../Components/PeopleMayKnow.jsx";
+import PeopleMayKnow from "../Components/Peoplemayknow.jsx";
 
 import {
   getConnectionRequests,

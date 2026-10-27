@@ -8,4 +8,7 @@ import java.util.List;
 public interface IdeaRepository extends JpaRepository<IdeaEntity, Long> {
 
     List<IdeaEntity> findByProjectIdOrderByCreatedAtDesc(Long projectId);
+    List<IdeaEntity> findByProjectIdAndSavedTrue(Long projectId);
+    // or, if saved ideas are shown across all projects:
+    List<IdeaEntity> findBySavedTrue();
 }

@@ -12,6 +12,15 @@ import java.util.Optional;
 
 public interface ConnectionRepo extends JpaRepository <ConnectionEntity,Long>{
 
+    @Query("""
+        SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END
+        FROM ConnectionEntity c
+        WHERE c.status = com.example.collabrix.backend.Enum.ConnectionStatus.ACCEPTED
+          AND ((c.sender.id = :user1Id AND c.receiver.id = :user2Id)
+               OR (c.sender.id = :user2Id AND c.receiver.id = :user1Id))
+        """)
+    boolean areConnected(@Param("user1Id") Long user1Id, @Param("user2Id") Long user2Id);
+
     Optional<ConnectionEntity> findBySenderAndReceiver(
             UserEntity sender,
             UserEntity receiver
@@ -41,5 +50,6 @@ public interface ConnectionRepo extends JpaRepository <ConnectionEntity,Long>{
             @Param("user1") UserEntity user1,
             @Param("user2") UserEntity user2
     );
+    // In your existing ConnectionRepository
 
 }

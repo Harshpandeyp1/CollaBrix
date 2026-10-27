@@ -25,6 +25,10 @@ public class MessageMapper {
                 .receiverProfileImage(message.getReceiver().getProfileImage())
 
                 .content(message.getContent())
+                .sharedItemType(message.getSharedItemType())
+                .sharedItemId(message.getSharedItemId())
+                .sharedItemTitle(message.getSharedItemTitle())
+                .sharedMessage(message.getSharedMessage())
                 .createdAt(message.getCreatedAt())
 
                 .build();

@@ -9,6 +9,8 @@ import com.example.collabrix.backend.Entity.UserEntity;
 import com.example.collabrix.backend.Repository.PostRepo;
 import com.example.collabrix.backend.Repository.ProjectRepo;
 import com.example.collabrix.backend.Repository.UserRepo;
+import com.example.collabrix.backend.Repository.CommentRepo;
+import com.example.collabrix.backend.Repository.PostLikeRepo;
 import com.example.collabrix.backend.exception.ResourceNotFoundException;
 import com.example.collabrix.backend.mapper.PostMapper;
 import jakarta.transaction.Transactional;
@@ -30,17 +32,27 @@ public class PostService {
 
     private final ProjectRepo projectRepo;
 
+    private final CommentRepo commentRepo;
+
+    private final PostLikeRepo postLikeRepo;
+
     private UserEntity getCurrentUser(){
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         String email=authentication.getName();
         return userRepository.findByEmail(email)
                 .orElseThrow(()->new ResourceNotFoundException("User not found"));
     }
-    private Post getPostForCurrentUser(Long id){
-        Post post=postRepository.findById(id)
-                .orElseThrow(()->new RuntimeException("Post not found"));
+    private Post getPostForCurrentUser(Long id) {
 
-        UserEntity currentUser=getCurrentUser();
+        Post post = postRepository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Post not found"));
+
+        UserEntity currentUser = getCurrentUser();
+
+        if (post.getUser().getId() != currentUser.getId()) {
+            throw new RuntimeException("You are not allowed to modify this post");
+        }
 
         return post;
     }
@@ -135,6 +147,9 @@ public class PostService {
 
         Post post = getPostForCurrentUser(id);
 
+        // Remove child rows first so their foreign keys do not prevent deletion.
+        postLikeRepo.deleteAllByPostId(id);
+        commentRepo.deleteAllByPostId(id);
         postRepository.delete(post);
     }
 }

@@ -148,7 +148,7 @@ public class IdeaService {
 
 
     // Convert Entity -> DTO
-    private IdeaDto toDto(IdeaEntity idea) {
+    IdeaDto toDto(IdeaEntity idea) {
 
         UserEntity creator = idea.getCreatedBy();
 
@@ -244,5 +244,15 @@ public class IdeaService {
         }
 
         ideaRepository.delete(idea);
+    }
+    public IdeaDto toggleSaved(Long ideaId, boolean saved) {
+        IdeaEntity idea = ideaRepository.findById(ideaId)
+                .orElseThrow(() -> new RuntimeException("Idea not found"));
+        idea.setSaved(saved);
+        return toDto(ideaRepository.save(idea));
+    }
+
+    public List<IdeaDto> getSavedIdeas() {
+        return ideaRepository.findBySavedTrue().stream().map(this::toDto).toList();
     }
 }

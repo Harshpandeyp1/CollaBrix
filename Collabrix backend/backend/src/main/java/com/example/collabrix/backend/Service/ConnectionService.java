@@ -2,6 +2,7 @@ package com.example.collabrix.backend.Service;
 
 import com.example.collabrix.backend.Entity.ConnectionEntity;
 import com.example.collabrix.backend.Entity.UserEntity;
+import com.example.collabrix.backend.Dto.connection.ConnectionUserDto;
 import com.example.collabrix.backend.Enum.ConnectionStatus;
 import com.example.collabrix.backend.Events.ConnectionAcceptedEvent;
 import com.example.collabrix.backend.Events.ConnectionRequestEvent;
@@ -13,6 +14,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -219,7 +221,7 @@ public class ConnectionService {
     // GET MY CONNECTIONS
     // =========================================================
 
-    public List<ConnectionEntity> getMyConnections(
+    public List<ConnectionUserDto> getMyConnections(
             String email
     ) {
 
@@ -232,22 +234,16 @@ public class ConnectionService {
                         );
 
 
-        List<ConnectionEntity> sent =
-                connectionRepo.findBySenderAndStatus(
-                        currentUser,
-                        ConnectionStatus.ACCEPTED
-                );
-
-
-        List<ConnectionEntity> received =
-                connectionRepo.findByReceiverAndStatus(
-                        currentUser,
-                        ConnectionStatus.ACCEPTED
-                );
-
-
-        sent.addAll(received);
-
-        return sent;
+        return Stream.concat(
+                        connectionRepo.findBySenderAndStatus(currentUser, ConnectionStatus.ACCEPTED)
+                                .stream()
+                                .map(ConnectionEntity::getReceiver),
+                        connectionRepo.findByReceiverAndStatus(currentUser, ConnectionStatus.ACCEPTED)
+                                .stream()
+                                .map(ConnectionEntity::getSender)
+                )
+                .map(user -> new ConnectionUserDto(
+                        user.getId(), user.getUsername(), user.getFullName(), user.getProfileImage()))
+                .toList();
     }
 }

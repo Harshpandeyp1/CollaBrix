@@ -1,5 +1,6 @@
 package com.example.collabrix.backend.Dto.Message;
 
+import com.example.collabrix.backend.Enum.ShareItemType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,11 @@ public class MessageResponseDto {
     private String receiverProfileImage;
 
     private String content;
+
+    private ShareItemType sharedItemType;
+    private Long sharedItemId;
+    private String sharedItemTitle;
+    private String sharedMessage;
 
     private LocalDateTime createdAt;
 }

@@ -1,6 +1,7 @@
 package com.example.collabrix.backend.Controller;
 
 import com.example.collabrix.backend.Dto.auth.ConnectionRequestDto;
+import com.example.collabrix.backend.Dto.connection.ConnectionUserDto;
 import com.example.collabrix.backend.Entity.ConnectionEntity;
 import com.example.collabrix.backend.Entity.UserEntity;
 import com.example.collabrix.backend.Enum.ConnectionStatus;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/api/connections")
 @RequiredArgsConstructor
 public class ConnectionController {
@@ -99,7 +99,7 @@ public class ConnectionController {
     // =========================================================
 
     @GetMapping
-    public List<ConnectionEntity> getMyConnections(
+    public List<ConnectionUserDto> getMyConnections(
             Authentication authentication
     ) {
 

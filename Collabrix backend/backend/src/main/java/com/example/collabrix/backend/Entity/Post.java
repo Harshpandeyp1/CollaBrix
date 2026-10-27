@@ -26,12 +26,21 @@ public class Post {
     private String description;
 
     @ElementCollection
+    @CollectionTable(name = "post_tech_stack", joinColumns = @JoinColumn(name = "post_id"))
+    @Column(name = "tech_stack")
+    @OrderColumn(name = "list_order")
     private List<String> techStack;
 
     @ElementCollection
+    @CollectionTable(name = "post_roles_needed", joinColumns = @JoinColumn(name = "post_id"))
+    @Column(name = "roles_needed")
+    @OrderColumn(name = "list_order")
     private List<String> rolesNeeded;
 
     @ElementCollection
+    @CollectionTable(name = "post_tags", joinColumns = @JoinColumn(name = "post_id"))
+    @Column(name = "tags")
+    @OrderColumn(name = "list_order")
     private List<String> tags;
 
     @Enumerated(EnumType.STRING)

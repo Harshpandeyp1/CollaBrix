@@ -49,13 +49,14 @@ public class UserEntity {
     
     private String coverImage;
 
- @ElementCollection
- @CollectionTable(
-         name = "user_skills",
-         joinColumns = @JoinColumn(name = "user_id")
- )
- @Column(name = "skill")
- private List<String> skills;
+    @ElementCollection
+    @CollectionTable(
+            name = "user_skills",
+            joinColumns = @JoinColumn(name = "user_id")
+    )
+    @Column(name = "skill")
+    @OrderColumn(name = "skill_order")
+    private List<String> skills;
 
 
     @Column(nullable = false, updatable = false)

@@ -1,5 +1,6 @@
 package com.example.collabrix.backend.Entity;
 
+import com.example.collabrix.backend.Enum.ShareItemType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +29,16 @@ public class MessageEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
+    @Enumerated(EnumType.STRING)
+    private ShareItemType sharedItemType;
+
+    private Long sharedItemId;
+
+    private String sharedItemTitle;
+
+    @Column(length = 500)
+    private String sharedMessage;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

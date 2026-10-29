@@ -1,0 +1,247 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  background-color: #FDFBD4;
+}
+
+html.dark {
+  color-scheme: dark;
+  background-color: #000;
+}
+
+html.dark body,
+html.dark #root {
+  background-color: #000;
+}
+
+html.dark main {
+  background-color: #000;
+}
+
+body {
+  margin: 0;
+  background-color: #FDFBD4;
+}
+
+.page-background {
+  background-color: #FDFBD4;
+}
+
+html.dark .page-background {
+  background-color: #000;
+}
+
+.authenticated-texture {
+  background-color: #f8f7e9;
+  background-image:
+    radial-gradient(ellipse at 12% 4%, rgb(56 189 248 / 12%), transparent 34rem),
+    radial-gradient(ellipse at 88% 18%, rgb(45 212 191 / 10%), transparent 32rem),
+    radial-gradient(ellipse at 50% 100%, rgb(129 140 248 / 8%), transparent 38rem);
+}
+
+.authenticated-texture :is(main, .page-background) {
+  background-image:
+    radial-gradient(ellipse at 8% 0%, rgb(56 189 248 / 8%), transparent 28rem),
+    radial-gradient(ellipse at 96% 24%, rgb(45 212 191 / 7%), transparent 26rem),
+    repeating-linear-gradient(
+      135deg,
+      rgb(99 102 241 / 1.5%) 0,
+      rgb(99 102 241 / 1.5%) 1px,
+      transparent 1px,
+      transparent 12px
+    );
+}
+
+.authenticated-texture main,
+.authenticated-texture .page-background {
+  background-color: transparent;
+}
+
+.dark .authenticated-texture main,
+.dark .authenticated-texture .page-background {
+  background-color: transparent;
+}
+
+.app-navbar {
+  background: rgb(255 255 255 / 84%);
+  border-color: rgb(203 213 225 / 72%);
+  box-shadow: 0 8px 30px rgb(15 23 42 / 6%);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+
+.dark .app-navbar {
+  background: rgb(9 12 20 / 84%);
+  border-color: rgb(71 85 105 / 45%);
+  box-shadow: 0 8px 30px rgb(0 0 0 / 24%);
+}
+
+.authenticated-texture :is(
+  section[class*="rounded"][class*="border"],
+  article[class*="rounded"][class*="border"],
+  [class*="rounded-2xl"][class*="border"][class*="bg-white"],
+  [class*="rounded-xl"][class*="border"][class*="bg-white"]
+) {
+  border-color: rgb(148 163 184 / 28%);
+  box-shadow:
+    0 12px 34px rgb(15 23 42 / 5%),
+    0 2px 6px rgb(15 23 42 / 3%);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.dark .authenticated-texture :is(
+  section[class*="rounded"][class*="border"],
+  article[class*="rounded"][class*="border"],
+  [class*="rounded-2xl"][class*="border"][class*="bg-white"],
+  [class*="rounded-xl"][class*="border"][class*="bg-white"]
+) {
+  border-color: rgb(100 116 139 / 24%);
+  box-shadow:
+    0 14px 38px rgb(0 0 0 / 18%),
+    0 2px 8px rgb(0 0 0 / 14%);
+}
+
+.authenticated-texture :is(button, a, input, textarea, select) {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.authenticated-texture :is(button, a):focus-visible,
+.authenticated-texture :is(input, textarea, select):focus-visible {
+  outline: 3px solid rgb(14 165 233 / 42%);
+  outline-offset: 3px;
+}
+
+.dark .authenticated-texture :is(button, a):focus-visible,
+.dark .authenticated-texture :is(input, textarea, select):focus-visible {
+  outline-color: rgb(45 212 191 / 55%);
+}
+
+.authenticated-texture button {
+  transition-duration: 180ms;
+}
+
+.authenticated-texture button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+::selection {
+  color: #082f49;
+  background: rgb(125 211 252 / 55%);
+}
+
+.dark ::selection {
+  color: #ecfeff;
+  background: rgb(13 148 136 / 55%);
+}
+
+html {
+  scrollbar-color: #94a3b8 transparent;
+  scrollbar-width: thin;
+}
+
+html.dark {
+  scrollbar-color: #475569 transparent;
+}
+
+html.dark .authenticated-texture {
+  background-color: #05070b;
+  background-image:
+    radial-gradient(ellipse at 12% 4%, rgb(14 165 233 / 14%), transparent 34rem),
+    radial-gradient(ellipse at 88% 18%, rgb(20 184 166 / 10%), transparent 32rem),
+    radial-gradient(ellipse at 50% 100%, rgb(99 102 241 / 9%), transparent 38rem);
+}
+
+html.dark .authenticated-texture :is(main, .page-background) {
+  background-image:
+    radial-gradient(ellipse at 8% 0%, rgb(14 165 233 / 9%), transparent 28rem),
+    radial-gradient(ellipse at 96% 24%, rgb(20 184 166 / 7%), transparent 26rem),
+    repeating-linear-gradient(
+      135deg,
+      rgb(148 163 184 / 2%) 0,
+      rgb(148 163 184 / 2%) 1px,
+      transparent 1px,
+      transparent 12px
+    );
+}
+
+html:not(.dark) :is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="color"]),
+  textarea,
+  select
+) {
+  color-scheme: light;
+  background-color: #fff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+  caret-color: #0f172a;
+}
+
+html.dark :is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="file"]):not([type="color"]),
+  textarea,
+  select
+) {
+  color-scheme: dark;
+  background-color: #18181b;
+  border-color: #52525b;
+  color: #fff;
+  caret-color: #fff;
+}
+
+html:not(.dark) :is(input, textarea, select)::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+html.dark :is(input, textarea, select)::placeholder {
+  color: #a1a1aa;
+  opacity: 1;
+}
+
+html.dark .light-mode-page {
+  color-scheme: light;
+}
+
+html.dark .light-mode-page :is(input, textarea, select) {
+  color-scheme: light;
+  background-color: #fff;
+  border-color: #cbd5e1;
+  color: #0f172a;
+  caret-color: #0f172a;
+}
+
+html.dark .light-mode-page :is(input, textarea, select)::placeholder {
+  color: #94a3b8;
+  opacity: 1;
+}
+
+html:not(.dark) .navbar-search input {
+  background-color: transparent;
+  color: #1e293b;
+  caret-color: #1e293b;
+}
+
+html.dark .navbar-search input {
+  background-color: transparent;
+  color: #fff;
+  caret-color: #fff;
+}
+
+html.dark .navbar-search input::placeholder {
+  color: #a1a1aa;
+}
+
+@keyframes moonRise { 0% { transform: translateY(0) scale(0.8); opacity: 0; } 15% { opacity: 1; } 70% { transform: translateY(-80vh) scale(1); opacity: 1; } 100% { transform: translateY(-115vh) scale(1.1); opacity: 0; } } @keyframes sunRise { 0% { transform: translateY(0) scale(0.8); opacity: 0; } 15% { opacity: 1; } 70% { transform: translateY(-80vh) scale(1); opacity: 1; } 100% { transform: translateY(-115vh) scale(1.1); opacity: 0; } } .animate-moon-rise { animation: moonRise 1.4s ease-in-out forwards; } .animate-sun-rise { animation: sunRise 1.4s ease-in-out forwards; }

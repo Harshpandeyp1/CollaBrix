@@ -9,6 +9,7 @@ import {
 
 import EducationCard from "./EducationCard.jsx";
 import EducationModal from "./EducationModal.jsx";
+import { useProfileModal } from "./ProfileModalContext.js";
 
 const EducationSection = ({ userId }) => {
 
@@ -16,7 +17,8 @@ const EducationSection = ({ userId }) => {
 
   const [loading, setLoading] = useState(true);
 
-  const [open, setOpen] = useState(false);
+  const { activeModal, openModal, closeModal } = useProfileModal();
+  const open = activeModal === "education";
 
   const [selectedEducation, setSelectedEducation] = useState(null);
 
@@ -93,7 +95,7 @@ const EducationSection = ({ userId }) => {
 
     setSelectedEducation(education);
 
-    setOpen(true);
+    openModal("education");
   };
 
 
@@ -145,7 +147,7 @@ const EducationSection = ({ userId }) => {
 
   const handleSaved = async () => {
 
-    setOpen(false);
+    closeModal();
 
     setSelectedEducation(null);
 
@@ -158,7 +160,7 @@ const EducationSection = ({ userId }) => {
     <section
       className="
         w-full
-        max-w-4xl
+        min-w-0
         mt-2
         rounded-2xl
         bg-white
@@ -167,7 +169,6 @@ const EducationSection = ({ userId }) => {
         shadow-lg
         px-6
         py-5
-        mr-80
         dark:bg-zinc-800
         dark:hover:bg-zinc-900
       "
@@ -207,7 +208,7 @@ const EducationSection = ({ userId }) => {
 
               setSelectedEducation(null);
 
-              setOpen(true);
+              openModal("education");
 
             }}
             title="Add education"
@@ -329,7 +330,7 @@ const EducationSection = ({ userId }) => {
 
           onClose={() => {
 
-            setOpen(false);
+            closeModal();
 
             setSelectedEducation(null);
 

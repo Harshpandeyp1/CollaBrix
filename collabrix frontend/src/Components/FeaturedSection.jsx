@@ -10,6 +10,7 @@ import {
 
 import FeaturedCard from "./FeaturedCard";
 import FeaturedModal from "./FeaturedModal";
+import { useProfileModal } from "./ProfileModalContext.js";
 
 
 const FeaturedSection = ({ userId }) => {
@@ -18,7 +19,8 @@ const FeaturedSection = ({ userId }) => {
 
   const [loading, setLoading] = useState(true);
 
-  const [open, setOpen] = useState(false);
+  const { activeModal, openModal, closeModal } = useProfileModal();
+  const open = activeModal === "featured";
 
   const [selectedFeatured, setSelectedFeatured] =
     useState(null);
@@ -82,7 +84,7 @@ const FeaturedSection = ({ userId }) => {
 
     setSelectedFeatured(featuredItem);
 
-    setOpen(true);
+    openModal("featured");
 
   };
 
@@ -137,7 +139,7 @@ const FeaturedSection = ({ userId }) => {
 
   const handleSaved = async () => {
 
-    setOpen(false);
+    closeModal();
 
     setSelectedFeatured(null);
 
@@ -154,7 +156,7 @@ const FeaturedSection = ({ userId }) => {
 
     <section
       className="
-            w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80 dark:bg-zinc-800 dark:bg-black dark:hover:bg-zinc-900
+            w-full min-w-0 mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 dark:bg-zinc-800 dark:bg-black dark:hover:bg-zinc-900
 
       "
     >
@@ -208,7 +210,7 @@ const FeaturedSection = ({ userId }) => {
 
               setSelectedFeatured(null);
 
-              setOpen(true);
+              openModal("featured");
 
             }}
             title="Add featured item"
@@ -346,7 +348,7 @@ const FeaturedSection = ({ userId }) => {
         open={open}
         onClose={() => {
 
-          setOpen(false);
+          closeModal();
 
           setSelectedFeatured(null);
 

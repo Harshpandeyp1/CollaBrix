@@ -65,6 +65,11 @@ const normalizeProfile = (data) => {
       profile.headline || profile.title || profile.tagline || profile.profession || profile.summary || "",
     bio:
       profile.bio || profile.description || profile.about || profile.aboutMe || profile.about_me || "",
+    skills: Array.isArray(profile.skills)
+      ? profile.skills
+      : typeof profile.skills === "string"
+        ? profile.skills.split(",").map((skill) => skill.trim()).filter(Boolean)
+        : [],
     location:
       profile.location || profile.city || profile.address || profile.country || "",
     website:
@@ -91,6 +96,11 @@ export const getProfileByUserId = async (userId) => {
 
 export const updateProfile = async (profileData) => {
   const response = await api.put("/profile", profileData);
+  return response.data;
+};
+
+export const updateAboutAndSkills = async ({ fullName, bio, skills }) => {
+  const response = await api.put("/profile", { fullName, bio, skills });
   return response.data;
 };
 

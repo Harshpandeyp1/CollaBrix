@@ -11,11 +11,13 @@ import {
 
 import ProjectCard from "./ProjectCard.jsx";
 import ProjectModal from "./ProjectModal.jsx";
+import { useProfileModal } from "./ProfileModalContext.js";
 
 const ProjectSection = ({ userId }) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
+  const { activeModal, openModal, closeModal } = useProfileModal();
+  const open = activeModal === "project";
   const [selectedProject, setSelectedProject] = useState(null);
   const [interestOpen, setInterestOpen] = useState(false);
   const [interestProject, setInterestProject] = useState(null);
@@ -59,7 +61,7 @@ const handleViewInterests = (project) => {
   const handleEdit = (project) => {
     if (!isOwnProfile) return;
     setSelectedProject(project);
-    setOpen(true);
+    openModal("project");
   };
 
   // =========================================
@@ -95,7 +97,7 @@ const handleViewInterests = (project) => {
   // =========================================
 
   const handleSaved = async () => {
-    setOpen(false);
+    closeModal();
     setSelectedProject(null);
 
     await fetchProjects();
@@ -106,7 +108,7 @@ const handleViewInterests = (project) => {
   // =========================================
 
   return (
-    <section className="     w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80 dark:bg-zinc-800
+    <section className="     w-full min-w-0 mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 dark:bg-zinc-800
 ">
 
       {/* =====================================
@@ -129,7 +131,7 @@ const handleViewInterests = (project) => {
           type="button"
           onClick={() => {
             setSelectedProject(null);
-            setOpen(true);
+            openModal("project");
           }}
           title="Add project"
           aria-label="Add project"
@@ -236,7 +238,7 @@ const handleViewInterests = (project) => {
       {isOwnProfile && <ProjectModal
         open={open}
         onClose={() => {
-          setOpen(false);
+          closeModal();
           setSelectedProject(null);
         }}
         onSave={handleSaved}

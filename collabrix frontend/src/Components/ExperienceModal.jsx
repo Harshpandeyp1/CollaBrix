@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { createExperience, updateExperience } from '../Services/Experience.js'
+import ModalPortal from "./ModalPortal.jsx";
 
 const ExperienceModal = ({ open, onClose, onSave, experience }) => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -106,14 +107,16 @@ const ExperienceModal = ({ open, onClose, onSave, experience }) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto dark:bg-black">
+    <ModalPortal>
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center overflow-y-auto bg-black/50 p-4">
+      <div className="flex max-h-[90dvh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white p-6 shadow-lg dark:bg-black">
 
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
+        <h2 className="mb-4 shrink-0 text-xl font-bold text-gray-900">
           {experience ? "Edit Experience" : "Add Experience"}
         </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col gap-3">
+          <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
 
           <input
             name="company"
@@ -121,7 +124,7 @@ const ExperienceModal = ({ open, onClose, onSave, experience }) => {
             onChange={handleChange}
             placeholder="Company"
             required
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <input
@@ -130,7 +133,7 @@ const ExperienceModal = ({ open, onClose, onSave, experience }) => {
             onChange={handleChange}
             placeholder="Position"
             required
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <input
@@ -138,7 +141,7 @@ const ExperienceModal = ({ open, onClose, onSave, experience }) => {
             value={formData.employmentType}
             onChange={handleChange}
             placeholder="Employment Type (e.g. Full-time)"
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <input
@@ -146,7 +149,7 @@ const ExperienceModal = ({ open, onClose, onSave, experience }) => {
             value={formData.location}
             onChange={handleChange}
             placeholder="Location"
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <div className="flex gap-3">
@@ -155,7 +158,7 @@ const ExperienceModal = ({ open, onClose, onSave, experience }) => {
               name="startDate"
               value={formData.startDate}
               onChange={handleChange}
-              className="border rounded-lg px-3 py-2 text-sm flex-1"
+              className="min-w-0 border rounded-lg px-3 py-2 text-sm flex-1"
             />
             <input
               type="date"
@@ -163,7 +166,7 @@ const ExperienceModal = ({ open, onClose, onSave, experience }) => {
               value={formData.endDate}
               onChange={handleChange}
               disabled={formData.currentlyWorking}
-              className="border rounded-lg px-3 py-2 text-sm flex-1 disabled:bg-gray-100"
+              className="min-w-0 border rounded-lg px-3 py-2 text-sm flex-1 disabled:bg-gray-100"
             />
           </div>
 
@@ -183,7 +186,7 @@ const ExperienceModal = ({ open, onClose, onSave, experience }) => {
             onChange={handleChange}
             placeholder="Description"
             rows={3}
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           {errorMessage && (
@@ -192,7 +195,9 @@ const ExperienceModal = ({ open, onClose, onSave, experience }) => {
             </div>
           )}
 
-          <div className="flex justify-end gap-2 mt-2">
+          </div>
+
+          <div className="flex shrink-0 justify-end gap-2 border-t bg-white pt-3 dark:bg-black">
             <button
               type="button"
               onClick={onClose}
@@ -211,6 +216,7 @@ const ExperienceModal = ({ open, onClose, onSave, experience }) => {
         </form>
       </div>
     </div>
+    </ModalPortal>
   )
 }
 

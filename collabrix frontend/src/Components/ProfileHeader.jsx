@@ -156,10 +156,10 @@ const ProfileHeader = ({ profile, onEdit, onProfileImageUpdated, onCoverImageUpd
   };
 
   return (
-    <div className="w-full max-w-4xl overflow-hidden dark:bg-linear-to-br
+    <div className="w-full min-w-0 overflow-hidden dark:bg-linear-to-br
       dark:from-zinc-800
       dark:via-teal-900
-      dark:to-zinc-800 rounded-2xl bg-white border border-gray-200 shadow-lg mr-80">
+      dark:to-zinc-800 rounded-2xl bg-white border border-gray-200 shadow-lg">
 
       {/* ==================================================
               COVER IMAGE

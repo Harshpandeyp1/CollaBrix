@@ -10,6 +10,7 @@ import {
 
 import ExperienceCard from "../Components/ExperienceCard.jsx";
 import ExperienceModal from "../Components/ExperienceModal";
+import { useProfileModal } from "./ProfileModalContext.js";
 
 
 const ExperienceSection = ({ userId }) => {
@@ -18,7 +19,8 @@ const ExperienceSection = ({ userId }) => {
 
   const [loading, setLoading] = useState(true);
 
-  const [open, setOpen] = useState(false);
+  const { activeModal, openModal, closeModal } = useProfileModal();
+  const open = activeModal === "experience";
 
   const [selectedExperience, setSelectedExperience] =
     useState(null);
@@ -95,7 +97,7 @@ const ExperienceSection = ({ userId }) => {
 
     setSelectedExperience(experience);
 
-    setOpen(true);
+    openModal("experience");
 
   };
 
@@ -151,7 +153,7 @@ const ExperienceSection = ({ userId }) => {
 
   const handleSaved = async () => {
 
-    setOpen(false);
+    closeModal();
 
     setSelectedExperience(null);
 
@@ -167,7 +169,7 @@ const ExperienceSection = ({ userId }) => {
   return (
 
     <section className="
-     w-full max-w-4xl mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 mr-80 dark:bg-zinc-800 dark:hover:bg-zinc-900
+     w-full min-w-0 mt-2 rounded-2xl bg-white border border-gray-200 shadow-lg px-6 py-5 dark:bg-zinc-800 dark:hover:bg-zinc-900
     ">
 
 
@@ -214,7 +216,7 @@ const ExperienceSection = ({ userId }) => {
 
             setSelectedExperience(null);
 
-            setOpen(true);
+            openModal("experience");
 
           }}
           title="Add experience"
@@ -345,7 +347,7 @@ const ExperienceSection = ({ userId }) => {
         open={open}
         onClose={() => {
 
-          setOpen(false);
+          closeModal();
 
           setSelectedExperience(null);
 

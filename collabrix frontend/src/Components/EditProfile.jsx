@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { updateProfile } from "../Services/Profile";
+import ModalPortal from "./ModalPortal.jsx";
 const EditProfile = ({  open,profile,  onClose, onSave }) => {
 
   const [formData, setFormData] = useState({
@@ -49,13 +50,13 @@ const EditProfile = ({  open,profile,  onClose, onSave }) => {
   if (!open) return null;
 
   return (
-    <div className="p-4">
+    <ModalPortal>
      
 
       {/* Modal Backdrop & Content */}
      
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl bg-white p-6 shadow-xl border border-gray-200 dark:bg-black">
+        <div className="fixed inset-0 z-[1000] flex items-center justify-center overflow-y-auto bg-black/50 p-4">
+          <div className="flex max-h-[90dvh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white p-6 shadow-xl dark:bg-black">
 
             {/* Header */}
             <div className="flex items-center justify-between border-b pb-3 mb-4">
@@ -70,7 +71,8 @@ const EditProfile = ({  open,profile,  onClose, onSave }) => {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col">
+              <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
               <div>
                 <label className="block text-sm font-medium text-gray-700">Full Name</label>
                 <input
@@ -148,8 +150,9 @@ const EditProfile = ({  open,profile,  onClose, onSave }) => {
                 />
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex justify-end gap-3 pt-3 border-t">
+              </div>
+
+              <div className="flex shrink-0 justify-end gap-3 border-t bg-white pt-3 dark:bg-black">
                 <button
                   type="button"
                   onClick={() => onClose()}
@@ -167,7 +170,7 @@ const EditProfile = ({  open,profile,  onClose, onSave }) => {
             </form>
           </div>
         </div>
-    </div>
+    </ModalPortal>
   );
 };
 

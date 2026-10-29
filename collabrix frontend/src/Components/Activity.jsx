@@ -16,7 +16,7 @@ const Activity = ({ posts = [], onDeletePost }) => {
   };
 
   return (
-    <section className="mt-2 w-full max-w-4xl rounded-2xl border border-gray-200 bg-white px-6 py-5 shadow-lg transition-all duration-300 hover:border-slate-300 hover:shadow-xl dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-600">
+    <section className="mt-2 w-full min-w-0 rounded-2xl border border-gray-200 bg-white px-6 py-5 shadow-lg transition-all duration-300 hover:border-slate-300 hover:shadow-xl dark:border-zinc-700 dark:bg-zinc-800 dark:hover:border-zinc-600">
 
       {/* ================================
           HEADER

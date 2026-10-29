@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { createEducation, updateEducation } from '../Services/Education.js'
+import ModalPortal from "./ModalPortal.jsx";
 
 const EducationModal = ({ open, onClose, onSave, education }) => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -88,14 +89,16 @@ const EducationModal = ({ open, onClose, onSave, education }) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto dark:bg-black">
+    <ModalPortal>
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center overflow-y-auto bg-black/50 p-4">
+      <div className="flex max-h-[90dvh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white p-6 shadow-lg dark:bg-black">
 
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
+        <h2 className="mb-4 shrink-0 text-xl font-bold text-gray-900">
           {education ? "Edit Education" : "Add Education"}
         </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col gap-3">
+          <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
 
           <input
             name="institution"
@@ -103,7 +106,7 @@ const EducationModal = ({ open, onClose, onSave, education }) => {
             onChange={handleChange}
             placeholder="Institution"
             required
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <input
@@ -112,7 +115,7 @@ const EducationModal = ({ open, onClose, onSave, education }) => {
             onChange={handleChange}
             placeholder="Degree (e.g. B.Tech)"
             required
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <input
@@ -120,7 +123,7 @@ const EducationModal = ({ open, onClose, onSave, education }) => {
             value={formData.fieldOfStudy}
             onChange={handleChange}
             placeholder="Field of Study (e.g. Computer Science)"
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <div className="flex gap-3">
@@ -129,7 +132,7 @@ const EducationModal = ({ open, onClose, onSave, education }) => {
               name="startDate"
               value={formData.startDate}
               onChange={handleChange}
-              className="border rounded-lg px-3 py-2 text-sm flex-1"
+              className="min-w-0 border rounded-lg px-3 py-2 text-sm flex-1"
             />
             <input
               type="date"
@@ -137,7 +140,7 @@ const EducationModal = ({ open, onClose, onSave, education }) => {
               value={formData.endDate}
               onChange={handleChange}
               disabled={formData.currentlyStudying}
-              className="border rounded-lg px-3 py-2 text-sm flex-1 disabled:bg-gray-100"
+              className="min-w-0 border rounded-lg px-3 py-2 text-sm flex-1 disabled:bg-gray-100"
             />
           </div>
 
@@ -157,7 +160,7 @@ const EducationModal = ({ open, onClose, onSave, education }) => {
             onChange={handleChange}
             placeholder="Description"
             rows={3}
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           {errorMessage && (
@@ -166,7 +169,9 @@ const EducationModal = ({ open, onClose, onSave, education }) => {
             </div>
           )}
 
-          <div className="flex justify-end gap-2 mt-2">
+          </div>
+
+          <div className="flex shrink-0 justify-end gap-2 border-t bg-white pt-3 dark:bg-black">
             <button
               type="button"
               onClick={onClose}
@@ -185,6 +190,7 @@ const EducationModal = ({ open, onClose, onSave, education }) => {
         </form>
       </div>
     </div>
+    </ModalPortal>
   )
 }
 

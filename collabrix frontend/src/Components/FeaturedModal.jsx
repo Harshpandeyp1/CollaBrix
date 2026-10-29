@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { createFeatured, updateFeatured } from "../Services/Featured.js";
+import ModalPortal from "./ModalPortal.jsx";
 
 const FEATURED_TYPES = [
   { value: "PORTFOLIO", label: "Portfolio" },
@@ -84,14 +85,16 @@ const FeaturedModal = ({ open, onClose, onSave, featured }) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-      <div className="w-full max-w-xl bg-white rounded-2xl shadow-xl p-6 max-h-[90vh] overflow-y-auto dark:bg-black">
+    <ModalPortal>
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center overflow-y-auto bg-black/50 p-4">
+      <div className="flex max-h-[90dvh] w-full max-w-xl flex-col overflow-hidden rounded-2xl bg-white p-6 shadow-xl dark:bg-black">
 
-        <h2 className="text-2xl font-bold mb-5">
+        <h2 className="mb-5 shrink-0 text-2xl font-bold">
           {featured ? "Edit Featured" : "Add Featured"}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col gap-4">
+          <div className="min-h-0 flex-1 space-y-4 overflow-y-auto pr-1">
 
           {/* Title */}
           <div>
@@ -200,8 +203,9 @@ const FeaturedModal = ({ open, onClose, onSave, featured }) => {
             </div>
           )}
 
-          {/* Buttons */}
-          <div className="flex justify-end gap-3 pt-2">
+          </div>
+
+          <div className="flex shrink-0 justify-end gap-3 border-t pt-3">
 
             <button
               type="button"
@@ -223,6 +227,7 @@ const FeaturedModal = ({ open, onClose, onSave, featured }) => {
         </form>
       </div>
     </div>
+    </ModalPortal>
   );
 };
 

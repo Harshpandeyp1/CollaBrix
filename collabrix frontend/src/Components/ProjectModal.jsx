@@ -1,6 +1,7 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { createProject, updateProject } from '../Services/Project.js'
+import ModalPortal from "./ModalPortal.jsx";
 
 const STATUS_OPTIONS = [
   { value: "PLANNING", label: "Planning" },
@@ -97,14 +98,16 @@ const ProjectModal = ({ open, onClose, onSave, project }) => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-lg p-6 max-h-[90vh] overflow-y-auto dark:bg-black">
+    <ModalPortal>
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center overflow-y-auto bg-black/50 p-4">
+      <div className="flex max-h-[90dvh] w-full max-w-lg flex-col overflow-hidden rounded-2xl bg-white p-6 shadow-lg dark:bg-black">
 
-        <h2 className="text-xl font-bold text-gray-900 mb-4">
+        <h2 className="mb-4 shrink-0 text-xl font-bold text-gray-900">
           {project ? "Edit Project" : "Add Project"}
         </h2>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <form onSubmit={handleSubmit} className="flex min-h-0 flex-1 flex-col gap-3">
+          <div className="min-h-0 flex-1 space-y-3 overflow-y-auto pr-1">
 
           <input
             name="title"
@@ -112,7 +115,7 @@ const ProjectModal = ({ open, onClose, onSave, project }) => {
             onChange={handleChange}
             placeholder="Title"
             required
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <textarea
@@ -121,7 +124,7 @@ const ProjectModal = ({ open, onClose, onSave, project }) => {
             onChange={handleChange}
             placeholder="Description"
             rows={3}
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <input
@@ -129,7 +132,7 @@ const ProjectModal = ({ open, onClose, onSave, project }) => {
             value={formData.techStack}
             onChange={handleChange}
             placeholder="Tech Stack (comma separated, e.g. React, Node.js, MongoDB)"
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <input
@@ -137,7 +140,7 @@ const ProjectModal = ({ open, onClose, onSave, project }) => {
             value={formData.githubUrl}
             onChange={handleChange}
             placeholder="GitHub URL"
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <input
@@ -145,7 +148,7 @@ const ProjectModal = ({ open, onClose, onSave, project }) => {
             value={formData.liveUrl}
             onChange={handleChange}
             placeholder="Live Demo URL"
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <input
@@ -153,14 +156,14 @@ const ProjectModal = ({ open, onClose, onSave, project }) => {
             value={formData.image}
             onChange={handleChange}
             placeholder="Image URL"
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           />
 
           <select
             name="status"
             value={formData.status}
             onChange={handleChange}
-            className="border rounded-lg px-3 py-2 text-sm"
+            className="w-full border rounded-lg px-3 py-2 text-sm"
           >
             {STATUS_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
@@ -185,7 +188,9 @@ const ProjectModal = ({ open, onClose, onSave, project }) => {
             </div>
           )}
 
-          <div className="flex justify-end gap-2 mt-2">
+          </div>
+
+          <div className="flex shrink-0 justify-end gap-2 border-t pt-3">
             <button
               type="button"
               onClick={onClose}
@@ -204,6 +209,7 @@ const ProjectModal = ({ open, onClose, onSave, project }) => {
         </form>
       </div>
     </div>
+    </ModalPortal>
   )
 }
 

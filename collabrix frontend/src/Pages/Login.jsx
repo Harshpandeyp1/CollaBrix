@@ -14,6 +14,10 @@ const Login = () => {
 
   const handleSubmit = async (data) => {
     data.preventDefault();
+    if (password.length < 8) {
+      setErrorMessage('Password must be at least 8 characters.')
+      return
+    }
     setErrorMessage('')
     try {
         const response = await api.post("/auth/login", {
@@ -37,6 +41,10 @@ const Login = () => {
 
   const handleSignup = async (data) => {
     data.preventDefault();
+    if (password.length < 8) {
+      setErrorMessage('Password must be at least 8 characters.')
+      return
+    }
     setErrorMessage('')
     try {
         const response = await api.post("/auth/register", {
@@ -203,6 +211,8 @@ const Login = () => {
               placeholder="••••••••" 
               value={password} 
               onChange={(e) => setPassword(e.target.value)}
+              minLength={8}
+              title="Password must be at least 8 characters."
               className="w-full pl-11 pr-12 py-3.5 bg-white border border-slate-300 rounded-xl outline-none text-slate-900 placeholder-slate-400 focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all text-sm"
               required
             />
@@ -216,6 +226,7 @@ const Login = () => {
               {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
             </button>
           </div>
+          <p className="ml-1 text-xs text-slate-500">Password must be at least 8 characters.</p>
         </div>
 
         {/* Submit Button */}

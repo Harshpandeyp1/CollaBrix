@@ -312,8 +312,6 @@ Collabrix was built to explore and apply practical full-stack development concep
 
 **Harsh Pandey**
 
-Third-year B.Tech Computer Science and Engineering student interested in Java backend development, full-stack engineering, Spring Boot, React, and system design.
-
 ---
 
 ## ⭐ Support

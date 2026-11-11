@@ -1,7 +1,7 @@
 # Collabrix 
 link to visit the website - https://collabrix-rrvz.onrender.com
 
-### Connect. Collaborate. Build Together.
+### Connect. Collaborate. Build Together
 
 Collabrix is a full-stack collaboration and professional networking platform designed for developers and students to discover like-minded people, share project ideas, build teams, and collaborate on real-world projects.
 

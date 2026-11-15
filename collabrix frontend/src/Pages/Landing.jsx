@@ -1,46 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-
-const Navbar = () => {
-  const navigate = useNavigate();
-  return (
-    <nav className="bg-[#E3F0A3] backdrop-blur-md px-4 md:px-8 py-3.5 w-full sticky top-0 z-50 border-b border-amber-900/20 shadow-sm shadow-amber-900/10">
-      <div className="max-w-7xl mx-auto flex items-center justify-between ">
-        
-        {/* Logo */}
-        <div className="flex items-center space-x-2 shrink-0">
-          <img 
-            src="https://img.icons8.com/ios-filled/50/0284c7/brain.png" 
-            alt="Collabrix Logo" 
-            className="h-7 w-7 object-contain" 
-          />
-          <h1 className="text-slate-800 text-base md:text-lg font-black tracking-wider select-none">
-            colla
-            <span className="text-sky-600">BRIX</span>
-          </h1>
-        </div>
-        
-        {/* Navigation Links */}
-        <ul className="hidden md:flex items-center space-x-8 text-sm font-medium">
-          <li><a href="#about" className="text-slate-600 hover:text-sky-600 transition-colors">About</a></li>
-          <li><a href="#features" className="text-slate-600 hover:text-sky-600 transition-colors">How It Works</a></li>
-          <li><a href="#contact" className="text-slate-600 hover:text-sky-600 transition-colors">Contact Us</a></li>
-        </ul>
-
-        {/* Action Buttons */}
-        <div className="flex items-center space-x-3">
-          <button onClick={() => navigate('/login')} className="text-slate-600 hover:text-sky-600 text-sm font-medium px-3 py-1.5 transition-colors">
-            Log In
-          </button>
-          <button onClick={() => navigate('/login')} className="bg-emerald-500 hover:bg-emerald-600 text-white text-xs md:text-sm font-bold px-4 py-2 rounded-xl shadow-md shadow-emerald-500/20 transition-all transform hover:-translate-y-0.5 active:translate-y-0">
-            Get Started
-          </button>
-        </div>
-
-      </div>
-    </nav>
-  )
-}
+import { ArrowRight, ArrowUpRight, Check, Code2, Lightbulb, Palette, Sparkles, Users } from 'lucide-react'
+import PublicNavbar from '../Components/PublicNavbar'
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -117,29 +78,118 @@ const Landing = () => {
       </div>
       {/* ===== End background design ===== */}
 
-      <Navbar />
+      <PublicNavbar />
 
       {/* --- HERO SECTION --- */}
-      <div className="relative w-full h-[85vh] md:h-[90vh] flex flex-col justify-between overflow-hidden">
-        <div className="relative z-10 flex-1 flex items-center justify-center px-4">
-          <div className="text-center p-6 md:p-10 max-w-4xl mx-auto">
-            <span className="inline-block bg-sky-100 border border-sky-200 text-sky-700 text-xs font-semibold tracking-widest uppercase px-3.5 py-1.5 rounded-full mb-6 backdrop-blur-sm">
-              For Student Visionaries & Creators
-            </span>
-            <h1 className="text-slate-900 font-black text-4xl md:text-6xl tracking-tight leading-[1.15]">
-              Unleash Your Ideas. <br />
-              <span className="bg-linear-to-r from-sky-600 via-teal-500 to-emerald-500 bg-clip-text text-transparent">Build Together.</span>
-            </h1>
-            <p className="text-slate-600 text-base md:text-xl mt-6 max-w-2xl mx-auto font-normal leading-relaxed">
-              The ultimate launchpad where students pitch raw concepts, assemble cross-functional teams, and collaborate to turn bright innovations into reality.
-            </p>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button onClick={() => navigate('/login')} className="w-full sm:w-auto bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3.5 px-8 rounded-xl shadow-lg shadow-emerald-500/20 transition-all transform hover:-translate-y-0.5 text-base active:translate-y-0">
-                Share Your Idea
-              </button>
-              <button onClick={() => navigate('/login')} className="w-full sm:w-auto bg-white hover:bg-sky-50 border border-sky-200 text-sky-700 font-semibold py-3.5 px-8 rounded-xl shadow-sm transition-all backdrop-blur-sm text-base">
-                Explore Student Projects
-              </button>
+      <div className="relative w-full flex flex-col justify-between overflow-hidden">
+        <div className="relative z-10 flex-1 flex items-center px-4 py-16 md:px-8 md:py-24">
+          <div className="max-w-7xl mx-auto grid w-full items-center gap-14 lg:grid-cols-[1fr_0.95fr]">
+            <div className="max-w-2xl">
+              <span className="inline-flex items-center gap-2 bg-white/80 border border-sky-200/80 text-sky-700 text-xs font-bold tracking-wide px-3.5 py-2 rounded-full mb-7 shadow-sm backdrop-blur-sm">
+                <Sparkles size={14} className="text-emerald-500" />
+                A launchpad for student creators
+              </span>
+              <h1 className="text-slate-900 font-black text-5xl sm:text-6xl lg:text-6xl xl:text-7xl tracking-[-0.055em] leading-[1.03]">
+                Big ideas are
+                <br />
+                better <span className="bg-linear-to-r from-sky-600 via-teal-500 to-emerald-500 bg-clip-text text-transparent">together.</span>
+              </h1>
+              <p className="text-slate-600 text-base md:text-lg mt-7 max-w-xl font-normal leading-relaxed">
+                Turn the idea in your notebook into something real. Find your people, build a team, and make your next big thing happen.
+              </p>
+              <div className="landing-hero-actions mt-8 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <button onClick={() => navigate('/login')} className="group inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-xl shadow-lg shadow-slate-900/15 transition-all hover:-translate-y-0.5 text-sm">
+                  Share your idea <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                </button>
+                <button onClick={() => navigate('/explore')} className="inline-flex items-center justify-center gap-2 bg-white/80 hover:bg-white border border-slate-200 text-slate-700 font-semibold py-3.5 px-6 rounded-xl shadow-sm transition-all text-sm">
+                  Explore projects <ArrowUpRight size={16} />
+                </button>
+              </div>
+              <div className="mt-9 flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  <span className="grid h-9 w-9 place-items-center rounded-full border-2 border-[#F7F9FC] bg-amber-100 text-xs font-bold text-amber-800">JD</span>
+                  <span className="grid h-9 w-9 place-items-center rounded-full border-2 border-[#F7F9FC] bg-sky-100 text-xs font-bold text-sky-800">AK</span>
+                  <span className="grid h-9 w-9 place-items-center rounded-full border-2 border-[#F7F9FC] bg-violet-100 text-xs font-bold text-violet-800">MS</span>
+                </div>
+                <p className="text-xs leading-relaxed text-slate-500">
+                  <span className="font-bold text-slate-800">Made for doers</span><br />
+                  Bring your next idea to life
+                </p>
+              </div>
+            </div>
+
+            <div aria-label="Preview of a student project workspace" className="relative mx-auto w-full max-w-[550px]">
+              <div className="absolute -inset-5 rounded-[2.5rem] bg-linear-to-br from-sky-200/60 via-white/20 to-emerald-200/60 blur-2xl" />
+              <div className="relative rotate-1 rounded-[1.75rem] border border-white/80 bg-white/85 p-3 shadow-[0_30px_90px_-35px_rgba(15,23,42,0.35)] backdrop-blur-xl sm:p-4">
+                <div className="overflow-hidden rounded-[1.25rem] border border-slate-100 bg-[#f8fafc]">
+                  <div className="flex items-center justify-between border-b border-slate-100 bg-white px-4 py-3 sm:px-5">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2.5 w-2.5 rounded-full bg-rose-300" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-amber-300" />
+                      <span className="h-2.5 w-2.5 rounded-full bg-emerald-300" />
+                    </div>
+                    <span className="text-[10px] font-semibold tracking-wide text-slate-400">YOUR PROJECT SPACE</span>
+                    <ArrowUpRight size={15} className="text-slate-400" />
+                  </div>
+                  <div className="p-4 sm:p-6">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> OPEN FOR COLLABORATORS
+                        </span>
+                        <h2 className="mt-3 text-lg font-extrabold tracking-tight text-slate-900 sm:text-xl">Campus Green Map</h2>
+                        <p className="mt-1 text-xs text-slate-500">A smarter way to find sustainable spots.</p>
+                      </div>
+                      <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-sky-100 text-sky-700">
+                        <Lightbulb size={20} />
+                      </div>
+                    </div>
+
+                    <div className="mt-5 rounded-xl border border-slate-100 bg-white p-3.5">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-bold text-slate-700">The dream team</span>
+                        <span className="text-[10px] font-medium text-sky-600">3 of 5 spots filled</span>
+                      </div>
+                      <div className="mt-3 grid grid-cols-3 gap-2">
+                        <div className="rounded-lg bg-violet-50 p-2.5">
+                          <Palette size={15} className="text-violet-600" />
+                          <p className="mt-2 text-[10px] font-bold text-slate-700">Design</p>
+                          <p className="text-[9px] text-slate-400">Maya · joined</p>
+                        </div>
+                        <div className="rounded-lg bg-sky-50 p-2.5">
+                          <Code2 size={15} className="text-sky-600" />
+                          <p className="mt-2 text-[10px] font-bold text-slate-700">Engineering</p>
+                          <p className="text-[9px] text-slate-400">You · joined</p>
+                        </div>
+                        <div className="rounded-lg border border-dashed border-emerald-200 bg-emerald-50/60 p-2.5">
+                          <Users size={15} className="text-emerald-600" />
+                          <p className="mt-2 text-[10px] font-bold text-slate-700">Your role?</p>
+                          <p className="text-[9px] text-emerald-700">There’s a place</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between rounded-xl bg-slate-900 px-3.5 py-3 text-white">
+                      <div className="flex items-center gap-2.5">
+                        <span className="grid h-7 w-7 place-items-center rounded-lg bg-white/10"><Check size={14} /></span>
+                        <div>
+                          <p className="text-[10px] font-semibold">First milestone</p>
+                          <p className="text-[9px] text-slate-300">Project brief is ready</p>
+                        </div>
+                      </div>
+                      <span className="rounded-md bg-emerald-400/15 px-2 py-1 text-[9px] font-bold text-emerald-300">IN MOTION</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute -right-4 top-[18%] hidden items-center gap-2 rounded-xl border border-white/80 bg-white/90 px-3 py-2.5 shadow-lg shadow-slate-900/10 sm:flex">
+                <span className="grid h-8 w-8 place-items-center rounded-lg bg-emerald-100 text-emerald-700"><Users size={16} /></span>
+                <span className="text-[10px] font-bold text-slate-700">Better, together</span>
+              </div>
+              <div className="absolute -bottom-5 -left-3 hidden items-center gap-2 rounded-xl border border-white/80 bg-white/90 px-3 py-2.5 shadow-lg shadow-slate-900/10 sm:flex">
+                <span className="grid h-8 w-8 place-items-center rounded-lg bg-amber-100 text-amber-700"><Sparkles size={16} /></span>
+                <span className="text-[10px] font-bold text-slate-700">From idea to impact</span>
+              </div>
             </div>
           </div>
         </div>

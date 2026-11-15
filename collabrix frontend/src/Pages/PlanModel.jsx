@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { X, Copy, Check, RefreshCw } from "lucide-react";
-import { planFromIdea, aiErrorMessage } from "../../Services/aiService";
+import { planFromIdea, aiErrorMessage } from "../Services/aiService";
 
 // Turns the plan object into plain text for "Copy".
 // flatMap = map, then flatten. For each milestone we return an ARRAY of lines
@@ -38,13 +38,19 @@ const PlanModal = ({ idea, onClose }) => {
 
     // Guard against double-clicks. Each request costs money and a rate-limit slot.
     if (status === "loading") return;
+    const ideaId = idea.id ?? idea._id;
+    if (ideaId == null) {
+      setError("This idea cannot be planned because it has no ID.");
+      setStatus("error");
+      return;
+    }
 
     setStatus("loading");
     setError("");
 
     try {
 
-      const result = await planFromIdea(idea.id);
+      const result = await planFromIdea(ideaId);
 
       setPlan(result);
       setStatus("done");
@@ -73,9 +79,9 @@ const PlanModal = ({ idea, onClose }) => {
 
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/55 px-4 py-6 backdrop-blur-sm">
 
-      <div className="flex max-h-[85vh] w-full max-w-2xl flex-col rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900">
+      <div className="flex max-h-[85vh] w-full max-w-2xl flex-col rounded-3xl border border-white/70 bg-white p-6 shadow-2xl shadow-slate-950/20 dark:border-zinc-700 dark:bg-zinc-900">
 
         {/* HEADER */}
 
@@ -91,8 +97,10 @@ const PlanModal = ({ idea, onClose }) => {
           </div>
 
           <button
+            type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            aria-label="Close project plan"
+            className="rounded-xl p-2 text-zinc-500 transition hover:bg-zinc-100 dark:hover:bg-zinc-800"
           >
             <X size={18} />
           </button>
@@ -106,14 +114,14 @@ const PlanModal = ({ idea, onClose }) => {
 
           {/* IDLE: nothing has been spent yet */}
           {status === "idle" && (
-            <div className="py-10 text-center">
+            <div className="rounded-2xl border border-sky-100 bg-sky-50/70 px-6 py-10 text-center dark:border-sky-900/50 dark:bg-sky-950/20">
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Turn this idea into a starter plan with milestones and tasks.
                 The plan is a suggestion, and nothing is saved.
               </p>
               <button
                 onClick={generate}
-                className="mt-5 rounded-xl bg-zinc-900 px-5 py-2.5 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+                className="mt-5 rounded-xl bg-linear-to-r from-sky-600 to-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-sky-500/20 transition hover:-translate-y-0.5 hover:from-sky-700 hover:to-indigo-700"
               >
                 Generate plan
               </button>
@@ -165,7 +173,7 @@ const PlanModal = ({ idea, onClose }) => {
                   // and this list never reorders, so the index is acceptable here.
                   <div
                     key={i}
-                    className="rounded-xl border border-zinc-200 p-4 dark:border-zinc-700"
+                    className="rounded-2xl border border-slate-200 bg-slate-50/80 p-4 dark:border-zinc-700 dark:bg-zinc-800/60"
                   >
                     <p className="text-sm font-semibold text-zinc-900 dark:text-white">
                       {i + 1}. {m.title}
@@ -195,7 +203,7 @@ const PlanModal = ({ idea, onClose }) => {
 
             <button
               onClick={generate}
-              className="flex items-center gap-2 rounded-xl border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+              className="flex items-center gap-2 rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
             >
               <RefreshCw size={15} />
               Regenerate
@@ -203,7 +211,7 @@ const PlanModal = ({ idea, onClose }) => {
 
             <button
               onClick={copyPlan}
-              className="flex items-center gap-2 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-medium text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+              className="flex items-center gap-2 rounded-xl bg-linear-to-r from-sky-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:from-sky-700 hover:to-indigo-700"
             >
               {copied ? <Check size={15} /> : <Copy size={15} />}
               {copied ? "Copied" : "Copy plan"}

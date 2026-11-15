@@ -6,18 +6,91 @@ import ProfileCard from "../Components/ProfileCard";
 import YourSpace from "../Components/YourSpace";
 import DiscoveryFeed from "../Components/DiscoveryFeed";
 import PostModal from "../Components/PostModal";
-import { getAllPosts } from "../Services/Post";
-import { getDiscoveryProjects } from "../Services/Project.js";
+import { getAllPosts, getMyPosts } from "../Services/Post";
+import { getProjects, getDiscoveryProjects } from "../Services/Project.js";
+import { getMyConnections } from "../Services/Connection.js";
+import { getProfile } from "../Services/Profile.js";
 import ProjectModal from "../Components/ProjectModal.jsx";
+
+const getItems = (response, keys) => {
+  if (Array.isArray(response)) return response;
+
+  for (const key of keys) {
+    if (Array.isArray(response?.[key])) return response[key];
+  }
+
+  return [];
+};
+
 const Mainpage = () => {
   const [openPostModal, setOpenPostModal] = useState(false);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
+  const [profile, setProfile] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(true);
+  const [profileStats, setProfileStats] = useState({
+    projects: null,
+    connections: null,
+    ideas: null,
+  });
 
   // Posts for the main feed
   const [posts, setPosts] = useState([]);
   const [projects, setProjects] = useState([]);
   // Feed loading state
   const [loadingPosts, setLoadingPosts] = useState(true);
+
+  const fetchProfile = async () => {
+    try {
+      const data = await getProfile();
+      setProfile(data);
+    } catch (error) {
+      console.error("Error fetching dashboard profile:", error);
+    } finally {
+      setLoadingProfile(false);
+    }
+  };
+
+  const fetchProfileStats = async () => {
+    const [projectsResult, connectionsResult, ideasResult] =
+      await Promise.allSettled([
+        getProjects(),
+        getMyConnections(),
+        getMyPosts(),
+      ]);
+
+    if (projectsResult.status === "rejected") {
+      console.error(
+        "Error fetching profile project count:",
+        projectsResult.reason
+      );
+    }
+    if (connectionsResult.status === "rejected") {
+      console.error(
+        "Error fetching profile connection count:",
+        connectionsResult.reason
+      );
+    }
+    if (ideasResult.status === "rejected") {
+      console.error("Error fetching profile idea count:", ideasResult.reason);
+    }
+
+    setProfileStats({
+      projects:
+        projectsResult.status === "fulfilled"
+          ? getItems(projectsResult.value, ["projects", "data"]).length
+          : null,
+      connections:
+        connectionsResult.status === "fulfilled"
+          ? getItems(connectionsResult.value, ["connections", "data"]).length
+          : null,
+      ideas:
+        ideasResult.status === "fulfilled"
+          ? getItems(ideasResult.value, ["posts", "ideas", "data"]).filter(
+              (idea) => !idea.project
+            ).length
+          : null,
+    });
+  };
 
   // Fetch posts
   const fetchPosts = async () => {
@@ -35,30 +108,39 @@ const Mainpage = () => {
     }
   };
   const fetchProjects = async () => {
-  try {
-    const data = await getDiscoveryProjects();
+    try {
+      const data = await getDiscoveryProjects();
 
-    setProjects(
-      Array.isArray(data)
-        ? data
-        : data?.data ?? []
-    );
-  } catch (error) {
-    console.error("Error fetching discovery projects:", error);
-    setProjects([]);
-  }
-};
+      setProjects(
+        Array.isArray(data)
+          ? data
+          : data?.data ?? []
+      );
+    } catch (error) {
+      console.error("Error fetching discovery projects:", error);
+      setProjects([]);
+    }
+  };
 
   // Load posts when Mainpage opens
   useEffect(() => {
-  fetchPosts();
-  fetchProjects();
-}, []);
+    fetchProfile();
+    fetchPosts();
+    fetchProjects();
+    fetchProfileStats();
+
+    window.addEventListener("profile-updated", fetchProfile);
+    return () => window.removeEventListener("profile-updated", fetchProfile);
+  }, []);
 
   // Called after creating/updating a post
   const handlePostSaved = async () => {
-    await fetchPosts();
+    await Promise.all([fetchPosts(), fetchProfileStats()]);
     setOpenPostModal(false);
+  };
+
+  const refreshDashboardContent = async () => {
+    await Promise.all([fetchPosts(), fetchProjects(), fetchProfileStats()]);
   };
 
   return (
@@ -82,7 +164,11 @@ const Mainpage = () => {
               <div className="space-y-6 sticky top-20 self-start">
 
                 {/* Profile */}
-                <ProfileCard />
+                <ProfileCard
+                  profile={profile}
+                  loading={loadingProfile}
+                  stats={profileStats}
+                />
 
                           
             <YourSpace />
@@ -96,6 +182,7 @@ const Mainpage = () => {
 
               {/* Dashboard Header */}
               <DashboardHeader
+                profile={profile}
                 onShareIdea={() => setOpenPostModal(true)}
                 onCreateProject={() => setCreateProjectOpen(true)}
               />
@@ -105,7 +192,7 @@ const Mainpage = () => {
                 onClose={() => setCreateProjectOpen(false)}
                 onSave={async () => {
                   setCreateProjectOpen(false);
-                  await fetchProjects();
+                  await Promise.all([fetchProjects(), fetchProfileStats()]);
                 }}
               />
 
@@ -114,7 +201,8 @@ const Mainpage = () => {
               posts={posts}
               projects={projects}
               loading={loadingPosts}
-              onPostDeleted={fetchPosts}
+              onPostDeleted={refreshDashboardContent}
+              onFeedUpdated={refreshDashboardContent}
             />
 
             </section>

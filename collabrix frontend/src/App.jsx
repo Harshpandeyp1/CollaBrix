@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Login from './Pages/Login'
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Landing from './Pages/Landing'
@@ -15,6 +16,7 @@ import Ideas from './Pages/Ideas'
 import SavedIdeas from './Pages/SavedIdeas'
 import SavedProjects from './Pages/SavedProjects'
 import SharedItemPage from './Pages/SharedItemPage'
+import Explore from './Pages/Explore'
 function App() {
  return (
    <BrowserRouter>
@@ -25,12 +27,20 @@ function App() {
 
 function AppRoutes() {
  const { pathname } = useLocation()
- const isAuthenticatedPage = !["/", "/login"].includes(pathname.toLowerCase())
+ const isPublicPage = ["/", "/login", "/explore"].includes(pathname.toLowerCase())
+ const isAuthenticatedPage = !isPublicPage
+
+ useEffect(() => {
+   const darkMode = isAuthenticatedPage && localStorage.getItem('theme') !== 'light'
+   document.documentElement.classList.toggle('dark', darkMode)
+   document.documentElement.style.colorScheme = darkMode ? 'dark' : 'light'
+ }, [isAuthenticatedPage])
 
  return (
    <div className={`min-h-screen text-slate-900 transition-colors dark:text-white ${isAuthenticatedPage ? "authenticated-texture" : "bg-[#FDFBD4] dark:bg-black"}`}>
      <Routes>
        <Route path="/" element={<Landing />} />
+       <Route path="/explore" element={<Explore />} />
        <Route path="/login" element={<Login />} />
        <Route path="/mainpage" element={<Mainpage />} />
        <Route path="/ideas" element={<Ideas />} />

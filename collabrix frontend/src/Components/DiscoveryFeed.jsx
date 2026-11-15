@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import { Bookmark, BookmarkCheck, Share2 } from "lucide-react";
+import { Bookmark, BookmarkCheck, ListChecks, Share2, Sparkles } from "lucide-react";
 import ShareModal from "./ShareModal";
+import FeedAiModal from "./FeedAiModal";
 import {
   sendProjectInterest,
   getMyProjectInterest,
@@ -37,6 +38,7 @@ const DiscoveryFeed = ({
   projects = [],
   loading = false,
   onPostDeleted,
+  onFeedUpdated,
 }) => {
   const [currentUser, setCurrentUser] = useState(readStoredUser);
   const currentUserId = currentUser?.id ?? currentUser?.userId;
@@ -76,6 +78,7 @@ const DiscoveryFeed = ({
   const [savedProjectIds, setSavedProjectIds] = useState([]);
   const [savingProjectIds, setSavingProjectIds] = useState({});
   const [shareItemDetails, setShareItemDetails] = useState(null);
+  const [feedAiSelection, setFeedAiSelection] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -1004,6 +1007,40 @@ return (
                 <span>Share</span>
               </button>
 
+              <button
+                type="button"
+                onClick={() =>
+                  setFeedAiSelection({
+                    item: post,
+                    isProject: isProjectPost,
+                    mode: "improve",
+                    canEdit: isProjectPost ? isOwner : isPostOwner,
+                  })
+                }
+                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-violet-700 transition-all hover:bg-violet-50 active:scale-95 dark:text-violet-300 dark:hover:bg-violet-950/40"
+                title={`Restructure ${isProjectPost ? "project" : "idea"} with AI`}
+              >
+                <Sparkles size={16} />
+                <span>Restructure</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setFeedAiSelection({
+                    item: post,
+                    isProject: isProjectPost,
+                    mode: "plan",
+                    canEdit: isProjectPost ? isOwner : isPostOwner,
+                  })
+                }
+                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-sky-700 transition-all hover:bg-sky-50 active:scale-95 dark:text-sky-300 dark:hover:bg-sky-950/40"
+                title={`Generate a plan for this ${isProjectPost ? "project" : "idea"}`}
+              >
+                <ListChecks size={16} />
+                <span>Generate plan</span>
+              </button>
+
               {isProjectPost && projectId != null && !isOwner && (
                 <button
                   type="button"
@@ -1308,6 +1345,18 @@ return (
       itemId={shareItemDetails?.itemId}
       itemTitle={shareItemDetails?.itemTitle}
     />
+
+    {feedAiSelection && (
+      <FeedAiModal
+        key={`${feedAiSelection.mode}-${feedAiSelection.isProject ? "project" : "idea"}-${feedAiSelection.item.id ?? feedAiSelection.item._id}`}
+        item={feedAiSelection.item}
+        isProject={feedAiSelection.isProject}
+        canEdit={feedAiSelection.canEdit}
+        mode={feedAiSelection.mode}
+        onClose={() => setFeedAiSelection(null)}
+        onUpdated={onFeedUpdated}
+      />
+    )}
 
   </section>
 );

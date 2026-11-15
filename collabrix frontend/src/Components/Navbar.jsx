@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ThemeTransition from './ThemeTransition';
 import { getProfile, getProfileImageUrl } from '../Services/Profile.js';
@@ -61,6 +61,7 @@ const DashboardNavbar = () => {
 
   const [isAnimating, setIsAnimating] = useState(false);
   const [animationType, setAnimationType] = useState(null);
+  const themeAnimationTimeouts = useRef([]);
 
 
   // =========================
@@ -161,22 +162,32 @@ const DashboardNavbar = () => {
     document.body.style.backgroundColor = darkMode ? '#000000' : '';
   }, [darkMode]);
 
+  useEffect(() => () => {
+    themeAnimationTimeouts.current.forEach((timeout) =>
+      window.clearTimeout(timeout)
+    );
+  }, []);
+
   const toggleDarkMode = () => {
+    if (isAnimating) return;
+
     const newMode = !document.documentElement.classList.contains('dark');
 
     setAnimationType(newMode ? "moon" : "sun");
     setIsAnimating(true);
-    setDarkMode(newMode);
-    localStorage.setItem('theme', newMode ? 'dark' : 'light');
-    document.documentElement.classList.toggle('dark', newMode);
-
-
-    setTimeout(() => {
-
-      setIsAnimating(false);
-      setAnimationType(null);
-
-    }, 1400);
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    themeAnimationTimeouts.current = [
+      window.setTimeout(() => {
+        setDarkMode(newMode);
+        localStorage.setItem('theme', newMode ? 'dark' : 'light');
+      }, prefersReducedMotion ? 0 : 850),
+      window.setTimeout(() => {
+        setIsAnimating(false);
+        setAnimationType(null);
+      }, prefersReducedMotion ? 250 : 1400),
+    ];
 
   };
 
@@ -908,6 +919,7 @@ const DashboardNavbar = () => {
 
             <button
               onClick={toggleDarkMode}
+              disabled={isAnimating}
               title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
               aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
               className="

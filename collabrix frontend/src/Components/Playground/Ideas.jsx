@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Plus,
   Pencil,
@@ -7,6 +7,8 @@ import {
   Lightbulb,
   Bookmark,
   BookmarkCheck,
+  Sparkles,
+  ListChecks,
 } from "lucide-react";
 import {
   getIdeas,
@@ -16,6 +18,8 @@ import {
   toggleSaveIdea,
 } from "../../Services/Ideas";
 import { getProfileImageUrl } from "../../Services/Profile.js";
+import { improveIdea, aiErrorMessage } from "../../Services/aiService";
+import PlanModal from "../../Pages/PlanModel";
 
 const getIdeaId = (idea) => idea.id ?? idea._id;
 
@@ -50,6 +54,16 @@ const Ideas = ({ projectId }) => {
   });
 
   const [saving, setSaving] = useState(false);
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiError, setAiError] = useState("");          // shown INSIDE the modal
+  const [suggestion, setSuggestion] = useState(null);  // null = nothing suggested
+  const [planIdea, setPlanIdea] = useState(null);      // null = plan modal closed
+
+  // Counter used to ignore stale answers (see handleImprove).
+  const improveReq = useRef(0);
+
+  const MAX_TITLE = 150;          // same as app.ai.max-title-length in the backend
+  const MAX_DESCRIPTION = 2000;   // same as app.ai.max-description-length
 
 
   // ==========================================
@@ -94,6 +108,8 @@ const Ideas = ({ projectId }) => {
 
   const openCreateModal = () => {
 
+    resetAi();
+
     setEditingIdea(null);
 
     setForm({
@@ -112,6 +128,8 @@ const Ideas = ({ projectId }) => {
   // ==========================================
 
   const openEditModal = (idea) => {
+
+    resetAi();
 
     setEditingIdea(idea);
 
@@ -133,6 +151,8 @@ const Ideas = ({ projectId }) => {
   const closeModal = () => {
 
     if (saving) return;
+
+    resetAi();
 
     setShowModal(false);
     setEditingIdea(null);
@@ -187,6 +207,7 @@ const Ideas = ({ projectId }) => {
         await createIdea(projectId, payload);
       }
 
+      resetAi();
       setShowModal(false);
       setEditingIdea(null);
 
@@ -294,6 +315,98 @@ const Ideas = ({ projectId }) => {
       );
     }
   };
+
+  // Clears the suggestion, the error, the spinner, AND invalidates any request
+  // still in flight (bumping the counter makes its answer "stale").
+  const resetAi = () => {
+    improveReq.current += 1;
+    setAiLoading(false);
+    setAiError("");
+    setSuggestion(null);
+  };
+
+  const requestImprovement = async (ideaContent, force = false) => {
+    if (aiLoading && !force) return;
+
+    if (!ideaContent.title.trim() && !ideaContent.description.trim()) {
+      setAiError("Write a rough idea first, then improve it.");
+      return;
+    }
+
+    // Each request gets a number. An answer is only used if its number is still the
+    // latest, so a slow answer can't appear in a different idea's modal.
+    const myRequest = ++improveReq.current;
+
+    setAiLoading(true);
+    setAiError("");
+    setSuggestion(null);
+
+    try {
+
+      const result = await improveIdea({
+        title: ideaContent.title,
+        description: ideaContent.description,
+      });
+
+      if (myRequest !== improveReq.current) return;   // stale: ignore
+
+      setSuggestion(result);
+      setAiLoading(false);
+
+    } catch (err) {
+
+      console.error("IMPROVE ERROR:", err);
+
+      if (myRequest !== improveReq.current) return;   // stale: ignore
+
+      setAiError(aiErrorMessage(err));
+      setAiLoading(false);
+    }
+  };
+
+  const handleImprove = () => requestImprovement(form);
+
+  const handleRestructureIdea = (idea) => {
+    if (getIdeaId(idea) == null) {
+      setError("This idea cannot be updated because it has no ID.");
+      return;
+    }
+
+    resetAi();
+    setEditingIdea(idea);
+    setForm({
+      title: idea.title || "",
+      description: idea.description || "",
+    });
+    setError("");
+    setShowModal(true);
+    requestImprovement(
+      { title: idea.title || "", description: idea.description || "" },
+      true
+    );
+  };
+
+  const acceptSuggestion = () => {
+
+    setForm({
+      title: (suggestion.title ?? "").slice(0, MAX_TITLE),
+      description: (suggestion.description ?? "").slice(0, MAX_DESCRIPTION),
+    });
+
+    setSuggestion(null);
+  };
+
+  const renderPlanButton = (idea) => (
+    <button
+      type="button"
+      onClick={() => setPlanIdea(idea)}
+      className="rounded-lg p-2 text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 dark:hover:bg-zinc-800 dark:hover:text-white"
+      title="Turn into a project plan"
+      aria-label={`Generate a plan from ${idea.title || "this idea"}`}
+    >
+      <ListChecks size={16} />
+    </button>
+  );
 
 
   // ==========================================
@@ -566,6 +679,25 @@ const Ideas = ({ projectId }) => {
 
               </div>
 
+              <div className="mt-4 flex flex-wrap gap-2 border-t border-zinc-100 pt-4 dark:border-zinc-800">
+                <button
+                  type="button"
+                  onClick={() => handleRestructureIdea(idea)}
+                  className="inline-flex items-center gap-2 rounded-xl border border-violet-200 bg-violet-50 px-3 py-2 text-xs font-semibold text-violet-700 transition hover:border-violet-300 hover:bg-violet-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 dark:border-violet-900/70 dark:bg-violet-950/30 dark:text-violet-300 dark:hover:bg-violet-950/60"
+                >
+                  <Sparkles size={15} />
+                  Restructure with AI
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPlanIdea(idea)}
+                  className="inline-flex items-center gap-2 rounded-xl border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-semibold text-sky-700 transition hover:border-sky-300 hover:bg-sky-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400 dark:border-sky-900/70 dark:bg-sky-950/30 dark:text-sky-300 dark:hover:bg-sky-950/60"
+                >
+                  <ListChecks size={15} />
+                  Generate a plan
+                </button>
+              </div>
+
             </div>
 
           ))}
@@ -581,9 +713,9 @@ const Ideas = ({ projectId }) => {
 
       {showModal && (
 
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/55 px-4 py-6 backdrop-blur-sm">
 
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl dark:bg-zinc-900">
+          <div className="w-full max-w-lg rounded-3xl border border-white/70 bg-white p-6 shadow-2xl shadow-slate-950/20 dark:border-zinc-700 dark:bg-zinc-900">
 
             {/* MODAL HEADER */}
 
@@ -638,8 +770,12 @@ const Ideas = ({ projectId }) => {
                   value={form.title}
                   onChange={handleChange}
                   placeholder="Add dark mode"
-                  className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                  maxLength={MAX_TITLE}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:bg-white focus:ring-4 focus:ring-violet-500/10 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:placeholder:text-zinc-500 dark:focus:border-violet-500 dark:focus:bg-zinc-800"
                 />
+                <p className="mt-1 text-right text-xs text-zinc-400">
+                  {form.title.length}/{MAX_TITLE}
+                </p>
 
               </div>
 
@@ -657,16 +793,75 @@ const Ideas = ({ projectId }) => {
                   value={form.description}
                   onChange={handleChange}
                   rows={4}
+                  maxLength={MAX_DESCRIPTION}
                   placeholder="Explain your idea..."
-                  className="w-full resize-none rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white"
+                  className="w-full resize-y rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm leading-6 text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-violet-400 focus:bg-white focus:ring-4 focus:ring-violet-500/10 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:placeholder:text-zinc-500 dark:focus:border-violet-500 dark:focus:bg-zinc-800"
                 />
+                <p className="mt-1 text-right text-xs text-zinc-400">
+                  {form.description.length}/{MAX_DESCRIPTION}
+                </p>
+
+              </div>
+
+              {/* AI: IMPROVE */}
+
+              <div className="space-y-3">
+
+                <button
+                  type="button"
+                  onClick={handleImprove}
+                  disabled={aiLoading}
+                  className="flex items-center gap-2 rounded-xl bg-linear-to-r from-violet-600 to-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-md shadow-violet-500/20 transition hover:-translate-y-0.5 hover:from-violet-700 hover:to-indigo-700 disabled:cursor-wait disabled:opacity-60"
+                >
+                  <Sparkles size={16} className="text-purple-500" />
+                  {aiLoading ? "Improving..." : "Improve with AI"}
+                </button>
+
+                {aiError && (
+                  <p className="text-sm text-red-600 dark:text-red-400">{aiError}</p>
+                )}
+
+                {suggestion && (
+                  <div                   className="rounded-2xl border border-violet-200 bg-violet-50/80 p-4 dark:border-violet-900 dark:bg-violet-950/20">
+
+                    <p className="text-xs font-medium uppercase tracking-wide text-purple-600 dark:text-purple-400">
+                      AI suggestion
+                    </p>
+
+                    <p className="mt-2 text-sm font-semibold text-zinc-900 dark:text-white">
+                      {suggestion.title}
+                    </p>
+
+                    <p className="mt-1 whitespace-pre-wrap text-sm text-zinc-700 dark:text-zinc-300">
+                      {suggestion.description}
+                    </p>
+
+                    <div className="mt-3 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={acceptSuggestion}
+                        className="rounded-lg bg-purple-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-purple-700"
+                      >
+                        Use this
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSuggestion(null)}
+                        className="rounded-lg px-3 py-1.5 text-sm font-medium text-zinc-600 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                      >
+                        Discard
+                      </button>
+                    </div>
+
+                  </div>
+                )}
 
               </div>
 
 
               {/* BUTTONS */}
 
-              <div className="flex justify-end gap-3 pt-2">
+              <div className="flex justify-end gap-3 border-t border-zinc-100 pt-4 dark:border-zinc-800">
 
                 <button
                   type="button"
@@ -776,15 +971,18 @@ const Ideas = ({ projectId }) => {
 
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => handleToggleSave(idea)}
-                      className="shrink-0 rounded-lg p-2 text-yellow-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                      title="Remove from saved"
-                      aria-label={`Remove ${idea.title || "idea"} from saved ideas`}
-                    >
-                      <BookmarkCheck size={16} />
-                    </button>
+                    <div className="flex shrink-0 items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleToggleSave(idea)}
+                        className="rounded-lg p-2 text-yellow-500 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                        title="Remove from saved"
+                        aria-label={`Remove ${idea.title || "idea"} from saved ideas`}
+                      >
+                        <BookmarkCheck size={16} />
+                      </button>
+                      {renderPlanButton(idea)}
+                    </div>
 
                   </div>
 
@@ -798,6 +996,12 @@ const Ideas = ({ projectId }) => {
 
         </div>
 
+      )}
+
+      {/* PLAN MODAL. It exists only while planIdea is set, so closing it destroys
+          its state and the next idea starts fresh. */}
+      {planIdea && (
+        <PlanModal idea={planIdea} onClose={() => setPlanIdea(null)} />
       )}
 
     </div>

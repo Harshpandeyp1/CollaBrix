@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { getProfile, getProfileImageUrl } from '../Services/Profile';
+import React from 'react'
+import { getProfileImageUrl } from '../Services/Profile';
 
 // ------------------------------------------------------
 // Same initials helper as ProfileHeader, kept local so
@@ -16,25 +16,7 @@ const getInitials = (name) => {
     .join("");
 };
 
-const ProfileCard = () => {
-  const [profile, setProfile] = useState(null);
-  const [loading, setloading] = useState(true);
-
-  const fetchProfile = async () => {
-    try {
-      const response = await getProfile();
-      setProfile(response);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setloading(false);
-    }
-  }
-
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
+const ProfileCard = ({ profile, loading, stats }) => {
   if (loading) {
     return (
       <section className="rounded-2xl border border-slate-200/80 bg-white/85 p-5 text-slate-600 shadow-sm backdrop-blur-sm dark:border-zinc-800/80 dark:bg-zinc-900/85 dark:text-zinc-300">
@@ -137,7 +119,7 @@ const ProfileCard = () => {
 
           <div>
             <p className="text-sm font-semibold text-slate-800 dark:text-white">
-              12
+              {stats.projects ?? "—"}
             </p>
 
             <p className="text-xs text-slate-500 dark:text-white/25">
@@ -147,7 +129,7 @@ const ProfileCard = () => {
 
           <div>
             <p className="text-sm font-semibold text-slate-800 dark:text-white">
-              248
+              {stats.connections ?? "—"}
             </p>
 
             <p className="text-xs text-slate-500 dark:text-white/25">
@@ -157,7 +139,7 @@ const ProfileCard = () => {
 
           <div>
             <p className="text-sm font-semibold text-slate-800 dark:text-white">
-              8
+              {stats.ideas ?? "—"}
             </p>
 
             <p className="text-xs text-slate-500 dark:text-white/25">

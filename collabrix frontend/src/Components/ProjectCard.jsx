@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import {
   Pencil,
   Trash2,
@@ -58,6 +59,7 @@ const ProjectCard = ({
   onViewProject,
   onUnsave,
   unsaving = false,
+  readOnly = false,
 }) => {
   const [shareOpen, setShareOpen] = useState(false);
 
@@ -233,6 +235,14 @@ console.log("IS OWNER:", isOwner);
           )}
 
           {/* Action Row */}
+          {readOnly ? (
+            <Link
+              to="/login"
+              className="inline-flex w-full items-center justify-center rounded-xl bg-indigo-50 px-3 py-2.5 text-xs font-semibold text-indigo-700 transition hover:bg-indigo-100 dark:bg-indigo-950/70 dark:text-indigo-300 dark:hover:bg-indigo-900/60"
+            >
+              Sign in to interact
+            </Link>
+          ) : (
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -288,15 +298,18 @@ console.log("IS OWNER:", isOwner);
               </button>
             )}
           </div>
+          )}
         </div>
       </div>
-      <ShareModal
-        open={shareOpen}
-        onClose={() => setShareOpen(false)}
-        itemType="PROJECT"
-        itemId={project?.id ?? project?._id}
-        itemTitle={project?.title}
-      />
+      {!readOnly && (
+        <ShareModal
+          open={shareOpen}
+          onClose={() => setShareOpen(false)}
+          itemType="PROJECT"
+          itemId={project?.id ?? project?._id}
+          itemTitle={project?.title}
+        />
+      )}
     </article>
   );
 };

@@ -1,5 +1,21 @@
 import React from 'react'
-const DashboardHeader = ({ onShareIdea, onCreateProject }) => {
+import { useNavigate } from 'react-router-dom'
+import { getProfileImageUrl } from '../Services/Profile.js'
+
+const getInitials = (name) =>
+  name
+    ?.trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase())
+    .join('') || '?'
+
+const DashboardHeader = ({ profile, onShareIdea, onCreateProject }) => {
+  const navigate = useNavigate()
+  const displayName =
+    profile?.fullName || profile?.name || profile?.username || 'there'
+  const profileImage = getProfileImageUrl(profile)
+
   return (
     <section>
       <div className="
@@ -26,7 +42,7 @@ const DashboardHeader = ({ onShareIdea, onCreateProject }) => {
               Dashboard
             </p>
             <h2 className="text-white text-xl md:text-2xl font-black tracking-tight">
-              Welcome back, Harsh 👋
+              Welcome back, {displayName} 👋
             </h2>
             <p className="text-sky-50/90 text-sm mt-1">
               Here's what's happening with your projects today.
@@ -34,7 +50,9 @@ const DashboardHeader = ({ onShareIdea, onCreateProject }) => {
           </div>
 
           {/* Action buttons */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex flex-col items-start md:items-end gap-3 shrink-0">
+          
+            <div className="flex items-center gap-3">
             <button onClick={onCreateProject}
              className="
               flex items-center gap-2
@@ -81,6 +99,7 @@ const DashboardHeader = ({ onShareIdea, onCreateProject }) => {
 
                 Share an Idea
             </button>
+            </div>
           </div>
 
         </div>

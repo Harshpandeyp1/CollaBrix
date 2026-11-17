@@ -1,35 +1,26 @@
-package com.Ecomm.prj.Controller;
+package com.example.collabrix.backend.Controller;
 
-import com.Ecomm.prj.Dto.LoginDto;
-import com.Ecomm.prj.Dto.LoginResponseDto;
-import com.Ecomm.prj.Dto.SignupDto;
-import com.Ecomm.prj.Service.UserService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.example.collabrix.backend.Dto.auth.UserSuggestionDto;
+import com.example.collabrix.backend.Service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/users")
+@RequiredArgsConstructor
 public class UserController {
-    private final UserService service;
+    private final UserService userService;
 
-    public UserController(UserService service) {
-        this.service = service;
-    }
-
-    @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody SignupDto request) {
-        return ResponseEntity.ok(service.signup(request));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDto> login(
-            @RequestBody LoginDto request) {
-
-        return ResponseEntity.ok(service.login(request));
+    @GetMapping("suggestion")
+    public List<UserSuggestionDto> getPeopleYouMayKnow(
+            Authentication authentication
+    ) {
+        System.out.println("Controller Hit");
+        return userService.getPeopleYouMayKnow(authentication.getName());
     }
 }
